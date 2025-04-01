@@ -1,0 +1,360 @@
+package official.sketchBook.gameState_related;
+
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import official.sketchBook.PlayScreen;
+import official.sketchBook.animation_related.Sprite;
+import official.sketchBook.camera_related.CameraManager;
+import official.sketchBook.ui_related.Button;
+import official.sketchBook.ui_related.On_OffButton;
+import official.sketchBook.ui_related.Slider;
+import official.sketchBook.ui_related.StateButton;
+import official.sketchBook.util_related.enumerators.states.GameState;
+import official.sketchBook.util_related.helpers.HelpMethods;
+import official.sketchBook.util_related.info.paths.UISpritePaths;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Configuration extends State implements StateMethods {
+
+    private List<Button> buttons = new ArrayList<>();
+    private List<Slider> sliders = new ArrayList<>();
+
+    public GameState previousState;
+
+    public Configuration(PlayScreen game, CameraManager gameCameraManager, CameraManager uiCameraManager) {
+        super(game, gameCameraManager, uiCameraManager);
+        this.mult = 2;
+        initData();
+    }
+
+    private void initData() {
+        this.initBackGround(UISpritePaths.config_BG, 1,1, 50);
+        this.initButtons();
+        this.initSliders();
+    }
+
+
+    private void initButtons() {
+        initReturnButton();
+        initAudioButtons();
+
+        for (Button button : buttons) {
+            if (button.buttonSpriteSheet == null) {
+                button.buttonSpriteSheet = new Texture(UISpritePaths.config_BTNs);
+            }
+        }
+
+    }
+
+    private void initReturnButton() {
+
+        if (previousState == null)
+            previousState = GameState.MENU;
+
+        int canvasWidth = 20;
+        int canvasHeight = 20;
+
+        int x = (int) (menuX + 16 * mult);
+        int y = (int) (menuY + 65 * mult);
+
+        buttons.add(
+            new StateButton(
+                x,
+                y,
+                canvasWidth,
+                canvasHeight,
+                mult,
+                new Sprite(0, 2),
+                previousState,
+                "return"
+            )
+        );
+    }
+
+    private void initAudioButtons() {
+
+        int canvasWidth = 20;
+        int canvasHeight = 20;
+
+//        int width = (int) (canvasWidth * Game.SCALE * mult);
+        int height = (int) (canvasHeight * mult);
+
+        int x = (int) (menuX + 111 * mult);
+        int y = (int) (menuY + 36 * mult);
+
+        int yOffSet = (int) (height + 9 * mult);
+
+        buttons.add(
+            new On_OffButton(
+                x,
+                y + yOffSet,
+                canvasWidth,
+                canvasHeight,
+                !PlayScreen.soundEfectsMute,
+                mult,
+                new Sprite(0, 0),
+                "sfx_mute"
+            )
+        );
+
+        buttons.add(
+            new On_OffButton(
+                x,
+                y,
+                canvasWidth,
+                canvasHeight,
+                !PlayScreen.soundMute,
+                mult,
+                new Sprite(0, 0),
+                "vol_mute"
+            )
+        );
+    }
+
+    private void initSliders() {
+        int canvasWidth = 50;
+        int canvasHeight = 5;
+
+        int height = (int) (canvasHeight * mult);
+
+        int yOffSet = (int) (height + 24 * mult);
+
+        int x = (int) (menuX + 69 * mult);
+        int y = (int) (menuY + 43 * mult);
+
+
+        sliders.add(
+            new Slider(
+                x,
+                y + yOffSet,
+                canvasWidth,
+                canvasHeight,
+                mult,
+                new Sprite(0, 0),
+                "sfx_volume",
+                uiCameraManager
+            )
+        );
+
+        sliders.add(
+            new Slider(
+                x,
+                y,
+                canvasWidth,
+                canvasHeight,
+                mult,
+                new Sprite(0, 0),
+                "sound_volume",
+                uiCameraManager
+            )
+        );
+
+        for (Slider slider : sliders) {
+
+            if (slider.getType().equals("sfx_volume")) {
+                slider.setTickPositionFromValue(PlayScreen.soundEfectsVolume);
+                slider.setTurnedOn(!PlayScreen.soundEfectsMute);  // Garanta que o estado do mute é refletido
+            }
+
+            if (slider.getType().equals("sound_volume")) {
+                slider.setTickPositionFromValue(PlayScreen.soundVolume);
+                slider.setTurnedOn(!PlayScreen.soundMute);  // Garanta que o estado do mute é refletido
+            }
+        }
+    }
+
+
+    @Override
+    public void update(float delta) {
+
+    }
+
+    @Override
+    public void updateUi(float delta) {
+        updateButtons();
+        updateSliders();
+    }
+
+    private void updateSliders() {
+        for (Slider slider : sliders) {
+            if (slider.getType().equals("sfx_volume")) {
+                if (PlayScreen.soundEfectsMute == slider.isTurnedOn()) {
+                    slider.setTurnedOn(!PlayScreen.soundEfectsMute);
+                }
+                if (slider.getValue() != PlayScreen.soundEfectsVolume) {
+                    PlayScreen.soundEfectsVolume = slider.getValue();
+                }
+
+            }
+            if (slider.getType().equals("sound_volume")) {
+
+                if(PlayScreen.soundMute == slider.isTurnedOn()) {
+                    slider.setTurnedOn(!PlayScreen.soundMute);
+                }
+
+                if (slider.getValue() != PlayScreen.soundVolume) {
+                    PlayScreen.soundVolume = slider.getValue();
+                }
+
+            }
+
+            slider.update();
+        }
+    }
+
+    private void updateButtons() {
+
+        for (Button button : buttons) {
+
+            switch (button.getType()) {
+                case "return":
+                    if (button instanceof StateButton menuButton && menuButton.getGameStateToChange() != previousState) {
+                        menuButton.setGameStateToChange(previousState);
+                    }
+                    break;
+                case "vol_mute":
+                    if (button instanceof On_OffButton soundButton
+                        && PlayScreen.soundMute == soundButton.isTurnedOn()
+                    ) {
+                        PlayScreen.soundMute = !soundButton.isTurnedOn();
+                    }
+                    break;
+                case "sfx_mute":
+                    if (button instanceof On_OffButton soundButton
+                        && PlayScreen.soundEfectsMute == soundButton.isTurnedOn()
+                    ) {
+                        PlayScreen.soundEfectsMute = !soundButton.isTurnedOn();
+                    }
+                    break;
+            }
+
+            button.update();
+        }
+
+    }
+
+    @Override
+    public void render(SpriteBatch batch) {
+
+    }
+
+    public void dispose() {
+        for (Button button : buttons) {
+            if (button.buttonSpriteSheet != null) {
+                button.buttonSpriteSheet.dispose();  // Dispose the texture used by the buttons
+            }
+        }
+
+        for(Slider slider : sliders){
+            slider.getTickSpriteSheet().dispose();
+            slider.getButtonSpriteSheet().dispose();
+        }
+        // Dispose other resources if needed, e.g., Sounds, Music, etc.
+    }
+
+
+    @Override
+    public void renderUi(SpriteBatch uiBatch) {
+
+        uiBatch.draw(
+            HelpMethods.obtainCurrentSpriteImage(
+                aniPlayer.getCurrentSprite(),
+                canvasWidth,
+                canvasHeight,
+                backGroundImage,
+                false
+            ),
+            menuX,
+            menuY,
+            menuWidth,
+            menuHeight
+        );
+
+        for (Button button : buttons) {
+            button.render(uiBatch);
+        }
+
+        for (Slider slider : sliders) {
+            slider.render(uiBatch);
+        }
+    }
+
+    public void handleTouchDragged(int screenX, int screenY, int touch) {
+        for (Slider slider : sliders) {
+            if (slider.isMousePressed()) {
+                slider.changeXTickPos(screenX);
+            }
+        }
+    }
+
+    @Override
+    public boolean handleMouseMoved(int screenX, int screenY) {
+        for (Button button : buttons) {
+            button.setMouseOver(isMouseInsideButton(screenX, screenY, button));
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean handleTouchDown(int screenX, int screenY, int button) {
+        for (Button b : buttons) {
+            if (isMouseInsideButton(screenX, screenY, b)) {
+                b.setMouseOver(false);
+                b.setMousePressed(true);
+
+                break;
+            }
+        }
+
+        for (Slider slider : sliders) {
+            if (isMouseInsideButton(screenX, screenY, slider)) {
+                slider.setMousePressed(true);
+                break;
+            }
+        }
+
+
+        return true;
+    }
+
+    @Override
+    public boolean handleTouchUp(int screenX, int screenY, int button) {
+        for (Button b : buttons) {
+            if (isMouseInsideButton(screenX, screenY, b) && b.isMousePressed()) {
+                b.mousePressedEvent();
+                b.resetBools();
+            } else {
+                b.resetBools();
+            }
+        }
+
+        for (Slider slider : sliders) {
+            slider.resetBools();
+        }
+
+
+        return true;
+    }
+
+    @Override
+    public boolean handleKeyDown(int keycode) {
+        if (keycode == Input.Keys.ENTER) {
+            System.out.println(
+                "sound volume: " + PlayScreen.soundVolume + " | mute: " + PlayScreen.soundMute +
+                    " | sfx volume: " + PlayScreen.soundEfectsVolume + " | mute: " + PlayScreen.soundEfectsMute
+            );
+        }
+
+
+        return true;
+    }
+
+    @Override
+    public boolean handleKeyUp(int keycode) {
+        return false;
+    }
+}

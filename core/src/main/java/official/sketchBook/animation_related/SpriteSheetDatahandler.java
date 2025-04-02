@@ -89,4 +89,8 @@ public class SpriteSheetDatahandler {
         return spriteSheet;
     }
 
+    public void dispose(){
+        this.spriteSheet.dispose();
+    }
+
 }

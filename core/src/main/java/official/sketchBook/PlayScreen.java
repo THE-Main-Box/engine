@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import official.sketchBook.camera_related.CameraManager;
 import official.sketchBook.gameState_related.Configuration;
 import official.sketchBook.gameState_related.Menu;
@@ -54,6 +55,10 @@ public class PlayScreen implements Screen {
     public static boolean soundMute = false;
     public static int soundEfectsVolume = 90;
     public static int soundVolume = 50;
+
+    //debug related
+    public static boolean showHitBox = false;
+    private Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
 
     public PlayScreen(MainClass game) {
 
@@ -116,6 +121,16 @@ public class PlayScreen implements Screen {
 
 
     }
+    private void renderDebuggVariables() {
+
+        if (showHitBox) {
+            debugRenderer.render(
+                playingState.getWorld(),
+                gameCameraManager.getCamera().combined.scl(PPM)
+            );
+        }
+
+    }
 
     private void updateGameStates() {
         switch (GameState.state) {
@@ -156,6 +171,7 @@ public class PlayScreen implements Screen {
             case PLAYING -> {
 
                 playingState.draw(batch, uiBatch);
+                renderDebuggVariables();
 
             }
             case MENU -> {

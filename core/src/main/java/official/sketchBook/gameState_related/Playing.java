@@ -23,7 +23,6 @@ public class Playing extends State implements StateMethods {
     public Playing(PlayScreen game, CameraManager gameCameraManager, CameraManager uiCameraManager) {
         super(game, gameCameraManager, uiCameraManager);
 
-
         // Cria o world com a gravidade desejada (por exemplo, 8.2 m/s² para baixo)
         world = new World(new Vector2(0, -8.2f), true);
 
@@ -128,6 +127,11 @@ public class Playing extends State implements StateMethods {
         if (keycode == Input.Keys.ESCAPE) {
             GameState.state = GameState.PAUSED;
         }
+
+        if (keycode == Input.Keys.F1) {
+            showHitBox = !showHitBox;
+        }
+
         return true;
     }
 
@@ -136,4 +140,7 @@ public class Playing extends State implements StateMethods {
         return false;
     }
 
+    public World getWorld() {
+        return world;
+    }
 }

@@ -7,18 +7,24 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import official.sketchBook.PlayScreen;
 import official.sketchBook.camera_related.CameraManager;
+import official.sketchBook.gameData_related.GameObjectManager;
+import official.sketchBook.gameObject_related.player.Player;
 import official.sketchBook.util_related.enumerators.states.GameState;
+import official.sketchBook.util_related.helpers.HelpMethods;
 import official.sketchBook.util_related.helpers.MultiContactListener;
 
 import static official.sketchBook.PlayScreen.*;
 
 public class Playing extends State implements StateMethods {
 
-    public World world;
-
     private final BitmapFont font = new BitmapFont();
 
     public static MultiContactListener multiContactListener = new MultiContactListener();
+
+    public World world;
+    public GameObjectManager objectManager;
+
+    private Player player;
 
     public Playing(PlayScreen game, CameraManager gameCameraManager, CameraManager uiCameraManager) {
         super(game, gameCameraManager, uiCameraManager);
@@ -31,15 +37,17 @@ public class Playing extends State implements StateMethods {
 
         world.setContactListener(multiContactListener);
 
-        addCollisionManagers();
-    }
+        objectManager = new GameObjectManager();
 
-    private void addCollisionManagers() {
-
+        player = new Player(10, 10, 50, 50, true, this.world);
+        objectManager.addGameObject(player);
     }
 
     @Override
     public void update(float delta) {
+
+        objectManager.updateObjects(delta);
+
 
         if (world != null) {
             world.step(
@@ -49,10 +57,25 @@ public class Playing extends State implements StateMethods {
             );
         }
 
+        objectManager.syncObjectsBodies();
+
+        float effectiveViewportWidth = gameCameraManager.getCamera().viewportWidth;
+        float effectiveViewportHeight = gameCameraManager.getCamera().viewportHeight;
+
+        HelpMethods.updateCameraMovementParams(gameCameraManager, effectiveViewportWidth, effectiveViewportHeight);
+        gameCameraManager.setEase(0.1f, 0.5f, 1f);
+        gameCameraManager.trackObjectByOffset(player.getX(), player.getY());
     }
 
     @Override
     public void updateUi(float delta) {
+
+    }
+
+    @Override
+    public void render(SpriteBatch batch) {
+
+        objectManager.renderObjects(batch);
 
     }
 
@@ -87,15 +110,13 @@ public class Playing extends State implements StateMethods {
     public void dispose() {
         font.dispose();
 
+        objectManager.dispose();
+
         if (world != null) {
             world.dispose();
             world = null;
         }
 
-    }
-
-    @Override
-    public void render(SpriteBatch batch) {
     }
 
     @Override

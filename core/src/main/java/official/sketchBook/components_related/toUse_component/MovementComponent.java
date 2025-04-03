@@ -2,6 +2,7 @@ package official.sketchBook.components_related.toUse_component;
 
 
 import official.sketchBook.components_related.base_component.Component;
+import official.sketchBook.gameObject_related.GameObject;
 
 public class MovementComponent extends Component {
     private float xSpeed, ySpeed;
@@ -12,6 +13,7 @@ public class MovementComponent extends Component {
 
     private boolean acceleratingX, acceleratingY;
 
+
     public MovementComponent(double weight) {
         this.weight = weight;
     }
@@ -21,6 +23,7 @@ public class MovementComponent extends Component {
         applyAcceleration();
         applyDeceleration();
         limitSpeed();
+
     }
 
     private void applyAcceleration() {

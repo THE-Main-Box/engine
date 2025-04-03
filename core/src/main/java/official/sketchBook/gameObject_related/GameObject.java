@@ -1,10 +1,12 @@
 package official.sketchBook.gameObject_related;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import official.sketchBook.animation_related.ObjectAnimationPlayer;
 import official.sketchBook.animation_related.SpriteSheetDatahandler;
 import official.sketchBook.components_related.base_component.Component;
+import official.sketchBook.components_related.toUse_component.PhysicsComponent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +30,8 @@ public abstract class GameObject {
     //components related
     protected List<Component> components;
 
+    protected PhysicsComponent physicsC;
+
     public GameObject(float x, float y, float width, float height, boolean facingForward, World world) {
         this.x = x;
         this.y = y;
@@ -41,7 +45,13 @@ public abstract class GameObject {
         spriteSheetDatahandlerList = new ArrayList<>();
         components = new ArrayList<>();
 
+        this.world = world;
+
         createBody();
+
+        physicsC = new PhysicsComponent(this, this.body);
+        addComponent(physicsC);
+
     }
 
     // Métodos para inicializar a física e a renderização (implementados nas subclasses)
@@ -49,9 +59,9 @@ public abstract class GameObject {
 
     public abstract void update(float deltaTime);
 
-    public abstract void render();
+    public abstract void render(SpriteBatch batch);
 
-    public void updateComponents(float delta) {
+    protected void updateComponents(float delta) {
         for (Component component : components) {
             component.update(delta);
         }
@@ -169,4 +179,7 @@ public abstract class GameObject {
         return objectAnimationPlayerList;
     }
 
+    public PhysicsComponent getPhysicsC() {
+        return physicsC;
+    }
 }

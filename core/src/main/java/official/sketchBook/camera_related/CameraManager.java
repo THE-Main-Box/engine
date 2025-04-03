@@ -41,7 +41,12 @@ public class CameraManager {
         camera.update();
     }
 
-    public void trackObjectByOffset(int targetX, int targetY) {
+    public void trackObjectDirectly(float targetX, float targetY) {
+        camera.position.set(targetX, targetY, 0);
+        camera.update();
+    }
+
+    public void trackObjectByOffset(float targetX, float targetY) {
         float effectiveViewportWidth = camera.viewportWidth * camera.zoom;
         float effectiveViewportHeight = camera.viewportHeight * camera.zoom;
 
@@ -55,6 +60,7 @@ public class CameraManager {
     }
 
     private void updateXOffset(float targetX, int rightBorder, int leftBorder, float effectiveViewportWidth) {
+
         float centerX = effectiveViewportWidth / 2f + xLvlOffSet;
         float diffX = targetX - centerX;
 

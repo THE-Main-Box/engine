@@ -57,7 +57,7 @@ public class PlayScreen implements Screen {
     public static int soundVolume = 50;
 
     //debug related
-    public static boolean showHitBox = false;
+    public static boolean showHitBox = true;
     private Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
 
     public PlayScreen(MainClass game) {

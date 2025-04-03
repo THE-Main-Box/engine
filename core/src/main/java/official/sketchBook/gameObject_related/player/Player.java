@@ -1,22 +1,24 @@
 package official.sketchBook.gameObject_related.player;
 
-import com.badlogic.gdx.physics.box2d.*;
-import official.sketchBook.components_related.toUse_component.MovementComponent;
-import official.sketchBook.components_related.toUse_component.PhysicsComponent;
-import official.sketchBook.gameObject_related.GameObject;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.World;
+import official.sketchBook.gameObject_related.MovableGameObject;
 
 import static official.sketchBook.PlayScreen.PPM;
 
-public class Player extends GameObject {
+public class Player extends MovableGameObject {
+
+    private PlayerControllerComponent controllerComponent;
 
     public Player(float x, float y, float width, float height, boolean facingForward, World world) {
         super(x, y, width, height, facingForward, world);
 
-//        body.setGravityScale(0);
+        body.setGravityScale(0);
 
-        addComponent(new MovementComponent(this.body.getMass()));
-        addComponent(new PhysicsComponent(this, this.body));
-        addComponent(new PlayerControllerComponent(this));
+        controllerComponent = new PlayerControllerComponent(this);
+        addComponent(controllerComponent);
     }
 
     @Override
@@ -42,11 +44,13 @@ public class Player extends GameObject {
 
     @Override
     public void update(float deltaTime) {
+        updateComponents(deltaTime);
 
+        //atualiza a posição do corpo através do componente de física
+        physicsC.applyImpulseForSpeed(moveC.getxSpeed(), moveC.getySpeed(), moveC.getxMaxSpeed(), moveC.getySpeed());
     }
 
-    @Override
-    public void render() {
-
+    public PlayerControllerComponent getControllerComponent() {
+        return controllerComponent;
     }
 }

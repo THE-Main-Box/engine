@@ -1,9 +1,10 @@
 package official.sketchBook.gameObject_related;
 
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.World;
 import official.sketchBook.animation_related.ObjectAnimationPlayer;
 import official.sketchBook.animation_related.SpriteSheetDatahandler;
+import official.sketchBook.components_related.base_component.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,11 +12,12 @@ import java.util.List;
 public abstract class GameObject {
 
     //dimensions and position related
-    protected Vector2 position;
+    protected float x, y;
     protected float width, height;
 
-    //body related
+    //physics related
     protected Body body;
+    protected World world;
 
     //rendering and animation related
     protected List<SpriteSheetDatahandler> spriteSheetDatahandlerList;
@@ -23,20 +25,70 @@ public abstract class GameObject {
 
     protected boolean facingForward;
 
-    public GameObject(Vector2 position, float width, float height, boolean facingForward) {
-        this.position = position;
+    //components related
+    protected List<Component> components;
+
+    public GameObject(float x, float y, float width, float height, boolean facingForward, World world) {
+        this.x = x;
+        this.y = y;
+
         this.width = width;
         this.height = height;
+
         this.facingForward = facingForward;
 
         objectAnimationPlayerList = new ArrayList<>();
         spriteSheetDatahandlerList = new ArrayList<>();
+        components = new ArrayList<>();
+
+        createBody();
     }
 
     // Métodos para inicializar a física e a renderização (implementados nas subclasses)
     protected abstract void createBody();
+
     public abstract void update(float deltaTime);
+
     public abstract void render();
+
+    public void updateComponents(float delta) {
+        for (Component component : components) {
+            component.update(delta);
+        }
+    }
+
+    public void dispose() {
+        if (!spriteSheetDatahandlerList.isEmpty()) {
+            for (SpriteSheetDatahandler spriteSheetDatahandler : spriteSheetDatahandlerList) {
+                spriteSheetDatahandler.dispose();
+            }
+        }
+    }
+
+    public List<Component> getComponents() {
+        return components;
+    }
+
+    public void addComponent(Component comp) {
+        components.add(comp);
+    }
+
+    public <T> T getComponent(Class<T> componentClass) {
+        for (Component comp : components) {
+            if (componentClass.isInstance(comp)) {
+                return componentClass.cast(comp);
+            }
+        }
+        return null;
+    }
+
+    public World getWorld() {
+        return world;
+    }
+
+    public void setWorld(World world) {
+        this.world = world;
+    }
 
     public Body getBody() {
         return body;
@@ -54,12 +106,20 @@ public abstract class GameObject {
         this.facingForward = facingForward;
     }
 
-    public Vector2 getPosition() {
-        return position;
+    public float getX() {
+        return x;
     }
 
-    public void setPosition(Vector2 position) {
-        this.position = position;
+    public void setX(float x) {
+        this.x = x;
+    }
+
+    public float getY() {
+        return y;
+    }
+
+    public void setY(float y) {
+        this.y = y;
     }
 
     public float getWidth() {
@@ -98,10 +158,6 @@ public abstract class GameObject {
 
     public ObjectAnimationPlayer getPrimaryAnimationPlayer() {
         return objectAnimationPlayerList.isEmpty() ? null : objectAnimationPlayerList.get(0);
-    }
-
-    public void addAniPlayer(ObjectAnimationPlayer aniPlayer){
-        objectAnimationPlayerList.add(aniPlayer);
     }
 
 

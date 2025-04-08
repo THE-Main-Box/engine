@@ -38,14 +38,19 @@ public class WorldGrid {
         }
     }
 
-    public Room getRoom(int x, int y) {
-        if (!isInBounds(x, y)) return null;
-        return grid[y][x].getRoom();
-    }
+    public void connectAdjacentRooms() {
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                RoomNode node = getNode(x, y);
+                if (node == null) continue;
 
-    public RoomNode getNode(int x, int y) {
-        if (!isInBounds(x, y)) return null;
-        return grid[y][x].getNode();
+                // Vizinhos imediatos (N, S, L, O)
+                connectNodes(x, y, x + 1, y); // direita
+                connectNodes(x, y, x - 1, y); // esquerda
+                connectNodes(x, y, x, y + 1); // baixo
+                connectNodes(x, y, x, y - 1); // cima
+            }
+        }
     }
 
     // Limpa toda a grid (inclusive as conexões)
@@ -91,6 +96,16 @@ public class WorldGrid {
         RoomNode nodeB = cellB.getNode();
 
         nodeA.connect(nodeB); // Respeita conexão existente automaticamente
+    }
+
+    public Room getRoom(int x, int y) {
+        if (!isInBounds(x, y)) return null;
+        return grid[y][x].getRoom();
+    }
+
+    public RoomNode getNode(int x, int y) {
+        if (!isInBounds(x, y)) return null;
+        return grid[y][x].getNode();
     }
 
     // Acesso à célula

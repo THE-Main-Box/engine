@@ -8,11 +8,20 @@ import java.util.List;
 
 public class RoomNode {
 
-    //index da posição da array bidimensional dentro da sala
+    //id da sala
+    private final int id;
+
+    //contador de id zerado
+    private static int nextId = 0;
+
+    //a quem esse nó pertence
     private Room room;
+
+    //as conexões desse nó
     private final List<RoomConnection> connections;
 
     public RoomNode(Room room) {
+        this.id = nextId++;
         this.room = room;
         this.connections = new ArrayList<>();
     }
@@ -46,21 +55,29 @@ public class RoomNode {
 
     //pega o nó da outra sala e adiciona ela na nossa lista e adicionamos essa lista na outra
     public void connect(RoomNode other) {
-        if (isAlreadyConnected(other)) return;
+        if (isConnectedTo(other)) return;
 
         this.connections.add(new RoomConnection(other));
         other.connections.add(new RoomConnection(this));
 
     }
 
+    public static void resetIdCounter(){
+        nextId = 0;
+    }
+
     //valida se já existe uma conexão com o outro nó
-    private boolean isAlreadyConnected(RoomNode other) {
+    public boolean isConnectedTo(RoomNode other) {
         return connections.stream()
             .anyMatch(conn -> conn.getTarget() == other);
     }
 
     public List<RoomConnection> getConnections() {
         return connections;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public Room getRoom() {

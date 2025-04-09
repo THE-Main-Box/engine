@@ -65,6 +65,8 @@ public class WorldGrid {
                 cell.setNode(null);
             }
         }
+
+        RoomNode.resetIdCounter();
     }
 
     // Limpa apenas as salas que podem ser sobrescritas

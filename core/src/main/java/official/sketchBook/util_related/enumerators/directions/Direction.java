@@ -1,6 +1,6 @@
 package official.sketchBook.util_related.enumerators.directions;
 
-public enum Directions {
+public enum Direction {
     UP,
     LEFT,
     DOWN,

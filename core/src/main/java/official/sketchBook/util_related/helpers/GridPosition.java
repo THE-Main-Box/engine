@@ -1,4 +1,4 @@
-package official.sketchBook.worldGeneration_related;
+package official.sketchBook.util_related.helpers;
 
 public class GridPosition {
     private final int x;

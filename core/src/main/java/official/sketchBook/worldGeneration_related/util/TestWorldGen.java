@@ -1,30 +1,38 @@
-package official.sketchBook.worldGeneration_related;
+package official.sketchBook.worldGeneration_related.util;
 
 import official.sketchBook.util_related.enumerators.types.RoomType;
 import official.sketchBook.util_related.enumerators.types.TileType;
+import official.sketchBook.worldGeneration_related.generation.WorldGenerator;
+import official.sketchBook.worldGeneration_related.generation.WorldGrid;
 import official.sketchBook.worldGeneration_related.connection.RoomConnection;
 import official.sketchBook.worldGeneration_related.connection.RoomNode;
-import official.sketchBook.worldGeneration_related.model.Room;
-import official.sketchBook.worldGeneration_related.model.RoomCell;
+import official.sketchBook.worldGeneration_related.structure.Room;
+import official.sketchBook.worldGeneration_related.structure.RoomBlueprint;
+import official.sketchBook.worldGeneration_related.structure.RoomCell;
+import official.sketchBook.worldGeneration_related.structure.WorldLayout;
 
 public class TestWorldGen {
     public static void main(String[] args) {
-        WorldGrid world = new WorldGrid(5, 5); // Cria grid 5x5
+
+        int width = 5, height = 5;
+
+        WorldLayout worldLayout = new WorldLayout(width, height);
+        WorldGenerator generator = new WorldGenerator(width, height);
 
         TileType[][] baseMap = createBasicTileMap(3, 3, TileType.FLOOR);
 
-        // Cria salas em posições específicas
-        world.setRoom(2, 2, new Room(baseMap, RoomType.NORMAL)); // sala central
-        world.setRoom(1, 2, new Room(baseMap, RoomType.NORMAL)); // esquerda
-        world.setRoom(3, 2, new Room(baseMap, RoomType.NORMAL)); // direita
-        world.setRoom(2, 1, new Room(baseMap, RoomType.NORMAL)); // cima
-        world.setRoom(2, 3, new Room(baseMap, RoomType.NORMAL)); // baixo
+        RoomBlueprint spawn = new RoomBlueprint(baseMap, RoomType.SPAWN, "spawn");
+        RoomBlueprint corridor = new RoomBlueprint(baseMap, RoomType.NORMAL, "corridor");
+        RoomBlueprint boss = new RoomBlueprint(baseMap, RoomType.BOSS, "boss");
 
-        // Conecta todas as salas adjacentes
-        world.connectAdjacentRooms();
+        worldLayout.setBlueprint(0,0, spawn);
+        worldLayout.setBlueprint(1,0, corridor);
+        worldLayout.setBlueprint(2,0, corridor);
+        worldLayout.setBlueprint(1,1, boss);
 
-        printAsciiMap(world);
-        printWorldConnections(world);
+        generator.applyLayoutToGrid(worldLayout);
+
+        printAsciiMap(generator.getGrid());
     }
 
     public static void printWorldConnections(WorldGrid world){
@@ -73,7 +81,7 @@ public class TestWorldGen {
     }
 
 
-    private static TileType[][] createBasicTileMap(int width, int height, TileType fillType) {
+    public static TileType[][] createBasicTileMap(int width, int height, TileType fillType) {
         TileType[][] tileMap = new TileType[height][width];
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {

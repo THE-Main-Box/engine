@@ -3,5 +3,7 @@ package official.sketchBook.util_related.enumerators.types;
 public enum RoomType {
     NORMAL,
     SPAWN,
-    CHECKPOINT
+    KEY,
+    EXIT,
+    BOSS
 }

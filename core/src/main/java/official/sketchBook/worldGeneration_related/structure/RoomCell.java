@@ -1,4 +1,4 @@
-package official.sketchBook.worldGeneration_related.model;
+package official.sketchBook.worldGeneration_related.structure;
 
 import official.sketchBook.worldGeneration_related.connection.RoomNode;
 

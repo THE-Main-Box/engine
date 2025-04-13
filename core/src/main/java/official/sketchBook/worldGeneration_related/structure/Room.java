@@ -1,4 +1,4 @@
-package official.sketchBook.worldGeneration_related.model;
+package official.sketchBook.worldGeneration_related.structure;
 
 import official.sketchBook.PlayScreen;
 import official.sketchBook.util_related.enumerators.types.RoomType;
@@ -8,12 +8,9 @@ public class Room {
 
     private final Tile[][] tiles;
     private final int width, height;
-    private final int worldX, worldY;
     private final RoomType type;
 
-    public Room(int worldX, int worldY, TileType[][] tileTypes, RoomType roomType) {
-        this.worldX = worldX;
-        this.worldY = worldY;
+    public Room(TileType[][] tileTypes, RoomType roomType) {
         this.width = tileTypes[0].length * PlayScreen.TILES_DEFAULT_SIZE;
         this.height = tileTypes.length * PlayScreen.TILES_DEFAULT_SIZE;
         this.type = roomType;
@@ -66,14 +63,6 @@ public class Room {
 
     public Tile[][] getTiles() {
         return tiles;
-    }
-
-    public int getWorldX() {
-        return worldX;
-    }
-
-    public int getWorldY() {
-        return worldY;
     }
 
     public int getWidth() {

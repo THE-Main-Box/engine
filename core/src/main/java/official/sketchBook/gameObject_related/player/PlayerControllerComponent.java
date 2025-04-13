@@ -1,11 +1,9 @@
 package official.sketchBook.gameObject_related.player;
 
-import com.badlogic.gdx.Input;
 import official.sketchBook.components_related.base_component.ControllerComponent;
-import official.sketchBook.components_related.toUse_component.MovementComponent;
 import official.sketchBook.components_related.toUse_component.TimerComponent;
 import official.sketchBook.gameObject_related.GameObject;
-import official.sketchBook.util_related.enumerators.directions.Directions;
+import official.sketchBook.util_related.enumerators.directions.Direction;
 import official.sketchBook.util_related.info.util.values.ControlKeys;
 import official.sketchBook.util_related.info.util.values.SpeedRelatedVariables;
 
@@ -20,7 +18,7 @@ public class PlayerControllerComponent extends ControllerComponent {
 
     private boolean leftPressed = false;
     private boolean rightPressed = false;
-    private Directions lastDirectionPressed = Directions.STILL;
+    private Direction lastDirectionPressed = Direction.STILL;
 
     private TimerComponent jumpBufferTimer = new TimerComponent(0.2f);
 
@@ -56,11 +54,11 @@ public class PlayerControllerComponent extends ControllerComponent {
 
     private void updateMovement() {
         if (leftPressed && !rightPressed) {
-            movePlayer(Directions.LEFT);
+            movePlayer(Direction.LEFT);
         } else if (!leftPressed && rightPressed) {
-            movePlayer(Directions.RIGHT);
+            movePlayer(Direction.RIGHT);
         } else if (!leftPressed) {
-            movePlayer(Directions.STILL);
+            movePlayer(Direction.STILL);
         } else {
             movePlayer(lastDirectionPressed); // Continua na última direção pressionada
         }
@@ -70,18 +68,18 @@ public class PlayerControllerComponent extends ControllerComponent {
     private void moveLeft(boolean pressed) {
         leftPressed = pressed;
         if (pressed) {
-            lastDirectionPressed = Directions.LEFT;
+            lastDirectionPressed = Direction.LEFT;
         }
     }
 
     private void moveRight(boolean pressed) {
         rightPressed = pressed;
         if (pressed) {
-            lastDirectionPressed = Directions.RIGHT;
+            lastDirectionPressed = Direction.RIGHT;
         }
     }
 
-    private void movePlayer(Directions directions) {
+    private void movePlayer(Direction directions) {
         switch (directions) {
             case LEFT:
                 player.setFacingForward(false);

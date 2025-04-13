@@ -1,8 +1,8 @@
-package official.sketchBook.worldGeneration_related;
+package official.sketchBook.worldGeneration_related.generation;
 
 import official.sketchBook.worldGeneration_related.connection.RoomNode;
-import official.sketchBook.worldGeneration_related.model.Room;
-import official.sketchBook.worldGeneration_related.model.RoomCell;
+import official.sketchBook.worldGeneration_related.structure.Room;
+import official.sketchBook.worldGeneration_related.structure.RoomCell;
 
 public class WorldGrid {
 
@@ -65,6 +65,8 @@ public class WorldGrid {
                 cell.setNode(null);
             }
         }
+
+        RoomNode.resetIdCounter();
     }
 
     // Limpa apenas as salas que podem ser sobrescritas

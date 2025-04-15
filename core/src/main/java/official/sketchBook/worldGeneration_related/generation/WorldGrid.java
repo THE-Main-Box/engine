@@ -1,8 +1,8 @@
 package official.sketchBook.worldGeneration_related.generation;
 
 import official.sketchBook.worldGeneration_related.connection.RoomNode;
-import official.sketchBook.worldGeneration_related.structure.Room;
-import official.sketchBook.worldGeneration_related.structure.RoomCell;
+import official.sketchBook.worldGeneration_related.model.Room;
+import official.sketchBook.worldGeneration_related.model.RoomCell;
 
 public class WorldGrid {
 

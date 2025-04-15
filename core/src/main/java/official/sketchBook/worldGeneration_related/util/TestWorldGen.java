@@ -6,10 +6,9 @@ import official.sketchBook.worldGeneration_related.generation.WorldGenerator;
 import official.sketchBook.worldGeneration_related.generation.WorldGrid;
 import official.sketchBook.worldGeneration_related.connection.RoomConnection;
 import official.sketchBook.worldGeneration_related.connection.RoomNode;
-import official.sketchBook.worldGeneration_related.structure.Room;
-import official.sketchBook.worldGeneration_related.structure.RoomBlueprint;
-import official.sketchBook.worldGeneration_related.structure.RoomCell;
-import official.sketchBook.worldGeneration_related.structure.WorldLayout;
+import official.sketchBook.worldGeneration_related.model.RoomBlueprint;
+import official.sketchBook.worldGeneration_related.model.RoomCell;
+import official.sketchBook.worldGeneration_related.generation.WorldLayout;
 
 public class TestWorldGen {
     public static void main(String[] args) {

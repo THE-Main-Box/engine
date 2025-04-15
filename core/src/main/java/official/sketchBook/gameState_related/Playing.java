@@ -9,6 +9,8 @@ import official.sketchBook.PlayScreen;
 import official.sketchBook.camera_related.CameraManager;
 import official.sketchBook.gameData_related.GameObjectManager;
 import official.sketchBook.gameObject_related.player.Player;
+import official.sketchBook.gameState_related.model.State;
+import official.sketchBook.gameState_related.model.StateMethods;
 import official.sketchBook.util_related.enumerators.states.GameState;
 import official.sketchBook.util_related.helpers.HelpMethods;
 import official.sketchBook.util_related.helpers.MultiContactListener;

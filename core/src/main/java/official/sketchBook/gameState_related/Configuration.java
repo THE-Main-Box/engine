@@ -6,6 +6,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import official.sketchBook.PlayScreen;
 import official.sketchBook.animation_related.Sprite;
 import official.sketchBook.camera_related.CameraManager;
+import official.sketchBook.gameState_related.model.State;
+import official.sketchBook.gameState_related.model.StateMethods;
 import official.sketchBook.ui_related.Button;
 import official.sketchBook.ui_related.On_OffButton;
 import official.sketchBook.ui_related.Slider;

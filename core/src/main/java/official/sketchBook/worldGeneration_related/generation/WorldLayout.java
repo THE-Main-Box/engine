@@ -1,4 +1,6 @@
-package official.sketchBook.worldGeneration_related.structure;
+package official.sketchBook.worldGeneration_related.generation;
+
+import official.sketchBook.worldGeneration_related.model.RoomBlueprint;
 
 public class WorldLayout {
     private final RoomBlueprint[][] blueprintGrid;

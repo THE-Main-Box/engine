@@ -1,4 +1,4 @@
-package official.sketchBook.worldGeneration_related.structure;
+package official.sketchBook.worldGeneration_related.model;
 
 import official.sketchBook.util_related.enumerators.types.TileType;
 

@@ -2,11 +2,8 @@ package official.sketchBook.worldGeneration_related.generation;
 
 import official.sketchBook.util_related.enumerators.types.RoomType;
 import official.sketchBook.util_related.enumerators.types.TileType;
-import official.sketchBook.worldGeneration_related.structure.Room;
-import official.sketchBook.worldGeneration_related.structure.RoomBlueprint;
-import official.sketchBook.worldGeneration_related.structure.WorldLayout;
-
-import java.util.Random;
+import official.sketchBook.worldGeneration_related.model.Room;
+import official.sketchBook.worldGeneration_related.model.RoomBlueprint;
 
 import static official.sketchBook.worldGeneration_related.util.TestWorldGen.createBasicTileMap;
 

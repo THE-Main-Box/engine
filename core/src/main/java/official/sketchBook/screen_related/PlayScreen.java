@@ -1,10 +1,11 @@
-package official.sketchBook;
+package official.sketchBook.screen_related;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import official.sketchBook.MainClass;
 import official.sketchBook.camera_related.CameraManager;
 import official.sketchBook.gameState_related.Configuration;
 import official.sketchBook.gameState_related.Menu;

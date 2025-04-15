@@ -6,7 +6,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 import official.sketchBook.gameObject_related.MovableGameObject;
 
-import static official.sketchBook.PlayScreen.PPM;
+import static official.sketchBook.screen_related.PlayScreen.PPM;
 
 public class Player extends MovableGameObject {
 

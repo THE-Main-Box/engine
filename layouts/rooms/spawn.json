@@ -1,0 +1,21 @@
+{
+  "tileMap": [
+    [
+      "FLOOR",
+      "FLOOR",
+      "FLOOR"
+    ],
+    [
+      "FLOOR",
+      "FLOOR",
+      "FLOOR"
+    ],
+    [
+      "FLOOR",
+      "FLOOR",
+      "FLOOR"
+    ]
+  ],
+  "roomType": "SPAWN",
+  "tag": "spawn"
+}

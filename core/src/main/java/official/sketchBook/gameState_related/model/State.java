@@ -3,7 +3,7 @@ package official.sketchBook.gameState_related.model;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
-import official.sketchBook.PlayScreen;
+import official.sketchBook.screen_related.PlayScreen;
 import official.sketchBook.animation_related.ObjectAnimationPlayer;
 import official.sketchBook.animation_related.Sprite;
 import official.sketchBook.camera_related.CameraManager;

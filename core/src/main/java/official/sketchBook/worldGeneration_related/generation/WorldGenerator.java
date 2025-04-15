@@ -1,11 +1,6 @@
 package official.sketchBook.worldGeneration_related.generation;
 
-import official.sketchBook.util_related.enumerators.types.RoomType;
-import official.sketchBook.util_related.enumerators.types.TileType;
-import official.sketchBook.worldGeneration_related.model.Room;
-import official.sketchBook.worldGeneration_related.model.RoomBlueprint;
-
-import static official.sketchBook.worldGeneration_related.util.TestWorldGen.createBasicTileMap;
+import official.sketchBook.worldGeneration_related.model.blueprint.RoomBlueprint;
 
 public class WorldGenerator {
 
@@ -16,6 +11,8 @@ public class WorldGenerator {
     }
 
     public void applyLayoutToGrid(WorldLayout layout) {
+        grid.emptyGridRooms();
+
         for (int y = 0; y < layout.getHeight(); y++) {
             for (int x = 0; x < layout.getWidth(); x++) {
                 RoomBlueprint blueprint = layout.getBlueprint(x, y);
@@ -26,10 +23,6 @@ public class WorldGenerator {
         }
 
         grid.connectAdjacentRooms(); // conecta automaticamente
-    }
-
-    private void placeRoom(int x, int y, RoomType type) {
-        grid.setRoom(x, y, new Room(createBasicTileMap(3, 3, TileType.FLOOR), type));
     }
 
     public WorldGrid getGrid() {

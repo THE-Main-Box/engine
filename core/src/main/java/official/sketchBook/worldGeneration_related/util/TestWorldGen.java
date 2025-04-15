@@ -1,14 +1,20 @@
 package official.sketchBook.worldGeneration_related.util;
 
+import official.sketchBook.screen_related.PlayScreen;
 import official.sketchBook.util_related.enumerators.types.RoomType;
 import official.sketchBook.util_related.enumerators.types.TileType;
+import official.sketchBook.util_related.helpers.IO.RoomBlueprintIO;
+import official.sketchBook.util_related.helpers.IO.WorldLayoutBlueprintIO;
 import official.sketchBook.worldGeneration_related.generation.WorldGenerator;
 import official.sketchBook.worldGeneration_related.generation.WorldGrid;
 import official.sketchBook.worldGeneration_related.connection.RoomConnection;
 import official.sketchBook.worldGeneration_related.connection.RoomNode;
-import official.sketchBook.worldGeneration_related.model.RoomBlueprint;
+import official.sketchBook.worldGeneration_related.model.blueprint.RoomBlueprint;
 import official.sketchBook.worldGeneration_related.model.RoomCell;
 import official.sketchBook.worldGeneration_related.generation.WorldLayout;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class TestWorldGen {
     public static void main(String[] args) {
@@ -18,7 +24,7 @@ public class TestWorldGen {
         WorldLayout worldLayout = new WorldLayout(width, height);
         WorldGenerator generator = new WorldGenerator(width, height);
 
-        TileType[][] baseMap = createBasicTileMap(3, 3, TileType.FLOOR);
+        TileType[][] baseMap = createBasicTileMap(PlayScreen.TILES_IN_WIDTH, PlayScreen.TILES_IN_HEIGHT, TileType.EMPTY);
 
         RoomBlueprint spawn = new RoomBlueprint(baseMap, RoomType.SPAWN, "spawn");
         RoomBlueprint corridor = new RoomBlueprint(baseMap, RoomType.NORMAL, "corridor");
@@ -32,6 +38,34 @@ public class TestWorldGen {
         generator.applyLayoutToGrid(worldLayout);
 
         printAsciiMap(generator.getGrid());
+
+        // salva as salas e o mundo
+        RoomBlueprintIO blueprintIO = new RoomBlueprintIO();
+        WorldLayoutBlueprintIO wBlueprintIO = new WorldLayoutBlueprintIO();
+        WorldLayoutConverter converter = new WorldLayoutConverter(blueprintIO);
+
+        blueprintIO.save(spawn.getTag(), spawn);
+        blueprintIO.save(corridor.getTag(), corridor);
+        blueprintIO.save(boss.getTag(), boss);
+
+        wBlueprintIO.save("world_01", converter.toBlueprint(worldLayout));
+
+
+        System.out.println("teste de loading de dados");
+        //obtém as salas e o mundo e os converte novamente para um objeto
+        var worldB = wBlueprintIO.load("world_01");
+
+        WorldLayout worldLayout1 = converter.convert(worldB);
+
+        generator = new WorldGenerator(worldLayout.getWidth(), worldLayout1.getHeight());
+
+        // 4. Aplica o layout no gerador
+        generator.applyLayoutToGrid(worldLayout1);
+
+        // 5. Teste: imprime o mapa e conexões
+        TestWorldGen.printAsciiMap(generator.getGrid());
+
+
     }
 
     public static void printWorldConnections(WorldGrid world){

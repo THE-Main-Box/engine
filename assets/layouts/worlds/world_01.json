@@ -1,0 +1,41 @@
+{
+  "tags": [
+    [
+      "spawn",
+      "corridor",
+      "corridor",
+      null,
+      null
+    ],
+    [
+      null,
+      "boss",
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null
+    ]
+  ],
+  "width": 5,
+  "height": 5
+}

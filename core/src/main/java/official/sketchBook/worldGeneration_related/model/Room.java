@@ -1,6 +1,6 @@
 package official.sketchBook.worldGeneration_related.model;
 
-import official.sketchBook.PlayScreen;
+import official.sketchBook.screen_related.PlayScreen;
 import official.sketchBook.util_related.enumerators.types.RoomType;
 import official.sketchBook.util_related.enumerators.types.TileType;
 

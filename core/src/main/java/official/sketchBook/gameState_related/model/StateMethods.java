@@ -1,4 +1,4 @@
-package official.sketchBook.gameState_related;
+package official.sketchBook.gameState_related.model;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 

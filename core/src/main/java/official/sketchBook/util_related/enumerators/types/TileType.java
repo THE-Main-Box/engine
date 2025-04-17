@@ -4,6 +4,8 @@ public enum TileType {
     FLOOR,
     WALL,
     SLOPE_LEFT,
-    SLOPE_RIGHT
+    SLOPE_RIGHT,
+    EMPTY,
+    FILLER
 
 }

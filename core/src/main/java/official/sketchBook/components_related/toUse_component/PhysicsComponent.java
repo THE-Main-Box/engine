@@ -5,7 +5,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import official.sketchBook.components_related.base_component.Component;
 import official.sketchBook.gameObject_related.GameObject;
 
-import static official.sketchBook.PlayScreen.PPM;
+import static official.sketchBook.screen_related.PlayScreen.PPM;
 
 public class PhysicsComponent extends Component {
 

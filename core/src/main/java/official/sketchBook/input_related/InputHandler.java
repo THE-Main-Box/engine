@@ -1,7 +1,7 @@
 package official.sketchBook.input_related;
 
 import com.badlogic.gdx.InputProcessor;
-import official.sketchBook.PlayScreen;
+import official.sketchBook.screen_related.PlayScreen;
 import official.sketchBook.util_related.enumerators.states.GameState;
 
 public class InputHandler implements InputProcessor {

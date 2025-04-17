@@ -5,15 +5,17 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
-import official.sketchBook.PlayScreen;
+import official.sketchBook.screen_related.PlayScreen;
 import official.sketchBook.camera_related.CameraManager;
 import official.sketchBook.gameData_related.GameObjectManager;
 import official.sketchBook.gameObject_related.player.Player;
+import official.sketchBook.gameState_related.model.State;
+import official.sketchBook.gameState_related.model.StateMethods;
 import official.sketchBook.util_related.enumerators.states.GameState;
 import official.sketchBook.util_related.helpers.HelpMethods;
 import official.sketchBook.util_related.helpers.MultiContactListener;
 
-import static official.sketchBook.PlayScreen.*;
+import static official.sketchBook.screen_related.PlayScreen.*;
 
 public class Playing extends State implements StateMethods {
 

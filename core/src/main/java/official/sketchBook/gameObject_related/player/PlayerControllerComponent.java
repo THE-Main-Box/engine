@@ -7,7 +7,7 @@ import official.sketchBook.util_related.enumerators.directions.Direction;
 import official.sketchBook.util_related.info.util.values.ControlKeys;
 import official.sketchBook.util_related.info.util.values.SpeedRelatedVariables;
 
-import static official.sketchBook.PlayScreen.PPM;
+import static official.sketchBook.screen_related.PlayScreen.PPM;
 
 public class PlayerControllerComponent extends ControllerComponent {
     private final Player player;

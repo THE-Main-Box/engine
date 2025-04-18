@@ -34,6 +34,7 @@ public class InputHandler implements InputProcessor {
                 playScreen.getConfigState().handleKeyDown(i);
 
             }
+
             default -> {
             }
 
@@ -64,6 +65,7 @@ public class InputHandler implements InputProcessor {
                 playScreen.getConfigState().handleKeyUp(i);
 
             }
+
             default -> {
             }
 
@@ -104,6 +106,7 @@ public class InputHandler implements InputProcessor {
                 playScreen.getConfigState().handleTouchDown(i, i1, i3);
 
             }
+
             default -> {
             }
 
@@ -139,6 +142,7 @@ public class InputHandler implements InputProcessor {
                 playScreen.getConfigState().handleTouchUp(i, i1, i3);
 
             }
+
             default -> {
             }
 
@@ -184,6 +188,7 @@ public class InputHandler implements InputProcessor {
                 playScreen.getConfigState().handleMouseMoved(screenX, screenY);
 
             }
+
             default -> {
             }
 

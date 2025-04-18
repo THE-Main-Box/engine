@@ -109,6 +109,8 @@ public class Menu extends State implements StateMethods {
     }
 
     public void dispose() {
+        super.dispose();
+
         for (Button button : buttons) {
             if (button.buttonSpriteSheet != null) {
                 button.buttonSpriteSheet.dispose();  // Dispose the texture used by the buttons

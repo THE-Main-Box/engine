@@ -110,6 +110,8 @@ public class Playing extends State implements StateMethods {
     }
 
     public void dispose() {
+        super.dispose();
+
         font.dispose();
 
         objectManager.dispose();

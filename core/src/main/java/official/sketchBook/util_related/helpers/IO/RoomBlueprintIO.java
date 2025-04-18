@@ -11,8 +11,8 @@ public class RoomBlueprintIO {
         return io.load(LayoutAssetPath.roomBlueprint_path + name + ".json", RoomBlueprint.class, true);
     }
 
-    public void save(String name, RoomBlueprint blueprint) {
-        io.save(LayoutAssetPath.roomBlueprint_path + name + ".json", blueprint, true);
+    public void save(RoomBlueprint blueprint) {
+        io.save(LayoutAssetPath.roomBlueprint_path + blueprint.getTag() + ".json", blueprint, true);
     }
 
 }

@@ -1,74 +1,56 @@
 package official.sketchBook.worldGeneration_related.util;
 
-import official.sketchBook.screen_related.PlayScreen;
 import official.sketchBook.util_related.enumerators.types.RoomType;
 import official.sketchBook.util_related.enumerators.types.TileType;
 import official.sketchBook.util_related.helpers.IO.RoomBlueprintIO;
 import official.sketchBook.util_related.helpers.IO.WorldLayoutBlueprintIO;
-import official.sketchBook.worldGeneration_related.generation.WorldGenerator;
-import official.sketchBook.worldGeneration_related.generation.WorldGrid;
 import official.sketchBook.worldGeneration_related.connection.RoomConnection;
 import official.sketchBook.worldGeneration_related.connection.RoomNode;
-import official.sketchBook.worldGeneration_related.model.blueprint.RoomBlueprint;
-import official.sketchBook.worldGeneration_related.model.RoomCell;
+import official.sketchBook.worldGeneration_related.generation.WorldGenerator;
+import official.sketchBook.worldGeneration_related.generation.WorldGrid;
 import official.sketchBook.worldGeneration_related.generation.WorldLayout;
-
-import java.util.ArrayList;
-import java.util.List;
+import official.sketchBook.worldGeneration_related.model.RoomCell;
+import official.sketchBook.worldGeneration_related.model.blueprint.RoomBlueprint;
 
 public class TestWorldGen {
     public static void main(String[] args) {
 
         int width = 5, height = 5;
 
+        int[][] baseBpTileMap = createBasicIntegerTileMap(width, height, TileType.EMPTY);
+
+        //TODO:criar um manager para os blueprints semelhante ao que fiz para o world
+        //isso daqui salva os blueprints
+        RoomBlueprintIO blueprintIO = new RoomBlueprintIO();
+
+        WorldManager manager = new WorldManager(); // o manager gerencia os dados do world, como salvar e carregar
+        WorldGenerator generator = new WorldGenerator(width, height);//o gerador gera o mundo
+
+        //o layout é o modelo inBetween, que será convertido para uma grid
         WorldLayout worldLayout = new WorldLayout(width, height);
-        WorldGenerator generator = new WorldGenerator(width, height);
 
-        TileType[][] baseMap = createBasicTileMap(PlayScreen.TILES_IN_WIDTH, PlayScreen.TILES_IN_HEIGHT, TileType.EMPTY);
+        //blueprints de salas
+        RoomBlueprint corridor = new RoomBlueprint(baseBpTileMap, RoomType.NORMAL, "corredor");
+        RoomBlueprint boss = new RoomBlueprint(baseBpTileMap, RoomType.BOSS, "chefe");
+        RoomBlueprint spawn = new RoomBlueprint(baseBpTileMap, RoomType.SPAWN, "spawn");
 
-        RoomBlueprint spawn = new RoomBlueprint(baseMap, RoomType.SPAWN, "spawn");
-        RoomBlueprint corridor = new RoomBlueprint(baseMap, RoomType.NORMAL, "corridor");
-        RoomBlueprint boss = new RoomBlueprint(baseMap, RoomType.BOSS, "boss");
+        //salvando os blueprints
+        blueprintIO.save(corridor);
+        blueprintIO.save(boss);
+        blueprintIO.save(spawn);
 
-        worldLayout.setBlueprint(0,0, spawn);
-        worldLayout.setBlueprint(1,0, corridor);
-        worldLayout.setBlueprint(2,0, corridor);
-        worldLayout.setBlueprint(1,1, boss);
+        worldLayout.setBlueprint(3, 3, spawn);
+        worldLayout.setBlueprint(4, 3, corridor);
+        worldLayout.setBlueprint(4, 4, boss);
 
         generator.applyLayoutToGrid(worldLayout);
-
         printAsciiMap(generator.getGrid());
 
-        // salva as salas e o mundo
-        RoomBlueprintIO blueprintIO = new RoomBlueprintIO();
-        WorldLayoutBlueprintIO wBlueprintIO = new WorldLayoutBlueprintIO();
-        WorldLayoutConverter converter = new WorldLayoutConverter(blueprintIO);
-
-        blueprintIO.save(spawn.getTag(), spawn);
-        blueprintIO.save(corridor.getTag(), corridor);
-        blueprintIO.save(boss.getTag(), boss);
-
-        wBlueprintIO.save("world_01", converter.toBlueprint(worldLayout));
-
-
-        System.out.println("teste de loading de dados");
-        //obtém as salas e o mundo e os converte novamente para um objeto
-        var worldB = wBlueprintIO.load("world_01");
-
-        WorldLayout worldLayout1 = converter.convert(worldB);
-
-        generator = new WorldGenerator(worldLayout.getWidth(), worldLayout1.getHeight());
-
-        // 4. Aplica o layout no gerador
-        generator.applyLayoutToGrid(worldLayout1);
-
-        // 5. Teste: imprime o mapa e conexões
-        TestWorldGen.printAsciiMap(generator.getGrid());
-
+        manager.saveWorld("test_01", worldLayout);
 
     }
 
-    public static void printWorldConnections(WorldGrid world){
+    public static void printWorldConnections(WorldGrid world) {
         // Teste: printar as conexões da sala central
         for (int y = 0; y < world.getHeight(); y++) {
             for (int x = 0; x < world.getWidth(); x++) { //percorre a lista de celulas de salas
@@ -119,6 +101,16 @@ public class TestWorldGen {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 tileMap[y][x] = fillType;
+            }
+        }
+        return tileMap;
+    }
+
+    public static int[][] createBasicIntegerTileMap(int width, int height, TileType fillType) {
+        int[][] tileMap = new int[height][width];
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                tileMap[y][x] = fillType.getId();
             }
         }
         return tileMap;

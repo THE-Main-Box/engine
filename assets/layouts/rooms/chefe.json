@@ -36,6 +36,6 @@
       0
     ]
   ],
-  "roomType": "SPAWN",
-  "tag": "spawn"
+  "roomType": "BOSS",
+  "tag": "chefe"
 }

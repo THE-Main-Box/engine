@@ -34,6 +34,7 @@ public abstract class State {
 
         // Inicializa o vetor temporário
         this.tempVector = new Vector3();
+
     }
 
     protected void initBackGround(String texturePath, int spriteQW, int spriteQH, int y) {
@@ -108,6 +109,12 @@ public abstract class State {
             tempVector.x <= button.getxPos() + button.getWidth() &&
             tempVector.y >= button.getyPos() &&
             tempVector.y <= button.getyPos() + button.getHeight();
+    }
+
+    public void dispose() {
+        if (backGroundImage != null) {
+            backGroundImage.dispose();
+        }
     }
 
     protected abstract void render(SpriteBatch batch);

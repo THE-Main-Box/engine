@@ -5,32 +5,28 @@ import official.sketchBook.util_related.enumerators.types.TileType;
 import official.sketchBook.worldGeneration_related.model.Room;
 
 public class RoomBlueprint {
-    private TileType[][] tileMap;
+    private int[][] tileMap;
     private RoomType roomType;
     private String tag; // tipo "spawn", "passagem", "desvio", etc.
 
     public RoomBlueprint() {
     }
 
-    public RoomBlueprint(TileType[][] tileMap, RoomType roomType, String tag) {
+    public RoomBlueprint(int[][] tileMap, RoomType roomType, String tag) {
         this.tileMap = tileMap;
         this.roomType = roomType;
         this.tag = tag;
-    }
-
-    public Room create() {
-        return new Room(tileMap, roomType);
     }
 
     public String getTag() {
         return tag;
     }
 
-    public TileType[][] getTileMap() {
+    public int[][] getTileMap() {
         return tileMap;
     }
 
-    public void setTileMap(TileType[][] tileMap) {
+    public void setTileMap(int[][] tileMap) {
         this.tileMap = tileMap;
     }
 

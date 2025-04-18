@@ -1,39 +1,39 @@
 {
   "tags": [
     [
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null,
       "spawn",
-      "corridor",
-      "corridor",
-      null,
-      null
-    ],
-    [
-      null,
-      "boss",
-      null,
-      null,
-      null
+      "corredor"
     ],
     [
       null,
       null,
       null,
       null,
-      null
-    ],
-    [
-      null,
-      null,
-      null,
-      null,
-      null
-    ],
-    [
-      null,
-      null,
-      null,
-      null,
-      null
+      "chefe"
     ]
   ],
   "width": 5,

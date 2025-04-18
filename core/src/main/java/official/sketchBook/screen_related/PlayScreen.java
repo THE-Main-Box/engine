@@ -7,10 +7,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import official.sketchBook.MainClass;
 import official.sketchBook.camera_related.CameraManager;
-import official.sketchBook.gameState_related.Configuration;
-import official.sketchBook.gameState_related.Menu;
-import official.sketchBook.gameState_related.Paused;
-import official.sketchBook.gameState_related.Playing;
+import official.sketchBook.gameState_related.*;
 import official.sketchBook.input_related.InputHandler;
 import official.sketchBook.util_related.enumerators.states.GameState;
 
@@ -69,7 +66,7 @@ public class PlayScreen implements Screen {
 
         // Configuração da câmera e do batch para o menu
         uiCameraManager = new CameraManager(Gdx.graphics.getWidth() / scale, Gdx.graphics.getHeight() / scale);
-        this.uiBatch = new SpriteBatch();
+        this.uiBatch = game.uiBatch;
 
         configState = new Configuration(this, gameCameraManager, uiCameraManager);
         playingState = new Playing(this, gameCameraManager, uiCameraManager);
@@ -120,8 +117,8 @@ public class PlayScreen implements Screen {
         frames++;
         frameTimer -= MAX_FPS; // Reduz o tempo acumulado do FPS
 
-
     }
+
     private void renderDebuggVariables() {
 
         if (showHitBox) {
@@ -190,10 +187,6 @@ public class PlayScreen implements Screen {
                 pausedState.draw(batch, uiBatch);
 
             }
-            case QUIT -> {
-
-
-            }
             default -> {
             }
         }
@@ -242,6 +235,7 @@ public class PlayScreen implements Screen {
         configState.dispose();
         menuState.dispose();
 
+        debugRenderer.dispose();
     }
 
     private void quitGame() {
@@ -265,4 +259,5 @@ public class PlayScreen implements Screen {
     public Menu getMenuState() {
         return menuState;
     }
+
 }

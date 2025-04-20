@@ -1,7 +1,7 @@
 package official.sketchBook.worldGeneration_related.generation;
 
 import official.sketchBook.worldGeneration_related.model.blueprint.RoomBlueprint;
-import official.sketchBook.worldGeneration_related.util.RoomConverter;
+import official.sketchBook.worldGeneration_related.util.converter.RoomConverter;
 
 public class WorldGenerator {
 
@@ -20,11 +20,12 @@ public class WorldGenerator {
             for (int x = 0; x < layout.getWidth(); x++) {
                 RoomBlueprint blueprint = layout.getBlueprint(x, y);
                 if (blueprint != null) {
-                    grid.setRoom(x, y, roomConverter.fromBlueprint(blueprint)); // Cria Room a partir do blueprint
+                    grid.setRoom(x, y, roomConverter.toObject(blueprint)); // Cria Room a partir do blueprint
                 }
             }
         }
 
+        grid.setSourceBlueprint(layout.getSourceBlueprint());
         grid.connectAdjacentRooms(); // conecta automaticamente
     }
 

@@ -3,11 +3,14 @@ package official.sketchBook.worldGeneration_related.generation;
 import official.sketchBook.worldGeneration_related.connection.RoomNode;
 import official.sketchBook.worldGeneration_related.model.Room;
 import official.sketchBook.worldGeneration_related.model.RoomCell;
+import official.sketchBook.worldGeneration_related.model.blueprint.WorldLayoutBlueprint;
 
 public class WorldGrid {
 
     private int width, height;
     private RoomCell[][] grid;
+    private WorldLayoutBlueprint sourceBlueprint;
+
 
     public WorldGrid(int width, int height) {
         this.width = width;
@@ -118,6 +121,14 @@ public class WorldGrid {
         return null;
     }
 
+    public void setSourceBlueprint(WorldLayoutBlueprint blueprint) {
+        this.sourceBlueprint = blueprint;
+    }
+
+    public WorldLayoutBlueprint getSourceBlueprint() {
+        return sourceBlueprint;
+    }
+
     public boolean isInBounds(int x, int y) {
         return x >= 0 && x < width && y >= 0 && y < height;
     }
@@ -132,5 +143,9 @@ public class WorldGrid {
 
     public int getHeight() {
         return height;
+    }
+
+    public boolean hasSourceBlueprint() {
+        return sourceBlueprint != null;
     }
 }

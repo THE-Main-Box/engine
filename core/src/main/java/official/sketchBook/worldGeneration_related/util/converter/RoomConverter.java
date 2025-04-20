@@ -1,4 +1,4 @@
-package official.sketchBook.worldGeneration_related.util;
+package official.sketchBook.worldGeneration_related.util.converter;
 
 import official.sketchBook.util_related.enumerators.types.TileType;
 import official.sketchBook.worldGeneration_related.model.Room;
@@ -6,18 +6,19 @@ import official.sketchBook.worldGeneration_related.model.blueprint.RoomBlueprint
 
 public class RoomConverter {
 
-    public Room fromBlueprint(RoomBlueprint blueprint) {
+    public Room toObject(RoomBlueprint blueprint) {
         return new Room(
             convertToTileMap(blueprint.getTileMap()),
-            blueprint.getRoomType()
+            blueprint.getRoomType(),
+            blueprint.getTag()
         );
     }
 
-    public RoomBlueprint fromObject(Room room, String tag) {
+    public RoomBlueprint toBlueprint(Room room) {
         return new RoomBlueprint(
             convertToIntegerTileMap(room.getTiles()),
             room.getType(),
-            tag
+            room.getTag()
         );
     }
 

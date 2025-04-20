@@ -9,11 +9,13 @@ public class Room {
     private final TileType[][] tiles;
     private final int width, height;
     private final RoomType type;
+    private final String tag;
 
-    public Room(TileType[][] tileTypes, RoomType roomType) {
+    public Room(TileType[][] tileTypes, RoomType roomType, String tag) {
         this.width = tileTypes[0].length * PlayScreen.TILES_DEFAULT_SIZE;
         this.height = tileTypes.length * PlayScreen.TILES_DEFAULT_SIZE;
         this.type = roomType;
+        this.tag = tag;
 
         this.tiles = tileTypes;
     }
@@ -24,6 +26,10 @@ public class Room {
             return tiles[y][x];
         }
         return null; // Fora dos limites
+    }
+
+    public String getTag() {
+        return tag;
     }
 
     public RoomType getType() {

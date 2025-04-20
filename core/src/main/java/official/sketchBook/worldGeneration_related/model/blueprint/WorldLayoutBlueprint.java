@@ -5,6 +5,8 @@ public class WorldLayoutBlueprint {
     private int width;
     private int height;
 
+    private String tag;
+
     public WorldLayoutBlueprint() {
     }
 
@@ -42,5 +44,13 @@ public class WorldLayoutBlueprint {
 
     public void setTags(String[][] tags) {
         this.tags = tags;
+    }
+
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
     }
 }

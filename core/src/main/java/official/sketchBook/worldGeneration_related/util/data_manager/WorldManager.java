@@ -1,10 +1,11 @@
-package official.sketchBook.worldGeneration_related.util;
+package official.sketchBook.worldGeneration_related.util.data_manager;
 
 
 import official.sketchBook.util_related.helpers.IO.RoomBlueprintIO;
 import official.sketchBook.util_related.helpers.IO.WorldLayoutBlueprintIO;
 import official.sketchBook.util_related.info.paths.LayoutAssetPath;
 import official.sketchBook.worldGeneration_related.generation.WorldLayout;
+import official.sketchBook.worldGeneration_related.util.converter.WorldLayoutConverter;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -30,11 +31,13 @@ public class WorldManager {
 
     public WorldLayout loadWorld(String name) {
         var blueprint = layoutIO.load(name);
-        return converter.convert(blueprint);
+        return converter.toObject(blueprint);
     }
 
+    //salva a blueprint com base num layout e passa o nome do arquivo como a tag dele
     public void saveWorld(String name, WorldLayout layout) {
         var blueprint = converter.toBlueprint(layout);
+        blueprint.setTag(name);
         layoutIO.save(name, blueprint);
     }
 

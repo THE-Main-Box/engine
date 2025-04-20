@@ -1,4 +1,4 @@
-package official.sketchBook.worldGeneration_related.util;
+package official.sketchBook.worldGeneration_related.util.converter;
 
 import official.sketchBook.util_related.helpers.IO.RoomBlueprintIO;
 import official.sketchBook.worldGeneration_related.generation.WorldLayout;
@@ -13,7 +13,8 @@ public class WorldLayoutConverter {
         this.blueprintIO = blueprintIO;
     }
 
-    public WorldLayout convert(WorldLayoutBlueprint blueprint) {
+    //converte a partir de uma blueprint para um objeto
+    public WorldLayout toObject(WorldLayoutBlueprint blueprint) {
         int width = blueprint.getWidth();
         int height = blueprint.getHeight();
         WorldLayout layout = new WorldLayout(width, height);
@@ -28,9 +29,11 @@ public class WorldLayoutConverter {
             }
         }
 
+        layout.setSourceBlueprint(blueprint);
         return layout;
     }
 
+    //converte de um objeto para uma blueprint
     public WorldLayoutBlueprint toBlueprint(WorldLayout layout) {
         int width = layout.getWidth();
         int height = layout.getHeight();

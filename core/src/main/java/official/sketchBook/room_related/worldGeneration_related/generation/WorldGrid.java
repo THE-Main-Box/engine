@@ -1,9 +1,9 @@
-package official.sketchBook.worldGeneration_related.generation;
+package official.sketchBook.room_related.worldGeneration_related.generation;
 
-import official.sketchBook.worldGeneration_related.connection.RoomNode;
-import official.sketchBook.worldGeneration_related.model.Room;
-import official.sketchBook.worldGeneration_related.model.RoomCell;
-import official.sketchBook.worldGeneration_related.model.blueprint.WorldLayoutBlueprint;
+import official.sketchBook.room_related.worldGeneration_related.connection.RoomNode;
+import official.sketchBook.room_related.model.Room;
+import official.sketchBook.room_related.model.RoomCell;
+import official.sketchBook.room_related.worldGeneration_related.blueprint.WorldLayoutBlueprint;
 
 public class WorldGrid {
 

@@ -3,7 +3,7 @@ package official.sketchBook.util_related.helpers.IO;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import official.sketchBook.util_related.info.paths.LayoutAssetPath;
-import official.sketchBook.worldGeneration_related.model.blueprint.WorldLayoutBlueprint;
+import official.sketchBook.room_related.worldGeneration_related.blueprint.WorldLayoutBlueprint;
 
 import java.io.FileReader;
 import java.io.FileWriter;

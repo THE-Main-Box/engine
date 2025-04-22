@@ -1,8 +1,6 @@
-package official.sketchBook.worldGeneration_related.model.blueprint;
+package official.sketchBook.room_related.worldGeneration_related.blueprint;
 
 import official.sketchBook.util_related.enumerators.types.RoomType;
-import official.sketchBook.util_related.enumerators.types.TileType;
-import official.sketchBook.worldGeneration_related.model.Room;
 
 public class RoomBlueprint {
     private int[][] tileMap;

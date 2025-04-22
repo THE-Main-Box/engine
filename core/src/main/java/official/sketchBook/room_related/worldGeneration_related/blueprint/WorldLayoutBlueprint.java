@@ -1,4 +1,4 @@
-package official.sketchBook.worldGeneration_related.model.blueprint;
+package official.sketchBook.room_related.worldGeneration_related.blueprint;
 
 public class WorldLayoutBlueprint {
     private String[][] tags;

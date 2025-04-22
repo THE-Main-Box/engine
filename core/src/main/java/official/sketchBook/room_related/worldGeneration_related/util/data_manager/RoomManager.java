@@ -1,12 +1,12 @@
-package official.sketchBook.worldGeneration_related.util.data_manager;
+package official.sketchBook.room_related.worldGeneration_related.util.data_manager;
 
 import official.sketchBook.util_related.enumerators.types.RoomType;
 import official.sketchBook.util_related.enumerators.types.TileType;
 import official.sketchBook.util_related.helpers.IO.RoomBlueprintIO;
 import official.sketchBook.util_related.info.paths.LayoutAssetPath;
-import official.sketchBook.worldGeneration_related.model.Room;
-import official.sketchBook.worldGeneration_related.model.blueprint.RoomBlueprint;
-import official.sketchBook.worldGeneration_related.util.converter.RoomConverter;
+import official.sketchBook.room_related.model.Room;
+import official.sketchBook.room_related.worldGeneration_related.blueprint.RoomBlueprint;
+import official.sketchBook.room_related.worldGeneration_related.util.converter.RoomConverter;
 
 import java.io.File;
 import java.util.ArrayList;

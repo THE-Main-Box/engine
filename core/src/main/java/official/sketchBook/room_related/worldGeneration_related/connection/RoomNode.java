@@ -1,6 +1,6 @@
-package official.sketchBook.worldGeneration_related.connection;
+package official.sketchBook.room_related.worldGeneration_related.connection;
 
-import official.sketchBook.worldGeneration_related.model.Room;
+import official.sketchBook.room_related.model.Room;
 
 import java.util.ArrayList;
 import java.util.Iterator;

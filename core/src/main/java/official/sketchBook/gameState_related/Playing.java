@@ -50,7 +50,6 @@ public class Playing extends State implements StateMethods {
 
         objectManager.updateObjects(delta);
 
-
         if (world != null) {
             world.step(
                 FIXED_TIMESTEP,

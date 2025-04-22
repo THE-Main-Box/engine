@@ -1,8 +1,8 @@
-package official.sketchBook.worldGeneration_related.util.converter;
+package official.sketchBook.room_related.worldGeneration_related.util.converter;
 
 import official.sketchBook.util_related.enumerators.types.TileType;
-import official.sketchBook.worldGeneration_related.model.Room;
-import official.sketchBook.worldGeneration_related.model.blueprint.RoomBlueprint;
+import official.sketchBook.room_related.model.Room;
+import official.sketchBook.room_related.worldGeneration_related.blueprint.RoomBlueprint;
 
 public class RoomConverter {
 

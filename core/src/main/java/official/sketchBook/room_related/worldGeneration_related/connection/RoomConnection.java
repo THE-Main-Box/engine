@@ -1,4 +1,4 @@
-package official.sketchBook.worldGeneration_related.connection;
+package official.sketchBook.room_related.worldGeneration_related.connection;
 
 public class RoomConnection {
     private final RoomNode target;

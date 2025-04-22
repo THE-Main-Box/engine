@@ -1,4 +1,4 @@
-package official.sketchBook.worldGeneration_related.model;
+package official.sketchBook.room_related.model;
 
 import official.sketchBook.screen_related.PlayScreen;
 import official.sketchBook.util_related.enumerators.types.RoomType;

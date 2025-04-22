@@ -1,9 +1,9 @@
-package official.sketchBook.worldGeneration_related.util.converter;
+package official.sketchBook.room_related.worldGeneration_related.util.converter;
 
 import official.sketchBook.util_related.helpers.IO.RoomBlueprintIO;
-import official.sketchBook.worldGeneration_related.generation.WorldLayout;
-import official.sketchBook.worldGeneration_related.model.blueprint.RoomBlueprint;
-import official.sketchBook.worldGeneration_related.model.blueprint.WorldLayoutBlueprint;
+import official.sketchBook.room_related.worldGeneration_related.generation.WorldLayout;
+import official.sketchBook.room_related.worldGeneration_related.blueprint.RoomBlueprint;
+import official.sketchBook.room_related.worldGeneration_related.blueprint.WorldLayoutBlueprint;
 
 public class WorldLayoutConverter {
 

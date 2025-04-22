@@ -1,7 +1,7 @@
 package official.sketchBook.util_related.helpers.IO;
 
 import official.sketchBook.util_related.info.paths.LayoutAssetPath;
-import official.sketchBook.worldGeneration_related.model.blueprint.RoomBlueprint;
+import official.sketchBook.room_related.worldGeneration_related.blueprint.RoomBlueprint;
 
 public class RoomBlueprintIO {
 

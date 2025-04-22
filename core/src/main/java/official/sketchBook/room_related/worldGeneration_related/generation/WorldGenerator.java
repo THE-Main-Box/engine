@@ -1,7 +1,7 @@
-package official.sketchBook.worldGeneration_related.generation;
+package official.sketchBook.room_related.worldGeneration_related.generation;
 
-import official.sketchBook.worldGeneration_related.model.blueprint.RoomBlueprint;
-import official.sketchBook.worldGeneration_related.util.converter.RoomConverter;
+import official.sketchBook.room_related.worldGeneration_related.blueprint.RoomBlueprint;
+import official.sketchBook.room_related.worldGeneration_related.util.converter.RoomConverter;
 
 public class WorldGenerator {
 

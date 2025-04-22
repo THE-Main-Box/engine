@@ -1,6 +1,6 @@
-package official.sketchBook.worldGeneration_related.model;
+package official.sketchBook.room_related.model;
 
-import official.sketchBook.worldGeneration_related.connection.RoomNode;
+import official.sketchBook.room_related.worldGeneration_related.connection.RoomNode;
 
 public class RoomCell {
     private int x,y;

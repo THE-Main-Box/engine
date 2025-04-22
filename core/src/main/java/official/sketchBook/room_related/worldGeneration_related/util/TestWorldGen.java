@@ -1,17 +1,15 @@
-package official.sketchBook.worldGeneration_related.util;
+package official.sketchBook.room_related.worldGeneration_related.util;
 
 import official.sketchBook.util_related.enumerators.types.RoomType;
 import official.sketchBook.util_related.enumerators.types.TileType;
-import official.sketchBook.util_related.helpers.IO.RoomBlueprintIO;
-import official.sketchBook.worldGeneration_related.connection.RoomConnection;
-import official.sketchBook.worldGeneration_related.connection.RoomNode;
-import official.sketchBook.worldGeneration_related.generation.WorldGenerator;
-import official.sketchBook.worldGeneration_related.generation.WorldGrid;
-import official.sketchBook.worldGeneration_related.generation.WorldLayout;
-import official.sketchBook.worldGeneration_related.model.RoomCell;
-import official.sketchBook.worldGeneration_related.model.blueprint.RoomBlueprint;
-import official.sketchBook.worldGeneration_related.util.data_manager.RoomManager;
-import official.sketchBook.worldGeneration_related.util.data_manager.WorldManager;
+import official.sketchBook.room_related.worldGeneration_related.connection.RoomNode;
+import official.sketchBook.room_related.worldGeneration_related.generation.WorldGenerator;
+import official.sketchBook.room_related.worldGeneration_related.generation.WorldGrid;
+import official.sketchBook.room_related.worldGeneration_related.generation.WorldLayout;
+import official.sketchBook.room_related.model.RoomCell;
+import official.sketchBook.room_related.worldGeneration_related.blueprint.RoomBlueprint;
+import official.sketchBook.room_related.worldGeneration_related.util.data_manager.RoomManager;
+import official.sketchBook.room_related.worldGeneration_related.util.data_manager.WorldManager;
 
 public class TestWorldGen {
     public static void main(String[] args) {

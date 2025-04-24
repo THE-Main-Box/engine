@@ -1,16 +1,14 @@
-package official.sketchBook.gameObject_related.player;
+package official.sketchBook.gameObject_related.entities;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.CircleShape;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
+import official.sketchBook.components_related.toUse_component.PlayerControllerComponent;
+import official.sketchBook.gameObject_related.Entity;
 import official.sketchBook.gameObject_related.MovableGameObject;
 import official.sketchBook.util_related.helpers.body.BodyCreatorHelper;
 
-import static official.sketchBook.screen_related.PlayScreen.PPM;
-
-public class Player extends MovableGameObject {
+public class Player extends Entity {
 
     private PlayerControllerComponent controllerComponent;
 
@@ -39,10 +37,8 @@ public class Player extends MovableGameObject {
 
     @Override
     public void update(float deltaTime) {
-        updateComponents(deltaTime);
-
-        //atualiza a posição do corpo através do componente de física
-        physicsC.applyImpulseForSpeed(moveC.getxSpeed(), moveC.getySpeed(), moveC.getxMaxSpeed(), moveC.getySpeed());
+        this.updateComponents(deltaTime);
+        super.update(deltaTime);
     }
 
     public PlayerControllerComponent getControllerComponent() {

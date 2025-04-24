@@ -8,7 +8,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import official.sketchBook.screen_related.PlayScreen;
 import official.sketchBook.camera_related.CameraManager;
 import official.sketchBook.gameDataManagement_related.GameObjectManager;
-import official.sketchBook.gameObject_related.player.Player;
+import official.sketchBook.gameObject_related.entities.Player;
 import official.sketchBook.gameState_related.model.State;
 import official.sketchBook.gameState_related.model.StateMethods;
 import official.sketchBook.util_related.enumerators.states.GameState;

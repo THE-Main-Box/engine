@@ -30,8 +30,6 @@ public abstract class GameObject {
     //components related
     protected List<Component> components;
 
-    protected PhysicsComponent physicsC;
-
     public GameObject(float x, float y, float width, float height, boolean facingForward, World world) {
         this.x = x;
         this.y = y;
@@ -48,9 +46,6 @@ public abstract class GameObject {
         this.world = world;
 
         createBody();
-
-        physicsC = new PhysicsComponent(this, this.body);
-        addComponent(physicsC);
 
     }
 
@@ -177,9 +172,5 @@ public abstract class GameObject {
 
     public List<ObjectAnimationPlayer> getObjectAnimationPlayerList() {
         return objectAnimationPlayerList;
-    }
-
-    public PhysicsComponent getPhysicsC() {
-        return physicsC;
     }
 }

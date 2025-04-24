@@ -2,8 +2,7 @@ package official.sketchBook.util_related.enumerators.types;
 
 public enum TileType {
     EMPTY(0, false), //bloco vazio
-    BLOCK(1, true), //bloco solido
-    SLOPE(2, true); //bloco diagonal
+    BLOCK(1, true);
 
     private final int id;
     private final boolean solid;

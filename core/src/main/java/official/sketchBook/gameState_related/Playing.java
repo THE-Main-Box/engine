@@ -35,7 +35,7 @@ public class Playing extends State implements StateMethods {
         world = new World(new Vector2(0, -8.2f), true);
 
         //zoom padrão 0.7f
-        gameCameraManager.setZoom(0.7f / scale);
+        gameCameraManager.setZoom(1f / scale);
 
         world.setContactListener(multiContactListener);
 

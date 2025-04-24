@@ -29,7 +29,8 @@ public class PlayableRoom implements Poolable {
     public void initialize(Room roomData, RoomNode roomConnections) {
         this.roomData = roomData;
         this.roomConnections = roomConnections;
-        this.nativeBodies = RoomBodyDataConversor.convertTileListToBodyList(roomData.getTiles(), this.world);
+        this.nativeBodies = RoomBodyDataConversor.buildMergedBodies(roomData.getTiles(), this.world);
+//        this.nativeBodies = RoomBodyDataConversor.convertTileListToBodyList(roomData.getTiles(), this.world);
         this.gameObjects = new ArrayList<>();
 
         this.active = true;

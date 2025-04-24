@@ -66,7 +66,7 @@ public class GameObjectManager {
             for (int x = 0; x < TILES_IN_WIDTH; x++) {
                 toReturn[y][x] = 0;
 
-                if(y == TILES_IN_HEIGHT -1){
+                if(y >= TILES_IN_HEIGHT -2 || (y == TILES_IN_HEIGHT -3 && x == TILES_IN_WIDTH - 10)){
                     toReturn[y][x] = 1;
                 }
 

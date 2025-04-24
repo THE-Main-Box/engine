@@ -35,38 +35,35 @@ public class RoomBodyDataConversor {
         return !surrounded;
     }
 
-
+    //converte a lista de tiles em uma lista de bodies como tiles unicas
     public static List<Body> convertTileListToBodyList(TileType[][] tiles, World world) {
         List<Body> bodies = new ArrayList<>();
+        int rows = tiles.length;
 
-        for (int y = 0; y < tiles.length; y++) {
+        for (int y = 0; y < rows; y++) {
             for (int x = 0; x < tiles[0].length; x++) {
-
-                if (tiles[y][x].equals(TileType.BLOCK) && shouldCreateBody(x, y, tiles)) {
-                    bodies.add(createBlockTileBody(x, y, tiles, world));
+                if (tiles[y][x] == TileType.BLOCK && shouldCreateBody(x, y, tiles)) {
+                    bodies.add(createBoxBody(world, x, y, 1, 1, rows));
                 }
-
             }
         }
 
         return bodies;
     }
 
+    //cria uma body quadrada
+    private static Body createBoxBody(World world, int x, int y, int width, int height, int totalRows) {
+        float tileSize = PlayScreen.TILES_DEFAULT_SIZE;
+        int invY = (totalRows - 1) - y;
 
-    private static Body createBlockTileBody(int x, int y, TileType[][] tiles, World world) {
-        int invertedY = (tiles.length - 1) - y;
-
-        float bX = (x * PlayScreen.TILES_DEFAULT_SIZE) + PlayScreen.TILES_DEFAULT_SIZE / 2f;
-        float bY = (invertedY * PlayScreen.TILES_DEFAULT_SIZE) + PlayScreen.TILES_DEFAULT_SIZE / 2f;
+        float worldX = (x + width / 2f) * tileSize;
+        float worldY = (invY - (height / 2f - 0.5f)) * tileSize;
 
         return BodyCreatorHelper.createBox(
             world,
-            new Vector2(
-                bX, // conversão para metros
-                bY
-            ),
-            PlayScreen.TILES_DEFAULT_SIZE,
-            PlayScreen.TILES_DEFAULT_SIZE,
+            new Vector2(worldX, worldY),
+            width * tileSize,
+            height * tileSize,
             BodyDef.BodyType.StaticBody,
             DEF_DENS,
             DEF_FRIC,
@@ -74,5 +71,50 @@ public class RoomBodyDataConversor {
         );
     }
 
+    //criam corpos unidos
+    public static List<Body> buildMergedBodies(TileType[][] tiles, World world) {
+        int rows = tiles.length;
+        int cols = tiles[0].length;
+        boolean[][] visited = new boolean[rows][cols];
+        List<Body> bodies = new ArrayList<>();
 
+        for (int y = 0; y < rows; y++) {
+            for (int x = 0; x < cols; x++) {
+                if (!visited[y][x] && tiles[y][x].isSolid()) {
+                    // Tenta criar o maior retângulo possível a partir de (x, y)
+                    int width = 1;
+                    int height = 1;
+
+                    // Primeiro, acha a largura
+                    while (x + width < cols && tiles[y][x + width].isSolid() && !visited[y][x + width]) {
+                        width++;
+                    }
+
+                    // Agora acha a altura, checando se todas as colunas da linha seguinte têm a mesma largura
+                    boolean done = false;
+                    while (!done && y + height < rows) {
+                        for (int dx = 0; dx < width; dx++) {
+                            if (!tiles[y + height][x + dx].isSolid() || visited[y + height][x + dx]) {
+                                done = true;
+                                break;
+                            }
+                        }
+                        if (!done) height++;
+                    }
+
+                    // Marca todas as tiles como visitadas
+                    for (int dy = 0; dy < height; dy++) {
+                        for (int dx = 0; dx < width; dx++) {
+                            visited[y + dy][x + dx] = true;
+                        }
+                    }
+
+                    // Cria o corpo físico
+                    bodies.add(createBoxBody(world, x, y, width, height, rows));
+                }
+            }
+        }
+
+        return bodies;
+    }
 }

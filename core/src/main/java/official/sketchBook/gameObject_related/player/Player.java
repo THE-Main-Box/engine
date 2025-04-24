@@ -1,10 +1,12 @@
 package official.sketchBook.gameObject_related.player;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 import official.sketchBook.gameObject_related.MovableGameObject;
+import official.sketchBook.util_related.helpers.body.BodyCreatorHelper;
 
 import static official.sketchBook.screen_related.PlayScreen.PPM;
 
@@ -21,23 +23,18 @@ public class Player extends MovableGameObject {
 
     @Override
     protected void createBody() {
-        BodyDef bodyDef = new BodyDef();
-        bodyDef.type = BodyDef.BodyType.DynamicBody;
-        bodyDef.position.set(x / PPM, y / PPM);
 
-        body = world.createBody(bodyDef);
+        this.body = BodyCreatorHelper.createCircle(
+            world,
+            new Vector2(x, y),
+            width,
+            BodyDef.BodyType.DynamicBody,
+            1f,
+            0.5f,
+            0.1f
+        );
 
-        CircleShape shape = new CircleShape();
-        shape.setRadius((width / 2) / PPM);
-
-        FixtureDef fixtureDef = new FixtureDef();
-        fixtureDef.shape = shape;
-        fixtureDef.density = 1f;
-        fixtureDef.friction = 0.5f;
-        fixtureDef.restitution = 0.1f;
-
-        body.createFixture(fixtureDef);
-        shape.dispose();
+        this.body.setFixedRotation(true);
     }
 
     @Override

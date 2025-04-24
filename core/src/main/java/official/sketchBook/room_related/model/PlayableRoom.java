@@ -3,6 +3,7 @@ package official.sketchBook.room_related.model;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Pool.Poolable;
 import official.sketchBook.gameObject_related.GameObject;
 import official.sketchBook.room_related.worldGeneration_related.connection.RoomNode;
 import official.sketchBook.util_related.helpers.body.RoomBodyDataConversor;
@@ -10,10 +11,12 @@ import official.sketchBook.util_related.helpers.body.RoomBodyDataConversor;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PlayableRoom {
+public class PlayableRoom implements Poolable {
     private Room roomData;
     private RoomNode roomConnections;
+
     private final World world;
+
     private List<GameObject> gameObjects;
     private List<Body> nativeBodies;
 
@@ -27,25 +30,27 @@ public class PlayableRoom {
         this.roomData = roomData;
         this.roomConnections = roomConnections;
         this.nativeBodies = RoomBodyDataConversor.convertTileListToBodyList(roomData.getTiles(), this.world);
-
         this.gameObjects = new ArrayList<>();
 
         this.active = true;
     }
 
     public void reset() {
-        // destrói os corpos da sala anterior
-        for (Body body : nativeBodies) {
-            world.destroyBody(body);
-        }
-        nativeBodies.clear();
+        this.dispose();
 
-        for (GameObject object : gameObjects) {
-            object.dispose();
+        if (nativeBodies != null) {
+            for (Body body : nativeBodies) {
+                world.destroyBody(body);
+            }
+            nativeBodies.clear();
         }
-        gameObjects.clear();
+
+        if (gameObjects != null) {
+            gameObjects.clear();
+        }
 
         roomData = null;
+        roomConnections = null;
         gameObjects = null;
         active = false;
     }
@@ -62,25 +67,33 @@ public class PlayableRoom {
     public void updateObjects(float delta) {
         if (!active) return;
 
-        for (GameObject object : gameObjects) {
-            object.update(delta);
+        if (gameObjects != null) {
+            for (GameObject object : gameObjects) {
+                object.update(delta);
+            }
         }
+
     }
 
 
     public void render(SpriteBatch batch) {
         if (!active) return;
 
-        for (GameObject object : gameObjects) {
-            object.render(batch);
+        if (gameObjects != null) {
+            for (GameObject object : gameObjects) {
+                object.render(batch);
+            }
         }
+
     }
 
     public void dispose() {
         if (!active) return;
 
-        for (GameObject object : gameObjects) {
-            object.dispose();
+        if (gameObjects != null) {
+            for (GameObject object : gameObjects) {
+                object.dispose();
+            }
         }
     }
 

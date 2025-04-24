@@ -7,5 +7,5 @@ public enum GameState {
     PAUSED,
     MENU;
 
-    public static GameState state = MENU;
+    public static GameState state = PLAYING;
 }

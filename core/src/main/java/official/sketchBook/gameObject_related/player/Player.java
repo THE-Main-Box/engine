@@ -15,8 +15,6 @@ public class Player extends MovableGameObject {
     public Player(float x, float y, float width, float height, boolean facingForward, World world) {
         super(x, y, width, height, facingForward, world);
 
-        body.setGravityScale(0);
-
         controllerComponent = new PlayerControllerComponent(this);
         addComponent(controllerComponent);
     }

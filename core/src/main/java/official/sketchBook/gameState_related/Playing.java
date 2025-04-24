@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import official.sketchBook.screen_related.PlayScreen;
 import official.sketchBook.camera_related.CameraManager;
-import official.sketchBook.gameData_related.GameObjectManager;
+import official.sketchBook.gameDataManagement_related.GameObjectManager;
 import official.sketchBook.gameObject_related.player.Player;
 import official.sketchBook.gameState_related.model.State;
 import official.sketchBook.gameState_related.model.StateMethods;
@@ -39,10 +39,10 @@ public class Playing extends State implements StateMethods {
 
         world.setContactListener(multiContactListener);
 
-        objectManager = new GameObjectManager();
+        objectManager = new GameObjectManager(world);
 
-        player = new Player(10, 10, 50, 50, true, this.world);
-        objectManager.addGameObject(player);
+        player = new Player(10, 100, 5, 5, true, this.world);
+        objectManager.addGameObject(objectManager.getCurrentRoom(), player);
     }
 
     @Override
@@ -60,10 +60,7 @@ public class Playing extends State implements StateMethods {
 
         objectManager.syncObjectsBodies();
 
-        float effectiveViewportWidth = gameCameraManager.getCamera().viewportWidth;
-        float effectiveViewportHeight = gameCameraManager.getCamera().viewportHeight;
-
-        HelpMethods.updateCameraMovementParams(gameCameraManager, effectiveViewportWidth, effectiveViewportHeight);
+        HelpMethods.updateCameraMovementParams(gameCameraManager, worldWidth, worldHeight);
         gameCameraManager.setEase(0.1f, 0.5f, 1f);
         gameCameraManager.trackObjectByOffset(player.getX(), player.getY());
     }

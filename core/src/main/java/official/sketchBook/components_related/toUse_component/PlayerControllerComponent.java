@@ -1,8 +1,8 @@
-package official.sketchBook.gameObject_related.player;
+package official.sketchBook.components_related.toUse_component;
 
 import official.sketchBook.components_related.base_component.ControllerComponent;
-import official.sketchBook.components_related.toUse_component.TimerComponent;
 import official.sketchBook.gameObject_related.GameObject;
+import official.sketchBook.gameObject_related.entities.Player;
 import official.sketchBook.util_related.enumerators.directions.Direction;
 import official.sketchBook.util_related.info.util.values.ControlKeys;
 import official.sketchBook.util_related.info.util.values.SpeedRelatedVariables;

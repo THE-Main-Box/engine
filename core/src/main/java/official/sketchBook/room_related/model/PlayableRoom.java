@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Pool.Poolable;
+import official.sketchBook.gameObject_related.Entity;
 import official.sketchBook.gameObject_related.GameObject;
 import official.sketchBook.gameObject_related.MovableGameObject;
 import official.sketchBook.room_related.worldGeneration_related.connection.RoomNode;
@@ -63,6 +64,14 @@ public class PlayableRoom implements Poolable {
         for (GameObject object : gameObjects) {
             if (object instanceof MovableGameObject mObj && mObj.getPhysicsC() != null) {
                 mObj.getPhysicsC().syncBodyObjectPos();
+            }
+        }
+    }
+
+    public void updateEntitiesRayCasts(){
+        for(GameObject object : gameObjects){
+            if(object instanceof Entity entity && entity.getRayCastHelper() != null){
+                entity.updateRayCast();
             }
         }
     }

@@ -7,6 +7,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import official.sketchBook.MainClass;
 import official.sketchBook.camera_related.CameraManager;
+import official.sketchBook.gameObject_related.Entity;
+import official.sketchBook.gameObject_related.GameObject;
 import official.sketchBook.gameState_related.*;
 import official.sketchBook.input_related.InputHandler;
 import official.sketchBook.util_related.enumerators.states.GameState;
@@ -28,6 +30,7 @@ public class PlayScreen implements Screen {
 
     // game dimensions related
     public static float scale = 2f;
+    public static float zoom= 0.7f / scale;
     public static final int TILES_IN_WIDTH = 39;
     public static final int TILES_IN_HEIGHT = 21;
     public static final int TILES_DEFAULT_SIZE = 16;
@@ -56,6 +59,8 @@ public class PlayScreen implements Screen {
 
     //debug related
     public static boolean showHitBox = true;
+    public static boolean showRayCast = true;
+
     private Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
 
     public PlayScreen(MainClass game) {
@@ -128,6 +133,19 @@ public class PlayScreen implements Screen {
             );
         }
 
+        if(showRayCast){
+            for(GameObject object : playingState.objectManager.getCurrentRoom().getGameObjects()){
+                if(object instanceof Entity entity && entity.getRayCastHelper() != null){
+                    entity.getRayCastHelper().render(gameCameraManager.getCamera().combined.scl(PPM));
+                }
+            }
+        }
+
+        for(GameObject object : playingState.objectManager.getCurrentRoom().getGameObjects()){
+            if(object instanceof Entity entity && entity.getRayCastHelper() != null){
+                entity.getRayCastHelper().clearRays();
+            }
+        }
     }
 
     private void updateGameStates() {

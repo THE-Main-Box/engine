@@ -8,7 +8,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import official.sketchBook.screen_related.PlayScreen;
 import official.sketchBook.camera_related.CameraManager;
 import official.sketchBook.gameDataManagement_related.GameObjectManager;
-import official.sketchBook.gameObject_related.entities.Player;
+import official.sketchBook.gameObject_related.entities.player.Player;
 import official.sketchBook.gameState_related.model.State;
 import official.sketchBook.gameState_related.model.StateMethods;
 import official.sketchBook.util_related.enumerators.states.GameState;
@@ -35,7 +35,7 @@ public class Playing extends State implements StateMethods {
         world = new World(new Vector2(0, -8.2f), true);
 
         //zoom padrão 0.7f
-        gameCameraManager.setZoom(1f / scale);
+        gameCameraManager.setZoom(zoom);
 
         world.setContactListener(multiContactListener);
 
@@ -151,6 +151,9 @@ public class Playing extends State implements StateMethods {
 
         if (keycode == Input.Keys.F1) {
             showHitBox = !showHitBox;
+        }
+        if (keycode == Input.Keys.F2) {
+            showRayCast = !showRayCast;
         }
 
         return true;

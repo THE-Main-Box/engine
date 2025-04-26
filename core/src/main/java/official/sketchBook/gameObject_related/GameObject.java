@@ -87,6 +87,10 @@ public abstract class GameObject {
         return null;
     }
 
+    public boolean hasComponent(Class<? extends Component> type) {
+        return components.stream().anyMatch(type::isInstance);
+    }
+
     public World getWorld() {
         return world;
     }

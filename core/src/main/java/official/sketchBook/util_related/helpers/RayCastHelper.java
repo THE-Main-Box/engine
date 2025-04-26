@@ -27,7 +27,7 @@ public class RayCastHelper {
     public RayCastHelper(World world) {
         this.world = world;
         this.shapeRenderer = new ShapeRenderer(); // Inicializa o ShapeRenderer para depuração
-        activeRays = new ArrayList<>();
+        this.activeRays = new ArrayList<>();
     }
 
     /**
@@ -46,6 +46,9 @@ public class RayCastHelper {
         }, start, end);
 
         addRay(start, end);
+
+        activeRays.add(new Ray<>(start.cpy(), end.cpy())); // Guarda o raio para debug
+
     }
 
     public void addRay(Vector2 start, Vector2 end) {
@@ -55,34 +58,26 @@ public class RayCastHelper {
     /**
      * desenhar o raio para debugging, apenas desenha a linha entre start e end.
      */
-    public void renderRays(Matrix4 projectionMatrix) {
-        // Configura a matriz de projeção do shapeRenderer
-        shapeRenderer.setProjectionMatrix(projectionMatrix);
+    public void render(Matrix4 projectionMatrix) {
+        if (activeRays.isEmpty()) return;
 
+        shapeRenderer.setProjectionMatrix(projectionMatrix);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         shapeRenderer.setColor(Color.RED);
 
-        // Desenha cada raio da lista ativa
         for (Ray<Vector2> ray : activeRays) {
-            // Aqui, assumindo que ray.start e ray.end já estão em pixels:
-            float startX = ray.start.x / PPM;
-            float startY = ray.start.y / PPM;
-            float endX = ray.end.x / PPM;
-            float endY = ray.end.y / PPM;
-            shapeRenderer.line(startX, startY, endX, endY);
-
+            shapeRenderer.line(
+                ray.start.x / PPM, ray.start.y / PPM,
+                ray.end.x / PPM, ray.end.y / PPM
+            );
         }
 
-//        System.out.println(activeRays.size());
-
         shapeRenderer.end();
-
-        clearRays();
+        activeRays.clear(); // Limpa depois de desenhar
     }
 
-
-    public void clearRays() {
-        activeRays.clear(); // Limpa os raios ativos
+    public void clearRays(){
+        activeRays.clear(); // Limpa depois de desenhar
     }
 
     /**

@@ -44,12 +44,12 @@ public class GameObjectManager {
         generator.applyLayoutToGrid(layout);
 
 
-        setCurrentRoom(0,0);
+        setCurrentRoom(0, 0);
         System.out.println(currentRoom.getRoomData().getTag());
 
     }
 
-    public void setCurrentRoom(int x, int y){
+    public void setCurrentRoom(int x, int y) {
         currentRoom = manager.initRoom(currentRoom, x, y);
 
         PlayScreen.worldWidth = currentRoom.getRoomData().getWidthInP();
@@ -66,7 +66,11 @@ public class GameObjectManager {
             for (int x = 0; x < TILES_IN_WIDTH; x++) {
                 toReturn[y][x] = 0;
 
-                if(y >= TILES_IN_HEIGHT -2 || (y == TILES_IN_HEIGHT -3 && x == TILES_IN_WIDTH - 10)){
+                boolean canCreate_1 = y >= TILES_IN_HEIGHT - 2;
+                boolean canCreate_2 = y == TILES_IN_HEIGHT - 3 && x == TILES_IN_WIDTH - 10;
+                boolean canCreate_3 = y == TILES_IN_HEIGHT - 10 && (x >= TILES_IN_WIDTH - 30 && x <= TILES_IN_WIDTH - 10 );
+
+                if (canCreate_1 || canCreate_2 || canCreate_3) {
                     toReturn[y][x] = 1;
                 }
 
@@ -78,6 +82,7 @@ public class GameObjectManager {
 
     public void syncObjectsBodies() {
         currentRoom.syncObjectsBodies();
+        currentRoom.updateEntitiesRayCasts();
     }
 
     public void updateObjects(float delta) {

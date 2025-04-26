@@ -1,8 +1,8 @@
-package official.sketchBook.components_related.toUse_component;
+package official.sketchBook.gameObject_related.entities.player;
 
 import official.sketchBook.components_related.base_component.ControllerComponent;
+import official.sketchBook.components_related.toUse_component.TimerComponent;
 import official.sketchBook.gameObject_related.GameObject;
-import official.sketchBook.gameObject_related.entities.Player;
 import official.sketchBook.util_related.enumerators.directions.Direction;
 import official.sketchBook.util_related.info.util.values.ControlKeys;
 import official.sketchBook.util_related.info.util.values.SpeedRelatedVariables;
@@ -20,24 +20,58 @@ public class PlayerControllerComponent extends ControllerComponent {
     private boolean rightPressed = false;
     private Direction lastDirectionPressed = Direction.STILL;
 
-    private TimerComponent jumpBufferTimer = new TimerComponent(0.2f);
+    private TimerComponent jumpBufferTimer;
 
     public PlayerControllerComponent(GameObject gameObject) {
-        super();
         this.player = (Player) gameObject;
+        jumpBufferTimer = new TimerComponent(0.2f);
 
         // Vinculando teclas ao movimento
         bindKey(ControlKeys.move_left, this::moveLeft);
         bindKey(ControlKeys.move_right, this::moveRight);
+        bindKey(ControlKeys.jump, this::jump);
 
+    }
+
+    private void jump(boolean pressed) {
+        if (pressed) {
+
+            jumpBufferTimer.reset();
+            jumpBufferTimer.start();
+
+        } else {
+
+            if (player.getjComponent().isJumping()) {
+                player.getjComponent().jump(true);
+
+                jumpBufferTimer.stop();
+                jumpBufferTimer.reset();
+
+            }
+
+        }
     }
 
     @Override
     public void update(float delta) {
         super.update(delta);
 
+        updateJump(delta);
         updateMovement();
         updateAirMovementValues();
+
+    }
+
+    private void updateJump(float delta){
+        jumpBufferTimer.update(delta);
+
+        jumpBufferTimer.resetByFinished();
+
+        if (jumpBufferTimer.isRunning() && player.canJump()) {
+            player.getjComponent().jump(false);  // Executa o pulo
+            jumpBufferTimer.stop();  // Para o buffer após o pulo ser executado
+            jumpBufferTimer.reset();
+        }
 
     }
 

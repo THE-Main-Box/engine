@@ -29,10 +29,11 @@ public class Player extends Entity {
     @Override
     protected void createBody() {
 
-        this.body = BodyCreatorHelper.createCircle(
+        this.body = BodyCreatorHelper.createCapsule(
             world,
             new Vector2(x, y),
             width,
+            height,
             BodyDef.BodyType.DynamicBody,
             1f,
             0.5f,

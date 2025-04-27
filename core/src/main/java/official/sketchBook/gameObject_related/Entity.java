@@ -27,20 +27,24 @@ public abstract class Entity extends MovableGameObject{
 
         onGround = false;
         Vector2 center = body.getPosition();
-        float rayDistance = (height + 1f) / PPM;
-        float offsetX = (width / 2f - 1f) / PPM; // Ligeiro recuo para a esquerda e direita
+
+        float halfWidth = (width / 2f) / PPM;
+        float halfHeight = (height / 2f) / PPM;
+        float footY = center.y - halfHeight; // Origem no "pé"
+
+        float rayLength = 1f / PPM; // Alcance pequeno pra detectar chão
 
         Vector2[] rayStarts = new Vector2[]{
-            new Vector2(center.x - offsetX, center.y),
-            center,
-            new Vector2(center.x + offsetX, center.y)
+            new Vector2(center.x - halfWidth + 2f / PPM, footY),
+            new Vector2(center.x, footY),
+            new Vector2(center.x + halfWidth - 2f / PPM, footY)
         };
 
         for (Vector2 start : rayStarts) {
-            Vector2 end = new Vector2(start.x, start.y - rayDistance);
+            Vector2 end = new Vector2(start.x, start.y - rayLength);
 
             rayCastHelper.castRay(start, end, data -> {
-                if (data.fixture != null && data.fixture.getBody().getType() != BodyDef.BodyType.DynamicBody) {
+                if (data.fixture() != null && data.fixture().getBody().getType() != BodyDef.BodyType.DynamicBody) {
                     onGround = true;
                 }
             });

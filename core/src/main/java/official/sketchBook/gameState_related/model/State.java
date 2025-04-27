@@ -17,100 +17,136 @@ public abstract class State {
     protected CameraManager gameCameraManager;
     protected CameraManager uiCameraManager;
 
-    // Vetor temporário para conversões
-
-    protected Vector3 tempVector;
+    /// Vetor do mouse normalizado (coordenadas corrigidas, sem o eixo Y invertido do LibGDX)
+    protected Vector3 normalizedMouseVector;
+    /// Imagem de fundo do menu
     protected Texture backGroundImage;
-    protected int menuX, menuY, menuWidth, menuHeight;
-    protected int canvasWidth, canvasHeight, spriteQuantityW, spriteQuantityH;
+    /// Coordenadas de posicionamento do menu
+    protected int menuX, menuY;
+    /// Dimensões do menu
+    protected int menuWidth, menuHeight;
+    /// Dimensões do canvas, usadas para calcular os recortes da imagem
+    protected int canvasWidth, canvasHeight;
+    /// Quantidade de sprites na vertical e horizontal no spritesheet
+    protected int spriteQuantityV, spriteQuantityH;
+    /// Controlador de animações para o background
     protected ObjectAnimationPlayer aniPlayer;
 
+    /// Multiplicador geral para escalar elementos internos independentemente da escala global
     protected float mult;
 
+    /**
+     * Construtor da classe base State.
+     *
+     * @param game Tela principal que chamará esse estado
+     * @param gameCameraManager Gerenciador da câmera do jogo
+     * @param uiCameraManager Gerenciador da câmera da interface (UI)
+     */
     public State(PlayScreen game, CameraManager gameCameraManager, CameraManager uiCameraManager) {
         this.game = game;
         this.gameCameraManager = gameCameraManager;
         this.uiCameraManager = uiCameraManager;
 
         // Inicializa o vetor temporário
-        this.tempVector = new Vector3();
-
+        this.normalizedMouseVector = new Vector3();
     }
 
-    protected void initBackGround(String texturePath, int spriteQW, int spriteQH, int y) {
+    /**
+     * Inicializa a imagem de fundo e define o posicionamento do menu
+     *
+     * @param texturePath Caminho da textura de fundo
+     * @param spriteQV Quantidade de sprites verticais no spritesheet
+     * @param spriteQH Quantidade de sprites horizontais no spritesheet
+     * @param x Posição X centralizada do menu
+     * @param y Posição Y centralizada do menu
+     */
+    protected void initBackGround(String texturePath, int spriteQV, int spriteQH, int x, int y) {
         backGroundImage = new Texture(texturePath);
 
-        // Quantidade de sprites na largura e altura do sprite sheet
-        spriteQuantityW = spriteQW;
+        spriteQuantityV = spriteQV;
         spriteQuantityH = spriteQH;
 
         updateMenuSize();
 
-        // Centraliza o menu na tela
-        menuX = PlayScreen.GAME_WIDTH / 2 - menuWidth / 2; // Centralizado horizontalmente
-        menuY = (int) (y * mult); // Mantém 1/3 da altura da tela, como no original
+        // Centraliza o menu no ponto (x, y) dado
+        menuX = x - menuWidth / 2; // Centralizado horizontalmente
+
+        menuY = y - menuHeight / 2; // Centralizado verticalmente
 
         initIdleBackGroundAnimation();
     }
 
+    /**
+     * Inicializa uma animação padrão de fundo (idle)
+     */
     protected void initIdleBackGroundAnimation() {
         aniPlayer = new ObjectAnimationPlayer();
         aniPlayer.addAnimation("idle", List.of(new Sprite(0, 0)));
         aniPlayer.setAnimation("idle");
     }
 
+    /**
+     * Atualiza o tamanho do menu baseado nas dimensões da imagem e na multiplicação de escala
+     */
     public void updateMenuSize() {
-        // Dimensões individuais de cada sprite no canvas
-        canvasWidth = backGroundImage.getWidth() / spriteQuantityW;
+        // Dimensões de um quadro individual do spritesheet
+        canvasWidth = backGroundImage.getWidth() / spriteQuantityV;
         canvasHeight = backGroundImage.getHeight() / spriteQuantityH;
 
-        // Calcula o percentual que o canvas ocupa em relação à tela
+        // Percentuais da largura e altura relativas à tela
         float canvasWidthPercentage = (float) canvasWidth / PlayScreen.GAME_WIDTH;
         float canvasHeightPercentage = (float) canvasHeight / PlayScreen.GAME_HEIGHT;
 
-        // Ajusta as dimensões do menu com base no percentual calculado e no multiplicador
+        // Ajusta o tamanho do menu considerando o percentual e o multiplicador
         menuWidth = (int) (PlayScreen.GAME_WIDTH * canvasWidthPercentage * mult);
         menuHeight = (int) (PlayScreen.GAME_HEIGHT * canvasHeightPercentage * mult);
-
     }
 
+    /**
+     * Renderiza o jogo e a UI, usando diferentes SpriteBatches
+     */
     public void draw(SpriteBatch batch, SpriteBatch uiBatch) {
         if (batch != null) {
             gameCameraManager.update();
             batch.setProjectionMatrix(gameCameraManager.getCamera().combined);
 
-            // Inicia a renderização
             batch.begin();
-
             this.render(batch);
-
             batch.end();
         }
 
         if (uiBatch != null) {
             uiCameraManager.update();
             uiBatch.setProjectionMatrix(uiCameraManager.getCamera().combined);
+
             uiBatch.begin();
-
             renderUi(uiBatch);
-
             uiBatch.end();
-
         }
-
     }
 
+    /**
+     * Verifica se o mouse está dentro dos limites de um botão
+     *
+     * @param mouseX Posição X do mouse (em pixels de tela)
+     * @param mouseY Posição Y do mouse (em pixels de tela)
+     * @param button Instância do botão a ser checado
+     * @return true se o mouse estiver sobre o botão
+     */
     public boolean isMouseInsideButton(int mouseX, int mouseY, Button button) {
-        // Converte as coordenadas da tela para o sistema de coordenadas da câmera/mundo
-        uiCameraManager.getViewport().unproject(tempVector.set(mouseX, mouseY, 0));
+        // Corrige as coordenadas do mouse para o sistema de mundo
+        uiCameraManager.getViewport().unproject(normalizedMouseVector.set(mouseX, mouseY, 0));
 
-        // Verifica se o mouse está dentro dos limites do botão
-        return tempVector.x >= button.getxPos() &&
-            tempVector.x <= button.getxPos() + button.getWidth() &&
-            tempVector.y >= button.getyPos() &&
-            tempVector.y <= button.getyPos() + button.getHeight();
+        // Verifica colisão simples ponto-retângulo
+        return normalizedMouseVector.x >= button.getxPos() &&
+            normalizedMouseVector.x <= button.getxPos() + button.getWidth() &&
+            normalizedMouseVector.y >= button.getyPos() &&
+            normalizedMouseVector.y <= button.getyPos() + button.getHeight();
     }
 
+    /**
+     * Libera os recursos utilizados pelo estado
+     */
     public void dispose() {
         if (backGroundImage != null) {
             backGroundImage.dispose();

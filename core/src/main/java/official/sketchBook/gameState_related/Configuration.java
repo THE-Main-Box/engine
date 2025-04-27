@@ -33,7 +33,13 @@ public class Configuration extends State implements StateMethods {
     }
 
     private void initData() {
-        this.initBackGround(UISpritePaths.config_BG, 1,1, 50);
+        this.initBackGround(
+            UISpritePaths.config_BG,
+            1,
+            1,
+            PlayScreen.GAME_WIDTH / 2,
+            PlayScreen.GAME_HEIGHT / 2
+        );
         this.initButtons();
         this.initSliders();
     }
@@ -193,7 +199,7 @@ public class Configuration extends State implements StateMethods {
             }
             if (slider.getType().equals("sound_volume")) {
 
-                if(PlayScreen.soundMute == slider.isTurnedOn()) {
+                if (PlayScreen.soundMute == slider.isTurnedOn()) {
                     slider.setTurnedOn(!PlayScreen.soundMute);
                 }
 
@@ -252,7 +258,7 @@ public class Configuration extends State implements StateMethods {
             }
         }
 
-        for(Slider slider : sliders){
+        for (Slider slider : sliders) {
             slider.getTickSpriteSheet().dispose();
             slider.getButtonSpriteSheet().dispose();
         }

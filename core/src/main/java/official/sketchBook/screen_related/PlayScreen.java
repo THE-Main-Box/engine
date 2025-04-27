@@ -73,6 +73,8 @@ public class PlayScreen implements Screen {
         uiCameraManager = new CameraManager(Gdx.graphics.getWidth() / scale, Gdx.graphics.getHeight() / scale);
         this.uiBatch = game.uiBatch;
 
+//        this.uiCameraManager.invertYAxis();
+
         configState = new Configuration(this, gameCameraManager, uiCameraManager);
         playingState = new Playing(this, gameCameraManager, uiCameraManager);
         pausedState = new Paused(this, gameCameraManager, uiCameraManager);

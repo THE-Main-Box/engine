@@ -29,7 +29,13 @@ public class Paused extends State implements StateMethods {
     }
 
     private void initData() {
-        initBackGround(UISpritePaths.pause_BG, 2, 1, 50);
+        initBackGround(
+            UISpritePaths.pause_BG,
+            2,
+            1,
+            PlayScreen.GAME_WIDTH / 2,
+            PlayScreen.GAME_HEIGHT / 2
+            );
 
         initIdleBackGroundAnimation();
 

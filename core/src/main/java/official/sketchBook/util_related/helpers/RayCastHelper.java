@@ -57,6 +57,7 @@ public class RayCastHelper {
 
     /**
      * desenhar o raio para debugging, apenas desenha a linha entre start e end.
+     * @param projectionMatrix armazena a matriz como deve ser desenhada(precisa ser escalada conforme o PPM)
      */
     public void render(Matrix4 projectionMatrix) {
         if (activeRays.isEmpty()) return;
@@ -73,10 +74,9 @@ public class RayCastHelper {
         }
 
         shapeRenderer.end();
-        activeRays.clear(); // Limpa depois de desenhar
     }
 
-    public void clearRays(){
+    public void clearRays() {
         activeRays.clear(); // Limpa depois de desenhar
     }
 
@@ -90,18 +90,12 @@ public class RayCastHelper {
 
     /**
      * Classe interna para armazenar os dados do RayCast.
+     *
+     * @param fixture  O objeto físico (fixture) que o raycast atingiu
+     * @param point    A posição no mundo onde o raycast colidiu
+     * @param normal   A direção perpendicular (normal) da superfície atingida
+     * @param fraction A fração do caminho percorrido pelo raycast até a colisão (de 0 a 1)
      */
-    public static class RayCastData {
-        public final Fixture fixture;
-        public final Vector2 point;
-        public final Vector2 normal;
-        public final float fraction;
-
-        public RayCastData(Fixture fixture, Vector2 point, Vector2 normal, float fraction) {
-            this.fixture = fixture;
-            this.point = point;
-            this.normal = normal;
-            this.fraction = fraction;
-        }
+    public record RayCastData(Fixture fixture, Vector2 point, Vector2 normal, float fraction) {
     }
 }

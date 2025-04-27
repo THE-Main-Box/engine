@@ -29,7 +29,13 @@ public class Menu extends State implements StateMethods {
 
 
     private void initData() {
-        initBackGround(UISpritePaths.menu_BG, 1, 1, 30);
+        initBackGround(
+            UISpritePaths.menu_BG,
+            1,
+            1,
+            PlayScreen.GAME_WIDTH / 2,
+            PlayScreen.GAME_HEIGHT / 2
+        );
         initButtons();
     }
 

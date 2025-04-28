@@ -47,6 +47,7 @@ public class Player extends Entity {
         );
 
         this.body.setFixedRotation(true);
+        this.body.setBullet(true);
     }
 
     @Override

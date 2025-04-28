@@ -67,10 +67,12 @@ public class GameObjectManager {
                 toReturn[y][x] = 0;
 
                 boolean canCreate_1 = y >= TILES_IN_HEIGHT - 2;
-                boolean canCreate_2 = y == TILES_IN_HEIGHT - 3 && x == TILES_IN_WIDTH - 10;
+                boolean canCreate_2 = y >= TILES_IN_HEIGHT - 7 && x == TILES_IN_WIDTH - 10;
                 boolean canCreate_3 = y == TILES_IN_HEIGHT - 10 && (x >= TILES_IN_WIDTH - 30 && x <= TILES_IN_WIDTH - 10 );
+                boolean canCreate_4 = y == TILES_IN_HEIGHT - 3 && x == TILES_IN_WIDTH - 21;
+                boolean canCreate_5 = y == TILES_IN_HEIGHT - 4 && x == TILES_IN_WIDTH - 24;
 
-                if (canCreate_1 || canCreate_2 || canCreate_3) {
+                if (canCreate_1 || canCreate_2 || canCreate_3|| canCreate_4 || canCreate_5) {
                     toReturn[y][x] = 1;
                 }
 

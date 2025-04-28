@@ -9,6 +9,11 @@ public class Dummy extends Enemy {
     }
 
     @Override
+    protected void setBodyDefValues() {
+
+    }
+
+    @Override
     public boolean canJump() {
         return false;
     }

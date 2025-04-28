@@ -30,6 +30,9 @@ public abstract class GameObject {
     //components related
     protected List<Component> components;
 
+    protected float defFric, defRest, defDens;
+
+
     public GameObject(float x, float y, float width, float height, boolean facingForward, World world) {
         this.x = x;
         this.y = y;
@@ -45,9 +48,12 @@ public abstract class GameObject {
 
         this.world = world;
 
+        setBodyDefValues();
         createBody();
 
     }
+
+    protected abstract void setBodyDefValues();
 
     // Métodos para inicializar a física e a renderização (implementados nas subclasses)
     protected abstract void createBody();
@@ -89,6 +95,18 @@ public abstract class GameObject {
 
     public boolean hasComponent(Class<? extends Component> type) {
         return components.stream().anyMatch(type::isInstance);
+    }
+
+    public float getDefFric() {
+        return defFric;
+    }
+
+    public float getDefRest() {
+        return defRest;
+    }
+
+    public float getDefDens() {
+        return defDens;
     }
 
     public World getWorld() {

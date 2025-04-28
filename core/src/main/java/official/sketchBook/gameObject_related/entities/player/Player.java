@@ -23,7 +23,13 @@ public class Player extends Entity {
 
         jComponent = new JumpComponent(this, 40, 100, 0.1f);
         addComponent(jComponent);
+    }
 
+    @Override
+    protected void setBodyDefValues() {
+        this.defDens = 1;
+        this.defFric = 1f;
+        this.defRest = 0;
     }
 
     @Override
@@ -35,9 +41,9 @@ public class Player extends Entity {
             width,
             height,
             BodyDef.BodyType.DynamicBody,
-            1f,
-            0.5f,
-            0.1f
+            defDens,
+            defFric,
+            defRest
         );
 
         this.body.setFixedRotation(true);

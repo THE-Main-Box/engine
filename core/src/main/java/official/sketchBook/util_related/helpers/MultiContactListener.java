@@ -1,7 +1,6 @@
 package official.sketchBook.util_related.helpers;
 
 import com.badlogic.gdx.physics.box2d.*;
-import official.sketchBook.util_related.info.util.methods.ContactActions;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,7 +38,7 @@ public class MultiContactListener implements ContactListener {
 
     @Override
     public void preSolve(Contact contact, Manifold oldManifold) {
-//        contactActions.applyDefaultFrictionLogic(contact, null);
+        contactActions.applyDefaultFrictionLogic(contact);
 
         // Chama preSolve para cada listener registrado
         for (Map.Entry<String, ContactListener> entry : listeners.entrySet()) {

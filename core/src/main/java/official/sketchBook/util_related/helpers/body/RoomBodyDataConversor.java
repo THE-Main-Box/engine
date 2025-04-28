@@ -9,12 +9,11 @@ import official.sketchBook.util_related.enumerators.types.TileType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static official.sketchBook.screen_related.PlayScreen.PPM;
 
 public class RoomBodyDataConversor {
-
-    private static final float DEF_DENS = 0.1f, DEF_FRIC = 1f, DEF_REST = 0f;
 
     //valida se existem tiles ao redor do mesmo tipo, se sim nós não criamos.
     //validamos também se são sólidos,
@@ -42,17 +41,27 @@ public class RoomBodyDataConversor {
 
         for (int y = 0; y < rows; y++) {
             for (int x = 0; x < tiles[0].length; x++) {
+
                 if (tiles[y][x] == TileType.BLOCK && shouldCreateBody(x, y, tiles)) {
-                    bodies.add(createBoxBody(world, x, y, 1, 1, rows));
+                    createBodies(bodies, TileType.BLOCK, world, x, y, rows);
                 }
+
             }
         }
 
         return bodies;
     }
 
+    private static void createBodies(List<Body> bodies, TileType type, World world, int x, int y, int rows) {
+        if (Objects.requireNonNull(type) == TileType.BLOCK) {
+            Body body = createBoxBody(world, type, x, y, 1, 1, rows);
+            body.setUserData(TileType.BLOCK);
+            bodies.add(body);
+        }
+    }
+
     //cria uma body quadrada
-    private static Body createBoxBody(World world, int x, int y, int width, int height, int totalRows) {
+    private static Body createBoxBody(World world, TileType type, int x, int y, int width, int height, int totalRows) {
         float tileSize = PlayScreen.TILES_DEFAULT_SIZE;
         int invY = (totalRows - 1) - y;
 
@@ -65,36 +74,41 @@ public class RoomBodyDataConversor {
             width * tileSize,
             height * tileSize,
             BodyDef.BodyType.StaticBody,
-            DEF_DENS,
-            DEF_FRIC,
-            DEF_REST
+            type.getDensity(),
+            type.getFriction(),
+            type.getRestituition()
         );
     }
 
-    //criam corpos unidos
     public static List<Body> buildMergedBodies(TileType[][] tiles, World world) {
         int rows = tiles.length;
         int cols = tiles[0].length;
         boolean[][] visited = new boolean[rows][cols];
         List<Body> bodies = new ArrayList<>();
 
+        //percorre a lista bidimensional
         for (int y = 0; y < rows; y++) {
             for (int x = 0; x < cols; x++) {
+
+                //verifica se nós ainda não visitamos essa tile e se ela é sólida
                 if (!visited[y][x] && tiles[y][x].isSolid()) {
-                    // Tenta criar o maior retângulo possível a partir de (x, y)
+                    TileType currentType = tiles[y][x];  // Guarda o tipo do tile atual
+
+                    // Tenta criar o maior retângulo possível a partir de (x, y) somente com o mesmo tipo de tile
                     int width = 1;
                     int height = 1;
 
-                    // Primeiro, acha a largura
-                    while (x + width < cols && tiles[y][x + width].isSolid() && !visited[y][x + width]) {
+                    // Primeiro, acha a largura, mas apenas com tiles do mesmo tipo
+                    while (x + width < cols && tiles[y][x + width] == currentType && !visited[y][x + width]) {
                         width++;
                     }
 
-                    // Agora acha a altura, checando se todas as colunas da linha seguinte têm a mesma largura
+                    // Agora acha a altura, checando se todas as colunas da linha seguinte têm o mesmo tipo de tile
                     boolean done = false;
                     while (!done && y + height < rows) {
                         for (int dx = 0; dx < width; dx++) {
-                            if (!tiles[y + height][x + dx].isSolid() || visited[y + height][x + dx]) {
+                            // Se a tile não for do mesmo tipo ou já foi visitada, finaliza
+                            if (tiles[y + height][x + dx] != currentType || visited[y + height][x + dx]) {
                                 done = true;
                                 break;
                             }
@@ -109,12 +123,15 @@ public class RoomBodyDataConversor {
                         }
                     }
 
-                    // Cria o corpo físico
-                    bodies.add(createBoxBody(world, x, y, width, height, rows));
+                    // Cria o corpo físico somente para tiles do mesmo tipo
+                    Body body = createBoxBody(world, currentType, x, y, width, height, rows);
+                    body.setUserData(currentType);
+                    bodies.add(body);
                 }
             }
         }
 
         return bodies;
     }
+
 }

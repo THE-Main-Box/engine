@@ -30,7 +30,7 @@ public class PlayScreen implements Screen {
 
     // game dimensions related
     public static float scale = 2f;
-    public static float zoom= 0.7f / scale;
+    public static float zoom = 1f / scale;
     public static final int TILES_IN_WIDTH = 39;
     public static final int TILES_IN_HEIGHT = 21;
     public static final int TILES_DEFAULT_SIZE = 16;
@@ -72,8 +72,6 @@ public class PlayScreen implements Screen {
         // Configuração da câmera e do batch para o menu
         uiCameraManager = new CameraManager(Gdx.graphics.getWidth() / scale, Gdx.graphics.getHeight() / scale);
         this.uiBatch = game.uiBatch;
-
-//        this.uiCameraManager.invertYAxis();
 
         configState = new Configuration(this, gameCameraManager, uiCameraManager);
         playingState = new Playing(this, gameCameraManager, uiCameraManager);
@@ -135,16 +133,16 @@ public class PlayScreen implements Screen {
             );
         }
 
-        if(showRayCast){
-            for(GameObject object : playingState.objectManager.getCurrentRoom().getGameObjects()){
-                if(object instanceof Entity entity && entity.getRayCastHelper() != null){
+        if (showRayCast) {
+            for (GameObject object : playingState.objectManager.getCurrentRoom().getGameObjects()) {
+                if (object instanceof Entity entity && entity.getRayCastHelper() != null) {
                     entity.getRayCastHelper().render(gameCameraManager.getCamera().combined.scl(PPM));
                 }
             }
         }
 
-        for(GameObject object : playingState.objectManager.getCurrentRoom().getGameObjects()){
-            if(object instanceof Entity entity && entity.getRayCastHelper() != null){
+        for (GameObject object : playingState.objectManager.getCurrentRoom().getGameObjects()) {
+            if (object instanceof Entity entity && entity.getRayCastHelper() != null) {
                 entity.getRayCastHelper().clearRays();
             }
         }

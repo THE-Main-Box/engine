@@ -6,7 +6,6 @@ import com.badlogic.gdx.physics.box2d.World;
 import official.sketchBook.animation_related.ObjectAnimationPlayer;
 import official.sketchBook.animation_related.SpriteSheetDatahandler;
 import official.sketchBook.components_related.base_component.Component;
-import official.sketchBook.components_related.toUse_component.PhysicsComponent;
 
 import java.util.ArrayList;
 import java.util.List;

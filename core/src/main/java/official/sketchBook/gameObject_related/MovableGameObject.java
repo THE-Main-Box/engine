@@ -1,14 +1,13 @@
 package official.sketchBook.gameObject_related;
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.World;
 import official.sketchBook.components_related.toUse_component.MovementComponent;
-import official.sketchBook.components_related.toUse_component.PhysicsComponent;
+import official.sketchBook.components_related.toUse_component.MObjectPhysicsComponent;
 
 public abstract class MovableGameObject extends GameObject {
 
     protected MovementComponent moveC;
-    protected PhysicsComponent physicsC;
+    protected MObjectPhysicsComponent physicsC;
 
     public MovableGameObject(float x, float y, float width, float height, boolean facingForward, World world) {
         super(x, y, width, height, facingForward, world);
@@ -16,23 +15,13 @@ public abstract class MovableGameObject extends GameObject {
         moveC = new MovementComponent(this.body.getMass());
         addComponent(moveC);
 
-        physicsC = new PhysicsComponent(this, this.body);
+        physicsC = new MObjectPhysicsComponent(this, this.body);
         addComponent(physicsC);
-    }
-
-    @Override
-    protected void createBody() {
-
     }
 
     @Override
     public void update(float deltaTime) {
         applySpeedOnBody();
-    }
-
-    @Override
-    public void render(SpriteBatch batch) {
-
     }
 
     //atualiza a posição do corpo através do componente de física
@@ -45,7 +34,7 @@ public abstract class MovableGameObject extends GameObject {
         return moveC;
     }
 
-    public PhysicsComponent getPhysicsC() {
+    public MObjectPhysicsComponent getPhysicsC() {
         return physicsC;
     }
 }

@@ -245,7 +245,6 @@ public class PlayScreen implements Screen {
 
     }
 
-    //TODO: definir um dispose válido para todas essas classes
     @Override
     public void dispose() {
         playingState.dispose();

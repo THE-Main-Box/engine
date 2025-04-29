@@ -41,7 +41,7 @@ public class Playing extends State implements StateMethods {
 
         objectManager = new GameObjectManager(world);
 
-        player = new Player(10, 100, 10, 15, true, this.world);
+        player = new Player(10, 100, 8, 16, true, this.world);
         objectManager.addGameObject(objectManager.getCurrentRoom(), player);
     }
 

@@ -1,4 +1,4 @@
-package official.sketchBook.components_related.toUse_component;
+package official.sketchBook.components_related.toUse_component.util;
 
 import official.sketchBook.components_related.base_component.Component;
 

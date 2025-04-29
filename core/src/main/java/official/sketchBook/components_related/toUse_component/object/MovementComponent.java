@@ -1,8 +1,7 @@
-package official.sketchBook.components_related.toUse_component;
+package official.sketchBook.components_related.toUse_component.object;
 
 
 import official.sketchBook.components_related.base_component.Component;
-import official.sketchBook.gameObject_related.GameObject;
 
 public class MovementComponent extends Component {
     private float xSpeed, ySpeed;

@@ -8,7 +8,6 @@ import java.util.Map;
 public class MultiContactListener implements ContactListener {
     // Usando um HashMap para armazenar os listeners, onde a chave é uma String (ou qualquer tipo único)
     private final Map<String, ContactListener> listeners = new HashMap<>();
-    private ContactActions contactActions = new ContactActions();
 
     // Adiciona um listener com uma chave única
     public void addListener(String key, ContactListener listener) {
@@ -38,7 +37,7 @@ public class MultiContactListener implements ContactListener {
 
     @Override
     public void preSolve(Contact contact, Manifold oldManifold) {
-        contactActions.applyDefaultFrictionLogic(contact);
+        ContactActions.applyDefaultFrictionLogic(contact);
 
         // Chama preSolve para cada listener registrado
         for (Map.Entry<String, ContactListener> entry : listeners.entrySet()) {

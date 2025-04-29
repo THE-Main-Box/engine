@@ -1,15 +1,16 @@
-package official.sketchBook.gameObject_related.entities.player;
+package official.sketchBook.components_related.toUse_component.entity;
 
-import official.sketchBook.components_related.base_component.ControllerComponent;
-import official.sketchBook.components_related.toUse_component.TimerComponent;
+import official.sketchBook.components_related.base_component.KeyBindedControllerComponent;
+import official.sketchBook.components_related.toUse_component.util.TimerComponent;
 import official.sketchBook.gameObject_related.GameObject;
+import official.sketchBook.gameObject_related.entities.Player;
 import official.sketchBook.util_related.enumerators.directions.Direction;
 import official.sketchBook.util_related.info.util.values.ControlKeys;
 import official.sketchBook.util_related.info.util.values.SpeedRelatedVariables;
 
 import static official.sketchBook.screen_related.PlayScreen.PPM;
 
-public class PlayerControllerComponent extends ControllerComponent {
+public class PlayerControllerComponent extends KeyBindedControllerComponent {
     private final Player player;
 
     private final float groundAccel = 50f / PPM;

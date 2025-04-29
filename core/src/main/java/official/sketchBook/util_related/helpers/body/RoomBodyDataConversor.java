@@ -5,19 +5,24 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
 import official.sketchBook.screen_related.PlayScreen;
+import official.sketchBook.util_related.enumerators.types.FixtureType;
 import official.sketchBook.util_related.enumerators.types.TileType;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static official.sketchBook.screen_related.PlayScreen.PPM;
-
 public class RoomBodyDataConversor {
 
-    //valida se existem tiles ao redor do mesmo tipo, se sim nós não criamos.
-    //validamos também se são sólidos,
-    // já que não podemos criar um corpo para uma tile caso esteja entre tiles sólidas do mesmo tipo
+    /**
+     * Valida se existem tiles ao redor do mesmo tipo, se sim nós não criamos.
+     * Validamos também se são sólidos,
+     * já que não podemos criar um corpo para uma tile caso esteja entre tiles sólidas do mesmo tipo
+     *
+     * @param tiles mapa bidimensional da lista de tiles existentes
+     * @param x coordenada X do mapa onde a tile se encontra
+     * @param y coordenada Y do mapa onde a tile se encontra
+     */
     private static boolean shouldCreateBody(int x, int y, TileType[][] tiles) {
         TileType current = tiles[y][x];
 
@@ -34,34 +39,8 @@ public class RoomBodyDataConversor {
         return !surrounded;
     }
 
-    //converte a lista de tiles em uma lista de bodies como tiles unicas
-    public static List<Body> convertTileListToBodyList(TileType[][] tiles, World world) {
-        List<Body> bodies = new ArrayList<>();
-        int rows = tiles.length;
-
-        for (int y = 0; y < rows; y++) {
-            for (int x = 0; x < tiles[0].length; x++) {
-
-                if (tiles[y][x] == TileType.BLOCK && shouldCreateBody(x, y, tiles)) {
-                    createBodies(bodies, TileType.BLOCK, world, x, y, rows);
-                }
-
-            }
-        }
-
-        return bodies;
-    }
-
-    private static void createBodies(List<Body> bodies, TileType type, World world, int x, int y, int rows) {
-        if (Objects.requireNonNull(type) == TileType.BLOCK) {
-            Body body = createBoxBody(world, type, x, y, 1, 1, rows);
-            body.setUserData(TileType.BLOCK);
-            bodies.add(body);
-        }
-    }
-
-    //cria uma body quadrada
-    private static Body createBoxBody(World world, TileType type, int x, int y, int width, int height, int totalRows) {
+    /// Cria uma body quadrada para as tiles
+    private static Body createBoxBodyForTiles(World world, TileType type, int x, int y, int width, int height, int totalRows) {
         float tileSize = PlayScreen.TILES_DEFAULT_SIZE;
         int invY = (totalRows - 1) - y;
 
@@ -80,7 +59,8 @@ public class RoomBodyDataConversor {
         );
     }
 
-    public static List<Body> buildMergedBodies(TileType[][] tiles, World world) {
+    /// Cria uma única tile grande para todas as tiles menores que se conectam com as outras que são do mesmo tipo
+    public static List<Body> buildTileMergedBodies(TileType[][] tiles, World world) {
         int rows = tiles.length;
         int cols = tiles[0].length;
         boolean[][] visited = new boolean[rows][cols];
@@ -124,8 +104,8 @@ public class RoomBodyDataConversor {
                     }
 
                     // Cria o corpo físico somente para tiles do mesmo tipo
-                    Body body = createBoxBody(world, currentType, x, y, width, height, rows);
-                    body.setUserData(currentType);
+                    Body body = createBoxBodyForTiles(world, currentType, x, y, width, height, rows);
+                    body.setUserData(new FixtureType(FixtureType.Type.ENVIRONMENT, currentType));
                     bodies.add(body);
                 }
             }

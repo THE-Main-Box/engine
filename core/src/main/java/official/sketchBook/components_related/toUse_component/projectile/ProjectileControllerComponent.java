@@ -1,0 +1,303 @@
+package official.sketchBook.components_related.toUse_component.projectile;
+
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Contact;
+import official.sketchBook.components_related.base_component.Component;
+import official.sketchBook.projectiles_related.Projectile;
+import official.sketchBook.util_related.enumerators.directions.Direction;
+
+public class ProjectileControllerComponent extends Component {
+    /// Projétil a quem pertence esse controlador
+    private Projectile projectile;
+    /// Componente de física próprio do projétil
+    private final ProjectilePhysicsComponent physicsComponent;
+    /// Tempo que o projétil permaneceu ativo
+    private float timeAlive;
+    /// tempo que o projétil deverá permanecer vivo
+    private float lifeTime;
+
+    /// Deve travar todos os eixos quando houver uma colisão
+    private boolean stickOnCollision = false;
+    /// Deve travar o eixo X ao colidir com uma parede
+    private boolean stickToWall = false;
+    /// deve travar o eixo Y ao colidir com o chão
+    private boolean stickToGround = false;
+    /// Deve travar o eixo Y ao colidir com o teto
+    private boolean stickToCeiling = false;
+
+    private boolean lockX = false;
+    private boolean lockY = false;
+
+    private int groundContacts = 0;
+    private int wallContacts = 0;
+    private int ceilingContacts = 0;
+
+    public ProjectileControllerComponent(Projectile projectile, float lifeTime) {
+        this.projectile = projectile;
+        this.physicsComponent = new ProjectilePhysicsComponent(projectile);
+        this.projectile.addComponent(physicsComponent);
+        this.lifeTime = lifeTime;
+        this.timeAlive = 0f;
+    }
+
+    @Override
+    public void update(float delta) {
+        if (!projectile.isActive()) return;
+
+        updateLifeTime(delta);
+        updateAxisSpeedByLockState();
+
+    }
+
+    public void reset() {
+        this.groundContacts = 0;
+        this.ceilingContacts = 0;
+        this.wallContacts = 0;
+
+        this.lockX = false;
+        this.lockY = false;
+
+        this.timeAlive = 0f;
+    }
+
+    public void onHitEnvironment(Object target, Contact contact) {
+        if (!projectile.isActive()) return;
+
+        updateAxisStatesByCollision();
+
+        projectile.onEnvironmentCollision(contact, target);
+    }
+
+    public void onLeaveEnvironment(Object target, Contact contact) {
+        if (!projectile.isActive()) return;
+
+        updateAxisStatesByCollision();
+
+        projectile.onEnvironmentEndCollision(contact, target);
+    }
+
+    public void onHitEntity(Object target, Contact contact) {
+        if (!projectile.isActive()) return;
+
+        projectile.onEntityCollision(contact, target);
+    }
+
+    public void onLeaveEntity(Object target, Contact contact) {
+        if (!projectile.isActive()) return;
+
+        projectile.onEntityEndCollision(contact, target);
+    }
+
+
+    public void onHitProjectile(Object target, Contact contact) {
+        if (!projectile.isActive()) return;
+
+        projectile.onProjectileCollision(contact, target);
+
+    }
+
+    public void onLeaveProjectile(Object target, Contact contact) {
+        if (!projectile.isActive()) return;
+
+        projectile.onProjectileEndCollision(contact, target);
+    }
+//
+//    private void updateAxisStatesByCollision() {
+//        boolean collidingGround = groundContacts > 0;
+//        boolean collidingWall = wallContacts > 0;
+//        boolean collidingCeiling = ceilingContacts > 0;
+//
+//        if (stickOnCollision) {
+//            if (collidingCeiling || collidingGround || collidingWall) lockAllAxes();
+//            else unlockAllAxes();
+//
+//        } else if (stickToGround || stickToCeiling) {
+//            if (collidingGround || collidingCeiling) lockYAxis();
+//            else unlockYAxis();
+//
+//        } else if (stickToWall) {
+//            if (collidingWall) lockXAxis();
+//            else unlockXAxis();
+//        }
+//    }
+
+    private void updateAxisStatesByCollision() {
+        if (stickOnCollision) {
+            setLockState(collidingAny());
+        } else {
+            lockX = stickToWall && wallContacts > 0;
+//            lockY = (stickToGround && groundContacts > 0) || (stickToCeiling && ceilingContacts > 0);
+            lockY = (stickToGround || stickToCeiling) && groundContacts > 0;
+        }
+    }
+
+    private boolean collidingAny() {
+        return groundContacts > 0 || wallContacts > 0 || ceilingContacts > 0;
+    }
+
+    private void setLockState(boolean state) {
+        lockX = state;
+        lockY = state;
+    }
+
+    /// Atualiza o estado de ativo com base no tempo ativo e incrementa o tempo ativo
+    private void updateLifeTime(float delta) {
+        timeAlive += delta;
+        if (timeAlive >= lifeTime) {
+            projectile.setActive(false);
+        }
+    }
+
+    /// Valida se algum dos eixos estão travados,
+    /// se houver verificamos qual deles está e assim atualizamos o valor deles corretamente
+    private void updateAxisSpeedByLockState() {
+        // Travas de eixo
+        if (lockX || lockY) {
+            Vector2 velocity = physicsComponent.getBody().getLinearVelocity();
+            float x = lockX ? 0f : velocity.x;
+            float y = lockY ? 0f : velocity.y;
+            physicsComponent.getBody().setLinearVelocity(x, y);
+        }
+    }
+
+    /// Atualiza a posição do projétil e o lança a uma velocidade
+    public void launch(Vector2 position, Vector2 direction, float speed, boolean affectedByGravity, float lifeTime) {
+        projectile.setActive(true);
+        projectile.setLifeTime(lifeTime);
+        timeAlive = 0f;
+
+        projectile.setX(position.x);
+        projectile.setY(position.y);
+
+        // Resetar física
+        physicsComponent.getBody().setTransform(position, 0f);
+        physicsComponent.getBody().setLinearVelocity(0, 0); // ou angularVelocity também se necessário
+        physicsComponent.setAffectedByGravity(affectedByGravity);
+
+        // Aplicar impulso na direção desejada
+        Vector2 impulse = direction.nor().scl(speed * physicsComponent.getBody().getMass());
+        physicsComponent.getBody().applyLinearImpulse(impulse, physicsComponent.getBody().getWorldCenter(), true);
+    }
+
+    public void setLifeTime(float lifeTime) {
+        this.lifeTime = lifeTime;
+    }
+
+    public void addGroundContact() {
+        groundContacts++;
+    }
+
+    public void removeGroundContact() {
+        groundContacts = Math.max(0, groundContacts - 1);
+    }
+
+    public void addWallContact() {
+        wallContacts++;
+    }
+
+    public void removeWallContact() {
+        wallContacts = Math.max(0, wallContacts - 1);
+    }
+
+    public void addCeilingContact() {
+        ceilingContacts++;
+    }
+
+    public void removeCeilingContact() {
+        ceilingContacts = Math.max(0, ceilingContacts - 1);
+    }
+
+    public boolean isCollidingGround() {
+        return groundContacts > 0;
+    }
+
+    public boolean isCollidingWall() {
+        return wallContacts > 0;
+    }
+
+    public boolean isCollidingCeiling() {
+        return ceilingContacts > 0;
+    }
+
+    public void lockXAxis() {
+        this.lockX = true;
+    }
+
+    public void unlockXAxis() {
+        this.lockX = false;
+    }
+
+    public void lockYAxis() {
+        this.lockY = true;
+    }
+
+    public void unlockYAxis() {
+        this.lockY = false;
+    }
+
+    public void lockAllAxes() {
+        this.lockX = true;
+        this.lockY = true;
+    }
+
+    public void unlockAllAxes() {
+        this.lockX = false;
+        this.lockY = false;
+    }
+
+    public boolean isXAxisLocked() {
+        return lockX;
+    }
+
+    public boolean isYAxisLocked() {
+        return lockY;
+    }
+
+    public void setStickToWall(boolean stickToWall) {
+        this.stickToWall = stickToWall;
+    }
+
+    public void setStickOnCollision(boolean stickOnCollision) {
+        this.stickOnCollision = stickOnCollision;
+    }
+
+    public void setStickToGround(boolean stickToGround) {
+        this.stickToGround = stickToGround;
+    }
+
+    public void setStickToCeiling(boolean stickToCeiling) {
+        this.stickToCeiling = stickToCeiling;
+    }
+
+    public float getLifeTime() {
+        return lifeTime;
+    }
+
+    public boolean isStickToWall() {
+        return stickToWall;
+    }
+
+    public boolean isStickOnCollision() {
+        return stickOnCollision;
+    }
+
+    public boolean isStickToGround() {
+        return stickToGround;
+    }
+
+    public boolean isStickToCeiling() {
+        return stickToCeiling;
+    }
+
+    public Projectile getProjectile() {
+        return projectile;
+    }
+
+    public ProjectilePhysicsComponent getPhysicsComponent() {
+        return physicsComponent;
+    }
+
+    public float getTimeAlive() {
+        return timeAlive;
+    }
+}

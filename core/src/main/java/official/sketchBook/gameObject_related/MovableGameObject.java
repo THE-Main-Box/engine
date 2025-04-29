@@ -1,8 +1,8 @@
 package official.sketchBook.gameObject_related;
 
 import com.badlogic.gdx.physics.box2d.World;
-import official.sketchBook.components_related.toUse_component.MovementComponent;
-import official.sketchBook.components_related.toUse_component.MObjectPhysicsComponent;
+import official.sketchBook.components_related.toUse_component.object.MovementComponent;
+import official.sketchBook.components_related.toUse_component.object.MObjectPhysicsComponent;
 
 public abstract class MovableGameObject extends GameObject {
 
@@ -15,7 +15,7 @@ public abstract class MovableGameObject extends GameObject {
         moveC = new MovementComponent(this.body.getMass());
         addComponent(moveC);
 
-        physicsC = new MObjectPhysicsComponent(this, this.body);
+        physicsC = new MObjectPhysicsComponent(this);
         addComponent(physicsC);
     }
 

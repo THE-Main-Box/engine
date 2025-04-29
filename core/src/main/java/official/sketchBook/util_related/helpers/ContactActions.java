@@ -1,12 +1,38 @@
 package official.sketchBook.util_related.helpers;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.WorldManifold;
+import official.sketchBook.util_related.enumerators.directions.Direction;
 
 public class ContactActions {
 
-    public void applyDefaultFrictionLogic(Contact contact) {
+    public static Direction getCollisionType(Contact contact) {
+        if (contact == null) return Direction.STILL;
+
+        WorldManifold worldManifold = contact.getWorldManifold();
+        if (worldManifold == null) return Direction.STILL;
+
+        Vector2 normal = worldManifold.getNormal();
+        float x = normal.x;
+        float y = normal.y;
+
+        float threshold = 0.5f;
+
+        if (y > threshold && x < -threshold) return Direction.DOWN_LEFT;
+        if (y > threshold && x > threshold) return Direction.DOWN_RIGHT;
+        if (y < -threshold && x < -threshold) return Direction.UP_LEFT;
+        if (y < -threshold && x > threshold) return Direction.UP_RIGHT;
+        if (y > threshold && Math.abs(x) < threshold) return Direction.DOWN;
+        if (y < -threshold && Math.abs(x) < threshold) return Direction.UP;
+        if (x > threshold && Math.abs(y) < threshold) return Direction.LEFT;
+        if (x < -threshold && Math.abs(y) < threshold) return Direction.RIGHT;
+
+        return Direction.STILL;
+    }
+
+    public static void applyDefaultFrictionLogic(Contact contact) {
         if (contact == null) return; // Evita NullPointerException
 
         WorldManifold worldManifold = contact.getWorldManifold();

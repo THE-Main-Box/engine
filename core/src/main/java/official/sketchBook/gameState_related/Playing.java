@@ -8,14 +8,16 @@ import com.badlogic.gdx.physics.box2d.World;
 import official.sketchBook.screen_related.PlayScreen;
 import official.sketchBook.camera_related.CameraManager;
 import official.sketchBook.gameDataManagement_related.GameObjectManager;
-import official.sketchBook.gameObject_related.entities.player.Player;
+import official.sketchBook.gameObject_related.entities.Player;
 import official.sketchBook.gameState_related.model.State;
 import official.sketchBook.gameState_related.model.StateMethods;
+import official.sketchBook.util_related.contactListeners.ProjectileContactListener;
 import official.sketchBook.util_related.enumerators.states.GameState;
 import official.sketchBook.util_related.helpers.HelpMethods;
 import official.sketchBook.util_related.helpers.MultiContactListener;
 
 import static official.sketchBook.screen_related.PlayScreen.*;
+import static official.sketchBook.util_related.helpers.HelpMethods.handleContactListener;
 
 public class Playing extends State implements StateMethods {
 
@@ -30,19 +32,23 @@ public class Playing extends State implements StateMethods {
 
     public Playing(PlayScreen game, CameraManager gameCameraManager, CameraManager uiCameraManager) {
         super(game, gameCameraManager, uiCameraManager);
-
         // Cria o world com a gravidade desejada (por exemplo, 8.2 m/s² para baixo)
         world = new World(new Vector2(0, -8.2f), true);
 
         //zoom padrão 0.7f
         gameCameraManager.setZoom(zoom);
 
-        world.setContactListener(multiContactListener);
-
         objectManager = new GameObjectManager(world);
 
         player = new Player(10, 100, 8, 16, true, this.world);
         objectManager.addGameObject(objectManager.getCurrentRoom(), player);
+
+        world.setContactListener(multiContactListener);
+        this.setContactListeners();
+    }
+
+    private void setContactListeners() {
+        handleContactListener(false, "projectile_listener", new ProjectileContactListener());
     }
 
     @Override

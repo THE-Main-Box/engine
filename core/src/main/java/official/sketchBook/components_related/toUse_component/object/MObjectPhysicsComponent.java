@@ -1,4 +1,4 @@
-package official.sketchBook.components_related.toUse_component;
+package official.sketchBook.components_related.toUse_component.object;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -9,8 +9,8 @@ import static official.sketchBook.screen_related.PlayScreen.PPM;
 
 public class MObjectPhysicsComponent extends BasePhysicsComponent {
 
-    public MObjectPhysicsComponent(GameObject object, Body body) {
-        super(object, body);
+    public MObjectPhysicsComponent(GameObject object) {
+        super(object, object.getBody());
     }
 
     public void update(float deltaTime) {

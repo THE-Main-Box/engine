@@ -1,18 +1,17 @@
 package official.sketchBook.components_related.base_component;
 
 import com.badlogic.gdx.Gdx;
-import official.sketchBook.gameObject_related.GameObject;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public abstract class ControllerComponent extends Component {
+public abstract class KeyBindedControllerComponent extends Component {
 
     protected final Map<Integer, Consumer<Boolean>> keyBindings;
     protected final Map<Integer, Boolean> keyStates;
 
-    public ControllerComponent() {
+    public KeyBindedControllerComponent() {
         this.keyBindings = new HashMap<>();
         this.keyStates = new HashMap<>();
     }

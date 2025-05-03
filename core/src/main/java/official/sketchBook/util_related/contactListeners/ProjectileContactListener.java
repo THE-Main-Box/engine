@@ -3,8 +3,9 @@ package official.sketchBook.util_related.contactListeners;
 import com.badlogic.gdx.physics.box2d.*;
 import official.sketchBook.projectiles_related.Projectile;
 import official.sketchBook.util_related.enumerators.directions.Direction;
-import official.sketchBook.util_related.enumerators.types.FixtureType;
+import official.sketchBook.util_related.enumerators.types.FixtType;
 import official.sketchBook.util_related.helpers.ContactActions;
+import official.sketchBook.util_related.info.util.values.FixtureType;
 
 public class ProjectileContactListener implements ContactListener {
     @Override
@@ -149,7 +150,7 @@ public class ProjectileContactListener implements ContactListener {
     private boolean isProjectile(Fixture fixture) {
         if (fixture == null || fixture.getUserData() == null) return false;
         var fixType = getTag(fixture);
-        return fixType != null && fixType.type == FixtureType.Type.PROJECTILE; // ou use instanceof se tiver classes específicas
+        return fixType != null && fixType.type == FixtType.PROJECTILE; // ou use instanceof se tiver classes específicas
     }
 
     private FixtureType getTag(Fixture fixture) {

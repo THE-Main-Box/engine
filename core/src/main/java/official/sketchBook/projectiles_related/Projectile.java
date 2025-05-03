@@ -7,25 +7,52 @@ import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Pool;
 import official.sketchBook.components_related.toUse_component.projectile.ProjectileControllerComponent;
+import official.sketchBook.gameObject_related.Entity;
 import official.sketchBook.gameObject_related.GameObject;
-import official.sketchBook.util_related.enumerators.types.FixtureType;
+import official.sketchBook.util_related.enumerators.types.FixtType;
 import official.sketchBook.util_related.helpers.body.BodyCreatorHelper;
+import official.sketchBook.util_related.info.util.values.FixtureType;
 
 public abstract class Projectile extends GameObject implements Pool.Poolable {
 
-    protected boolean active;
-    protected float lifeTime;
-    protected float radius;
-    protected ProjectileControllerComponent controllerComponent;
+    protected boolean active;// flag para se está ativo
+    protected float lifeTime;//tempo de vida do projétil
+    protected float radius;//raio da area da body do projétil
+    protected ProjectileControllerComponent controllerComponent;//componente de controle, tem um em cada projétil
+
+    protected Entity owner; //dono do projétil
 
     public Projectile(float x, float y, float radius, boolean facingForward, World world) {
         super(x, y, radius * 2, radius * 2, facingForward, world);
         this.active = false;
         this.radius = radius;
-        this.lifeTime = 0;
 
-        this.controllerComponent = new ProjectileControllerComponent(this, lifeTime);
+        this.controllerComponent = new ProjectileControllerComponent(this);
         this.addComponent(controllerComponent);
+    }
+
+    public abstract void init(Entity owner);
+
+    protected void initValues(
+        Entity owner,
+        float lifeTime,
+        boolean stickOnCollision,
+        boolean stickOnWall,
+        boolean stickOnCeiling,
+        boolean stickOnGround,
+        boolean affectedByGravity
+    ) {
+        this.active = true;
+        this.owner = owner;
+        this.setLifeTime(lifeTime);
+
+        this.controllerComponent.setStickOnCollision(stickOnCollision);
+        this.controllerComponent.setStickToWall(stickOnWall);
+        this.controllerComponent.setStickToCeiling(stickOnCeiling);
+        this.controllerComponent.setStickToGround(stickOnGround);
+        this.controllerComponent.setAffectedByGravity(affectedByGravity);
+
+        this.controllerComponent.reset();
     }
 
     public abstract void onEnvironmentCollision(Contact contact, Object target);
@@ -58,7 +85,7 @@ public abstract class Projectile extends GameObject implements Pool.Poolable {
             0f,   // friction
             0f    // restitution
         );
-        body.setUserData(new FixtureType(FixtureType.Type.PROJECTILE, this));
+        body.setUserData(new FixtureType(FixtType.PROJECTILE, this));
         body.setBullet(true); // Importante para colisões de alta velocidade
         body.setFixedRotation(true);
     }
@@ -72,22 +99,24 @@ public abstract class Projectile extends GameObject implements Pool.Poolable {
     @Override
     public void reset() {
         this.active = false;
+        this.owner = null;
+
         this.setLifeTime(0f);
 
         controllerComponent.reset();
-
-        // Opcional: resetar posição e corpo físico se necessário
-        if (body != null) {
-            body.setLinearVelocity(0, 0);
-            body.setAngularVelocity(0);
-            body.setTransform(x, y, 0);
-            body.setActive(false); // Desativa o corpo no mundo físico
-        }
     }
 
     @Override
     public void render(SpriteBatch batch) {
 
+    }
+
+    public Entity getOwner() {
+        return owner;
+    }
+
+    public void setOwner(Entity owner) {
+        this.owner = owner;
     }
 
     public float getLifeTime() {

@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import official.sketchBook.animation_related.Sprite;
 import official.sketchBook.camera_related.CameraManager;
-import official.sketchBook.gameState_related.Playing;
+import official.sketchBook.gameState_related.states.Playing;
 
 public class HelpMethods {
 

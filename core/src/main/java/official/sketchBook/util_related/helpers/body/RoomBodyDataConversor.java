@@ -5,12 +5,12 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
 import official.sketchBook.screen_related.PlayScreen;
-import official.sketchBook.util_related.enumerators.types.FixtureType;
+import official.sketchBook.util_related.enumerators.types.FixtType;
 import official.sketchBook.util_related.enumerators.types.TileType;
+import official.sketchBook.util_related.info.util.values.FixtureType;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class RoomBodyDataConversor {
 
@@ -20,8 +20,8 @@ public class RoomBodyDataConversor {
      * já que não podemos criar um corpo para uma tile caso esteja entre tiles sólidas do mesmo tipo
      *
      * @param tiles mapa bidimensional da lista de tiles existentes
-     * @param x coordenada X do mapa onde a tile se encontra
-     * @param y coordenada Y do mapa onde a tile se encontra
+     * @param x     coordenada X do mapa onde a tile se encontra
+     * @param y     coordenada Y do mapa onde a tile se encontra
      */
     private static boolean shouldCreateBody(int x, int y, TileType[][] tiles) {
         TileType current = tiles[y][x];
@@ -105,7 +105,7 @@ public class RoomBodyDataConversor {
 
                     // Cria o corpo físico somente para tiles do mesmo tipo
                     Body body = createBoxBodyForTiles(world, currentType, x, y, width, height, rows);
-                    body.setUserData(new FixtureType(FixtureType.Type.ENVIRONMENT, currentType));
+                    body.setUserData(new FixtureType(FixtType.ENVIRONMENT, currentType));
                     bodies.add(body);
                 }
             }

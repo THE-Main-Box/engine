@@ -1,8 +1,9 @@
-package official.sketchBook.gameState_related;
+package official.sketchBook.gameState_related.states;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import official.sketchBook.screen_related.PlayScreen;
+import official.sketchBook.animation_related.ObjectAnimationPlayer;
 import official.sketchBook.animation_related.Sprite;
 import official.sketchBook.camera_related.CameraManager;
 import official.sketchBook.gameState_related.model.State;
@@ -14,67 +15,57 @@ import official.sketchBook.util_related.helpers.HelpMethods;
 import official.sketchBook.util_related.info.paths.UISpritePaths;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-public class Menu extends State implements StateMethods {
+public class Paused extends State implements StateMethods {
 
     private List<StateButton> buttons = new ArrayList<>();
 
-    public Menu(PlayScreen game, CameraManager gameCameraManager, CameraManager uiCameraManager) {
+    public Paused(PlayScreen game, CameraManager gameCameraManager, CameraManager uiCameraManager) {
         super(game, gameCameraManager, uiCameraManager);
-
-        this.mult = 2;
+        mult = 2;
         initData();
     }
 
-
     private void initData() {
         initBackGround(
-            UISpritePaths.menu_BG,
-            1,
+            UISpritePaths.pause_BG,
+            2,
             1,
             PlayScreen.GAME_WIDTH / 2,
             PlayScreen.GAME_HEIGHT / 2
-        );
+            );
+
+        initIdleBackGroundAnimation();
+
         initButtons();
     }
 
+    @Override
+    protected void initIdleBackGroundAnimation() {
+        this.aniPlayer = new ObjectAnimationPlayer();
+
+        aniPlayer.addAnimation("idle", Arrays.asList(
+            new Sprite(0, 0, 500),
+            new Sprite(1, 0, 500)
+        ));
+
+        aniPlayer.setAnimation("idle");
+    }
+
     private void initButtons() {
-        int canvasWidth = 50;
-        int canvasHeight = 25;
+        int canvasWidth = 20;
+        int canvasHeight = 20;
 
-        int height = (int) (canvasHeight * mult);
+        int width = (int) (canvasWidth * mult);
 
-        int yOffSet = (int) (height + 12 * mult);
+        int xOffSet = (int) (width + 9 * mult);
 
-        int x = (int) (menuX + 45 * mult);
-        int y = (int) (menuY + 13 * mult);
+        int x = (int) (menuX + 31 * mult);
+        int y = (int) (menuY + 11* mult);
 
 
-        buttons.add(
-            new StateButton(
-                x,
-                y + yOffSet * 2,
-                canvasWidth,
-                canvasHeight,
-                mult,
-                new Sprite(0, 0),
-                GameState.PLAYING,
-                "play"
-            )
-        );
-        buttons.add(
-            new StateButton(
-                x,
-                y + yOffSet,
-                canvasWidth,
-                canvasHeight,
-                mult,
-                new Sprite(0, 1),
-                GameState.CONFIGURATION,
-                "configuration"
-            )
-        );
         buttons.add(
             new StateButton(
                 x,
@@ -83,35 +74,53 @@ public class Menu extends State implements StateMethods {
                 canvasHeight,
                 mult,
                 new Sprite(0, 2),
-                GameState.QUIT,
-                "quit"
+                GameState.CONFIGURATION,
+                "configurations"
+            )
+        );
+        buttons.add(
+            new StateButton(
+                x + xOffSet,
+                y,
+                canvasWidth,
+                canvasHeight,
+                mult,
+                new Sprite(0, 1),
+                GameState.MENU,
+                "menu"
+            )
+        );
+        buttons.add(
+            new StateButton(
+                x + xOffSet * 2,
+                y,
+                canvasWidth,
+                canvasHeight,
+                mult,
+                new Sprite(0, 0),
+                GameState.PLAYING,
+                "return"
             )
         );
 
         for (Button button : buttons) {
-            button.buttonSpriteSheet = new Texture(UISpritePaths.menu_BTNs);
+            button.buttonSpriteSheet = new Texture(UISpritePaths.pause_BTNs);
         }
     }
 
     @Override
     public void update(float delta) {
-//        game.getPausedState().resetEntitysMovement();
-//        game.getPlayingState().getLevelManager().unloadCurrentPlayerAreaAndLevel();
-
+//        resetEntitysMovement();
         updateUi(delta);
     }
 
     @Override
     public void updateUi(float delta) {
+        aniPlayer.update(delta);
 
         for (Button button : buttons) {
             button.update();
         }
-    }
-
-    @Override
-    public void render(SpriteBatch batch) {
-
     }
 
     public void dispose() {
@@ -122,6 +131,11 @@ public class Menu extends State implements StateMethods {
                 button.buttonSpriteSheet.dispose();  // Dispose the texture used by the buttons
             }
         }
+    }
+
+    @Override
+    public void render(SpriteBatch batch) {
+        game.getPlayingState().render(batch);
     }
 
     @Override
@@ -158,6 +172,7 @@ public class Menu extends State implements StateMethods {
 
     @Override
     public boolean handleTouchDown(int screenX, int screenY, int button) {
+
         for (Button b : buttons) {
             if (b.isMouseOver()) {
                 b.setMousePressed(true);
@@ -171,15 +186,15 @@ public class Menu extends State implements StateMethods {
 
     @Override
     public boolean handleTouchUp(int screenX, int screenY, int button) {
+
         for (Button b : buttons) {
             if (b.isMousePressed()) {
                 b.mousePressedEvent();
                 b.resetBools();
 
                 if (b instanceof StateButton stateB && stateB.getGameStateToChange() == GameState.CONFIGURATION) {
-                    game.getConfigState().previousState = GameState.MENU;
+                    game.getConfigState().previousState = GameState.PAUSED;
                 }
-
             } else {
                 b.resetBools();
             }

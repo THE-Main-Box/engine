@@ -1,4 +1,4 @@
-package official.sketchBook.gameState_related;
+package official.sketchBook.gameState_related.states;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;

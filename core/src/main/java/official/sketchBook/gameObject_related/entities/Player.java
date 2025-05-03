@@ -4,11 +4,12 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
+import official.sketchBook.components_related.toUse_component.entity.PlayerControllerComponent;
 import official.sketchBook.components_related.toUse_component.object.JumpComponent;
 import official.sketchBook.gameObject_related.Entity;
-import official.sketchBook.components_related.toUse_component.entity.PlayerControllerComponent;
-import official.sketchBook.util_related.enumerators.types.FixtureType;
+import official.sketchBook.util_related.enumerators.types.FixtType;
 import official.sketchBook.util_related.helpers.body.BodyCreatorHelper;
+import official.sketchBook.util_related.info.util.values.FixtureType;
 
 public class Player extends Entity {
 
@@ -46,7 +47,7 @@ public class Player extends Entity {
             defRest
         );
 
-        this.body.setUserData(new FixtureType(FixtureType.Type.ENTITY, this));
+        this.body.setUserData(new FixtureType(FixtType.ENTITY, this));
         this.body.setFixedRotation(true);
         this.body.setBullet(true);
     }

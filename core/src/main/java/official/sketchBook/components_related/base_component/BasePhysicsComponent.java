@@ -40,6 +40,12 @@ public abstract class BasePhysicsComponent extends Component{
         applyImpulse(impulse);
     }
 
+    public void resetMovement(){
+        body.setLinearVelocity(0, 0);
+        body.setAngularVelocity(0);
+        body.setActive(false); // Desativa o corpo no mundo físico
+    }
+
     public Body getBody() {
         return body;
     }

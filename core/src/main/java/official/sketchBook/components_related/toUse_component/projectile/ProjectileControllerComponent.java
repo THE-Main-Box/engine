@@ -4,7 +4,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Contact;
 import official.sketchBook.components_related.base_component.Component;
 import official.sketchBook.projectiles_related.Projectile;
-import official.sketchBook.util_related.enumerators.directions.Direction;
 
 public class ProjectileControllerComponent extends Component {
     /// Projétil a quem pertence esse controlador
@@ -20,10 +19,12 @@ public class ProjectileControllerComponent extends Component {
     private boolean stickOnCollision = false;
     /// Deve travar o eixo X ao colidir com uma parede
     private boolean stickToWall = false;
-    /// deve travar o eixo Y ao colidir com o chão
+    /// Deve travar o eixo Y ao colidir com o chão
     private boolean stickToGround = false;
     /// Deve travar o eixo Y ao colidir com o teto
     private boolean stickToCeiling = false;
+    /// Deve ser afetado pela gravidade
+    private boolean affectedByGravity = false;
 
     private boolean lockX = false;
     private boolean lockY = false;
@@ -32,11 +33,11 @@ public class ProjectileControllerComponent extends Component {
     private int wallContacts = 0;
     private int ceilingContacts = 0;
 
-    public ProjectileControllerComponent(Projectile projectile, float lifeTime) {
+    public ProjectileControllerComponent(Projectile projectile) {
         this.projectile = projectile;
         this.physicsComponent = new ProjectilePhysicsComponent(projectile);
         this.projectile.addComponent(physicsComponent);
-        this.lifeTime = lifeTime;
+        this.lifeTime = 0f;
         this.timeAlive = 0f;
     }
 
@@ -58,6 +59,15 @@ public class ProjectileControllerComponent extends Component {
         this.lockY = false;
 
         this.timeAlive = 0f;
+
+        physicsComponent.resetMovement();
+
+        projectile.getBody().setTransform(
+            projectile.getX(),
+            projectile.getY(),
+            0
+        );
+
     }
 
     public void onHitEnvironment(Object target, Contact contact) {
@@ -101,25 +111,6 @@ public class ProjectileControllerComponent extends Component {
 
         projectile.onProjectileEndCollision(contact, target);
     }
-//
-//    private void updateAxisStatesByCollision() {
-//        boolean collidingGround = groundContacts > 0;
-//        boolean collidingWall = wallContacts > 0;
-//        boolean collidingCeiling = ceilingContacts > 0;
-//
-//        if (stickOnCollision) {
-//            if (collidingCeiling || collidingGround || collidingWall) lockAllAxes();
-//            else unlockAllAxes();
-//
-//        } else if (stickToGround || stickToCeiling) {
-//            if (collidingGround || collidingCeiling) lockYAxis();
-//            else unlockYAxis();
-//
-//        } else if (stickToWall) {
-//            if (collidingWall) lockXAxis();
-//            else unlockXAxis();
-//        }
-//    }
 
     private void updateAxisStatesByCollision() {
         if (stickOnCollision) {
@@ -144,7 +135,7 @@ public class ProjectileControllerComponent extends Component {
     private void updateLifeTime(float delta) {
         timeAlive += delta;
         if (timeAlive >= lifeTime) {
-            projectile.setActive(false);
+            projectile.reset();
         }
     }
 
@@ -161,18 +152,13 @@ public class ProjectileControllerComponent extends Component {
     }
 
     /// Atualiza a posição do projétil e o lança a uma velocidade
-    public void launch(Vector2 position, Vector2 direction, float speed, boolean affectedByGravity, float lifeTime) {
-        projectile.setActive(true);
-        projectile.setLifeTime(lifeTime);
-        timeAlive = 0f;
-
+    public void launch(Vector2 position, Vector2 direction, float speed) {
         projectile.setX(position.x);
         projectile.setY(position.y);
 
         // Resetar física
         physicsComponent.getBody().setTransform(position, 0f);
         physicsComponent.getBody().setLinearVelocity(0, 0); // ou angularVelocity também se necessário
-        physicsComponent.setAffectedByGravity(affectedByGravity);
 
         // Aplicar impulso na direção desejada
         Vector2 impulse = direction.nor().scl(speed * physicsComponent.getBody().getMass());
@@ -243,6 +229,15 @@ public class ProjectileControllerComponent extends Component {
     public void unlockAllAxes() {
         this.lockX = false;
         this.lockY = false;
+    }
+
+    public boolean isAffectedByGravity() {
+        return affectedByGravity;
+    }
+
+    public void setAffectedByGravity(boolean affectedByGravity) {
+        this.affectedByGravity = affectedByGravity;
+        this.physicsComponent.setAffectedByGravity(affectedByGravity);
     }
 
     public boolean isXAxisLocked() {

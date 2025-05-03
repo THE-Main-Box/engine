@@ -9,7 +9,10 @@ import official.sketchBook.MainClass;
 import official.sketchBook.camera_related.CameraManager;
 import official.sketchBook.gameObject_related.Entity;
 import official.sketchBook.gameObject_related.GameObject;
-import official.sketchBook.gameState_related.*;
+import official.sketchBook.gameState_related.states.Configuration;
+import official.sketchBook.gameState_related.states.Menu;
+import official.sketchBook.gameState_related.states.Paused;
+import official.sketchBook.gameState_related.states.Playing;
 import official.sketchBook.input_related.InputHandler;
 import official.sketchBook.util_related.enumerators.states.GameState;
 

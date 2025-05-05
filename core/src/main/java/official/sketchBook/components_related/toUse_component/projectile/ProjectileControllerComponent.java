@@ -12,8 +12,13 @@ public class ProjectileControllerComponent extends Component {
     private final ProjectilePhysicsComponent physicsComponent;
     /// Tempo que o projétil permaneceu ativo
     private float timeAlive;
-    /// tempo que o projétil deverá permanecer vivo
-    private float lifeTime;
+    /// Tempo que o projétil deverá permanecer vivo
+    private float timeAliveLimit;
+
+    /// Tempo que o projétil está inativo
+    private float inactiveTime;
+    /// Tempo que um projétil pode ficar inativo
+    private float inactiveTimeLimit;
 
     /// Deve travar todos os eixos quando houver uma colisão
     private boolean stickOnCollision = false;
@@ -37,17 +42,35 @@ public class ProjectileControllerComponent extends Component {
         this.projectile = projectile;
         this.physicsComponent = new ProjectilePhysicsComponent(projectile);
         this.projectile.addComponent(physicsComponent);
-        this.lifeTime = 0f;
+        this.timeAliveLimit = 0f;
         this.timeAlive = 0f;
+        this.inactiveTimeLimit = 3f;
+        this.inactiveTime = 0f;
     }
 
     @Override
     public void update(float delta) {
+        updateInactiveTime(delta);
+
         if (!projectile.isActive()) return;
 
         updateLifeTime(delta);
         updateAxisSpeedByLockState();
 
+    }
+
+    private void updateInactiveTime(float delta) {
+        if (projectile.isActive()) {
+            inactiveTime = 0;
+            return;
+        }
+
+        if (inactiveTime < inactiveTimeLimit) {
+            inactiveTime += delta;
+            if (inactiveTime > inactiveTimeLimit) {
+                inactiveTime = inactiveTimeLimit; // opcional, por segurança
+            }
+        }
     }
 
     public void reset() {
@@ -117,8 +140,7 @@ public class ProjectileControllerComponent extends Component {
             setLockState(collidingAny());
         } else {
             lockX = stickToWall && wallContacts > 0;
-//            lockY = (stickToGround && groundContacts > 0) || (stickToCeiling && ceilingContacts > 0);
-            lockY = (stickToGround || stickToCeiling) && groundContacts > 0;
+            lockY = (stickToGround && groundContacts > 0) || (stickToCeiling && ceilingContacts > 0);
         }
     }
 
@@ -134,7 +156,7 @@ public class ProjectileControllerComponent extends Component {
     /// Atualiza o estado de ativo com base no tempo ativo e incrementa o tempo ativo
     private void updateLifeTime(float delta) {
         timeAlive += delta;
-        if (timeAlive >= lifeTime) {
+        if (timeAlive >= timeAliveLimit) {
             projectile.reset();
         }
     }
@@ -165,8 +187,16 @@ public class ProjectileControllerComponent extends Component {
         physicsComponent.getBody().applyLinearImpulse(impulse, physicsComponent.getBody().getWorldCenter(), true);
     }
 
-    public void setLifeTime(float lifeTime) {
-        this.lifeTime = lifeTime;
+    public float getInactiveTime() {
+        return inactiveTime;
+    }
+
+    public float getInactiveTimeLimit() {
+        return inactiveTimeLimit;
+    }
+
+    public void setTimeAliveLimit(float timeAliveLimit) {
+        this.timeAliveLimit = timeAliveLimit;
     }
 
     public void addGroundContact() {
@@ -264,8 +294,8 @@ public class ProjectileControllerComponent extends Component {
         this.stickToCeiling = stickToCeiling;
     }
 
-    public float getLifeTime() {
-        return lifeTime;
+    public float getTimeAliveLimit() {
+        return timeAliveLimit;
     }
 
     public boolean isStickToWall() {

@@ -37,7 +37,7 @@ public class ObjectAnimationPlayer {
 
         // se a duração for menor ou igual a 0 pula essa divisão
         if (currentSprite.getDuration() > 0) {
-            frameDuration = currentSprite.getDuration() / 1000.0f; // Converte a duração do frame para segundos
+            frameDuration = currentSprite.getDuration();
         }
 
         // se o tempo decorrido for maior ou igual a duração do frame atualiza ele

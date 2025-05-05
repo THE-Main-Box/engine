@@ -47,8 +47,8 @@ public class Paused extends State implements StateMethods {
         this.aniPlayer = new ObjectAnimationPlayer();
 
         aniPlayer.addAnimation("idle", Arrays.asList(
-            new Sprite(0, 0, 500),
-            new Sprite(1, 0, 500)
+            new Sprite(0, 0, 0.5f),
+            new Sprite(1, 0, 0.7f)
         ));
 
         aniPlayer.setAnimation("idle");

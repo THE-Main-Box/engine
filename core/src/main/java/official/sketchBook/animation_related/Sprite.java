@@ -2,13 +2,9 @@ package official.sketchBook.animation_related;
 
 public class Sprite {
     private int indexX, indexY;
-    private long duration;
+    private float duration;
 
-    /*a duração segue essa seguinte formatação
-     * "0.2" segundos equivale a "200" milisegundos
-     * a segunda formatação é a que será usada na duração de um sprite*/
-
-    public Sprite(int indexX, int indexY, long duration) {
+    public Sprite(int indexX, int indexY, float duration) {
         this.indexX = indexX;
         this.indexY = indexY;
         this.duration = duration;
@@ -36,11 +32,8 @@ public class Sprite {
         this.indexY = indexY;
     }
 
-    public long getDuration() {
+    public float getDuration() {
         return duration;
     }
 
-    public void setDuration(long duration) {
-        this.duration = duration;
-    }
 }

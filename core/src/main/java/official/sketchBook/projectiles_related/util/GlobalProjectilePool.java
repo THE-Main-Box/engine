@@ -1,9 +1,11 @@
 package official.sketchBook.projectiles_related.util;
 
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
 import official.sketchBook.projectiles_related.Projectile;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class GlobalProjectilePool {
@@ -15,6 +17,7 @@ public class GlobalProjectilePool {
         this.world = world;
     }
 
+    @SuppressWarnings("unchecked")
     public <T extends Projectile> Projectile returnProjectileRequested(Class<T> type){
         return createPoolIfAbsent(type).getFreeOrNew();
     }

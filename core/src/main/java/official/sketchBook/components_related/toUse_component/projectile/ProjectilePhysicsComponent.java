@@ -34,6 +34,34 @@ public class ProjectilePhysicsComponent extends Component {
         object.setY((body.getPosition().y * PPM) - (object.getRadius() * 2) / 2f);
     }
 
+    public void applyTimedTrajectory(Vector2 displacement, float time) {
+        if (body == null || time <= 0f) return;
+
+        float gravity = Math.abs(body.getWorld().getGravity().y);
+        float gravityScale = body.getGravityScale();
+
+        float dx = displacement.x;
+        float dy = displacement.y;
+
+        if (gravityScale == 0f || gravity == 0f) {
+            // Sem influência gravitacional: movimento linear
+            Vector2 velocity = new Vector2(dx / time, dy / time);
+            Vector2 impulse = velocity.scl(body.getMass());
+            applyImpulse(impulse);
+            return;
+        }
+
+        // Com gravidade: calcular arco
+        float vx = dx / time;
+        float vy = (dy / time) + (0.5f * gravity * gravityScale * time);
+
+        float height = (vy * vy) / (2 * gravity * gravityScale); // altura do arco
+        float distance = vx * time;                              // distância total
+
+        applyTrajectoryImpulse(height, distance);
+    }
+
+
     public void applyTrajectoryImpulse(float height, float distance) {
         if (body == null) return;
 

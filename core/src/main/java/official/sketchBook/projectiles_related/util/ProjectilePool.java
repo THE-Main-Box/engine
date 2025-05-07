@@ -5,28 +5,43 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import official.sketchBook.projectiles_related.Projectile;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ProjectilePool<T extends Projectile> extends Pool<T> {
     private final Class<T> type;
     private final World world;
-    private final Array<T> allProjectiles;
+    private final List<T> allProjectiles;
 
 
     public ProjectilePool(Class<T> type, World world) {
         this.type = type;
         this.world = world;
-        this.allProjectiles = new Array<>();
+        this.allProjectiles = new ArrayList<>();
     }
 
-    public void recycleInactiveProjectiles() {
-        for (int i = allProjectiles.size - 1; i >= 0; i--) {
+    /// Destrói todos os projéteis inativos
+    public void destroyInactiveProjectiles() {
+        for (int i = allProjectiles.size() - 1; i >= 0; i--) {
             T projectile = allProjectiles.get(i);
 
-            if (projectile.shouldBeRecycled()) {
+            if (projectile.shouldBeDestroyedPermanently()) {
                 // Destruir recursos associados
                 projectile.destroy();
-                allProjectiles.removeIndex(i);
+                allProjectiles.remove(i);
             }
         }
+    }
+
+    public void destroyAllProjectiles() {
+        for (int i = allProjectiles.size() - 1; i >= 0; i--) {
+            T projectile = allProjectiles.get(i);
+
+            projectile.destroy();
+            allProjectiles.remove(i);
+
+        }
+
     }
 
     @Override
@@ -47,7 +62,7 @@ public class ProjectilePool<T extends Projectile> extends Pool<T> {
         return obtain();
     }
 
-    public Array<T> getAllProjectiles() {
+    public List<T> getAllProjectiles() {
         return allProjectiles;
     }
 }

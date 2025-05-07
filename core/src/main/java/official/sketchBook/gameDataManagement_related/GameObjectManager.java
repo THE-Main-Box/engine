@@ -3,10 +3,10 @@ package official.sketchBook.gameDataManagement_related;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.World;
 import official.sketchBook.gameObject_related.GameObject;
+import official.sketchBook.projectiles_related.util.GlobalProjectilePool;
 import official.sketchBook.room_related.model.PlayableRoom;
 import official.sketchBook.room_related.worldGeneration_related.blueprint.RoomBlueprint;
 import official.sketchBook.room_related.worldGeneration_related.generation.WorldGenerator;
-import official.sketchBook.room_related.worldGeneration_related.generation.WorldGrid;
 import official.sketchBook.room_related.worldGeneration_related.generation.WorldLayout;
 import official.sketchBook.screen_related.PlayScreen;
 import official.sketchBook.util_related.enumerators.types.RoomType;
@@ -19,6 +19,7 @@ public class GameObjectManager {
     private PlayableRoomManager manager;
     private PlayableRoom currentRoom;
     private WorldGenerator generator;
+    private GlobalProjectilePool projectilePool;
 
     //TODO: criar classe onde centralizamos a criação, salvamento, edição etc... de salas e mundos
 
@@ -26,6 +27,7 @@ public class GameObjectManager {
         this.generator = new WorldGenerator(5, 5);
         this.manager = new PlayableRoomManager(world, generator.getGrid());
         this.currentRoom = this.manager.createNewRoom();
+        this.projectilePool = currentRoom.getProjectilePool();
 
         this.initRoom();
     }
@@ -84,11 +86,13 @@ public class GameObjectManager {
 
     public void syncObjectsBodies() {
         currentRoom.syncObjectsBodies();
+        projectilePool.syncProjectilesBodies();
         currentRoom.updateEntitiesRayCasts();
     }
 
     public void updateObjects(float delta) {
         currentRoom.updateObjects(delta);
+        projectilePool.updateProjectiles(delta);
     }
 
     public void renderObjects(SpriteBatch batch) {

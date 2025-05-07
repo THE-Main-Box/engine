@@ -52,8 +52,10 @@ public abstract class Projectile implements Pool.Poolable {
         this.createBody();
     }
 
+    /// Inicia as informações dinâmicas do projétil
     public abstract void init(Entity owner);
 
+    /// Inicia o comportamento padrão do projétil(chamado no construtor)
     protected void initBodyBehavior(
         boolean stickOnCollision,
         boolean stickOnWall,
@@ -82,6 +84,7 @@ public abstract class Projectile implements Pool.Poolable {
 
     protected abstract void setBodyDefValues();
 
+    /// Cria uma body padrão para todos os projéteis
     protected void createBody() {
         body = BodyCreatorHelper.createCircle(
             world,
@@ -104,12 +107,19 @@ public abstract class Projectile implements Pool.Poolable {
 
     }
 
+    /// Atualiza todos os componentes existentes dentro do objeto
     protected void updateComponents(float delta) {
         for (Component component : components) {
             component.update(delta);
         }
     }
 
+    /// Serve para "matar" o projétil, resetando as suas propriedades dinâmicas
+    public void die(){
+        this.reset();
+    }
+
+    /// Reset e desativação do projétil
     @Override
     public void reset() {
         this.active = false;
@@ -117,7 +127,10 @@ public abstract class Projectile implements Pool.Poolable {
 
         this.setLifeTime(0f);
 
+        this.body.setActive(false);
+
         controllerComponent.reset();
+        this.dispose();
     }
 
 
@@ -125,23 +138,32 @@ public abstract class Projectile implements Pool.Poolable {
 
     }
 
-    public boolean shouldBeRecycled() {
-        return controllerComponent.getInactiveTime() >= controllerComponent.getInactiveTimeLimit() && !active;
+    /// Valida se o projétil deve ser destruído permanentemente,
+    /// verifica se o tempo inativo foi atingido e também se podemos eliminar a body do mundo
+    public boolean shouldBeDestroyedPermanently() {
+        boolean recycleByTime = controllerComponent.getInactiveTime() >= controllerComponent.getInactiveTimeLimit();
+        boolean recycleByWorld = world != null && !world.isLocked();
+
+        return !active && recycleByTime && recycleByWorld;
     }
 
+    /// Limpa os dados mais pesados que precisam ser reciclados períodicamente
     public void dispose() {
         if (spriteSheetDatahandler != null) {
             spriteSheetDatahandler.dispose();
         }
     }
 
-    public void destroyPhysics(){
-        if(body != null && world != null && !world.isLocked()){
+    /// Destrói a body e a física do projétil permanentemente
+    public void destroyPhysics() {
+        if (body != null && world != null && !world.isLocked()) {
             world.destroyBody(body);
             this.body = null;
+            this.world = null;
         }
     }
 
+    ///Limpa todas as informações do projétil para preparar ele para ser eliminado permanentemente
     public void destroy() {
         destroyPhysics();
         dispose();

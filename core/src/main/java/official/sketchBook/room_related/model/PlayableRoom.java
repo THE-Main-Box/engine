@@ -7,6 +7,7 @@ import com.badlogic.gdx.utils.Pool.Poolable;
 import official.sketchBook.gameObject_related.Entity;
 import official.sketchBook.gameObject_related.GameObject;
 import official.sketchBook.gameObject_related.MovableGameObject;
+import official.sketchBook.projectiles_related.util.GlobalProjectilePool;
 import official.sketchBook.room_related.worldGeneration_related.connection.RoomNode;
 import official.sketchBook.util_related.helpers.body.RoomBodyDataConversor;
 
@@ -16,6 +17,7 @@ import java.util.List;
 public class PlayableRoom implements Poolable {
     private Room roomData;
     private RoomNode roomConnections;
+    private GlobalProjectilePool projectilePool;
 
     private final World world;
 
@@ -26,32 +28,34 @@ public class PlayableRoom implements Poolable {
 
     public PlayableRoom(World world) {
         this.world = world;
+        this.projectilePool = new GlobalProjectilePool(world);
     }
 
     public void initialize(Room roomData, RoomNode roomConnections) {
         this.roomData = roomData;
         this.roomConnections = roomConnections;
         this.nativeBodies = RoomBodyDataConversor.buildTileMergedBodies(roomData.getTiles(), this.world);
-//        this.nativeBodies = RoomBodyDataConversor.convertTileListToBodyList(roomData.getTiles(), this.world);
         this.gameObjects = new ArrayList<>();
 
         this.active = true;
     }
 
+    /// Reseta a sala para poder ser iniciada como outra sala
     public void reset() {
-        this.dispose();
+        this.dispose();//limpa dados
 
-        if (nativeBodies != null) {
+        if (nativeBodies != null) { //limpa e destrói todas as bodies nativas
             for (Body body : nativeBodies) {
                 world.destroyBody(body);
             }
             nativeBodies.clear();
         }
 
-        if (gameObjects != null) {
+        if (gameObjects != null) { //limpa a lista de gameObjects
             gameObjects.clear();
         }
 
+        projectilePool.killPool();
         roomData = null;
         roomConnections = null;
         gameObjects = null;
@@ -107,6 +111,10 @@ public class PlayableRoom implements Poolable {
                 object.dispose();
             }
         }
+    }
+
+    public GlobalProjectilePool getProjectilePool() {
+        return projectilePool;
     }
 
     public void addNativeBody(Body body) {

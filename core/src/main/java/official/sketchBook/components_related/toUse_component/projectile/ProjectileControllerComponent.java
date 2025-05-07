@@ -173,18 +173,14 @@ public class ProjectileControllerComponent extends Component {
         }
     }
 
-    /// Atualiza a posição do projétil e o lança a uma velocidade
-    public void launch(Vector2 position, Vector2 direction, float speed) {
-        projectile.setX(position.x);
-        projectile.setY(position.y);
+    /// Atualiza a posição do projétil e o lança para atingir um deslocamento no tempo desejado
+    public void launch(Vector2 displacement, float timeSeconds) {
+        // Posiciona o projétil corretamente
+        physicsComponent.getBody().setTransform(projectile.getX(), projectile.getY(), 0f);
+        physicsComponent.getBody().setLinearVelocity(0, 0); // reseta a velocidade
 
-        // Resetar física
-        physicsComponent.getBody().setTransform(position, 0f);
-        physicsComponent.getBody().setLinearVelocity(0, 0); // ou angularVelocity também se necessário
-
-        // Aplicar impulso na direção desejada
-        Vector2 impulse = direction.nor().scl(speed * physicsComponent.getBody().getMass());
-        physicsComponent.getBody().applyLinearImpulse(impulse, physicsComponent.getBody().getWorldCenter(), true);
+        // Aplica o impulso calculado para atingir o deslocamento no tempo desejado
+        physicsComponent.applyTimedTrajectory(displacement, timeSeconds);
     }
 
     public float getInactiveTime() {

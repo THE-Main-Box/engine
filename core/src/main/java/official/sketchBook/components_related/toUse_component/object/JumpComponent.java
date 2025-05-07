@@ -9,15 +9,25 @@ import static official.sketchBook.screen_related.PlayScreen.PPM;
 
 public class JumpComponent extends Component {
 
+
     private boolean jumping, falling, jumpedFromGround, coyoteConsumed;
     private float jumpForce, fallSpeedAfterJCancel;
+    private boolean enhancedGravity;
     private TimerComponent coyoteTimer;
 
     private Entity entity;
 
-    public JumpComponent(Entity entity, float jumpForce, float fallSpeedAfterJCancel, float coyoteTimeTarget) {
+    private boolean prevOnGround;        // armazena onGround do frame anterior
+    private boolean landedThisFrame;     // true somente no frame em que aterrissa
+
+    private final TimerComponent landBuffer;
+
+    public JumpComponent(Entity entity, float jumpForce, float fallSpeedAfterJCancel, float coyoteTimeTarget, boolean enhancedGravity) {
         this.entity = entity;
         this.coyoteTimer = new TimerComponent(coyoteTimeTarget);
+        this.landBuffer = new TimerComponent(0.1f); // 100ms de buffer
+
+        this.enhancedGravity = enhancedGravity;
 
         this.jumpForce = jumpForce / PPM;
         this.fallSpeedAfterJCancel = fallSpeedAfterJCancel / PPM;
@@ -31,7 +41,46 @@ public class JumpComponent extends Component {
     @Override
     public void update(float delta) {
         coyoteTimer.update(delta);
+        landBuffer.update(delta);
+
         updateJump();
+        applyEnhancedGravity();
+
+        updateLandedFlag();
+    }
+
+    private void updateLandedFlag() {
+        boolean currentlyOnGround = entity.isOnGround();
+
+        // detecta aterrissagem: só se estava no ar ANTES e caiu (falling)
+        landedThisFrame = !prevOnGround && currentlyOnGround;
+
+        prevOnGround = currentlyOnGround;
+
+        if (landedThisFrame) {
+            landBuffer.reset();
+            landBuffer.start();
+        }
+
+        landBuffer.resetByFinished();
+    }
+
+
+    private void applyEnhancedGravity() {
+        if (!enhancedGravity) return;
+
+        float defaultScale = 1f;
+        float enhancedScale = 2f;
+
+        if (jumpedFromGround && falling) {
+            if (entity.getBody().getGravityScale() == defaultScale) {
+                entity.getBody().setGravityScale(enhancedScale);
+            }
+        } else if ((!jumpedFromGround && !falling) || entity.isOnGround()) {
+            if (entity.getBody().getGravityScale() > defaultScale) {
+                entity.getBody().setGravityScale(defaultScale);
+            }
+        }
     }
 
     private void updateJump() {
@@ -132,6 +181,10 @@ public class JumpComponent extends Component {
 
         }
 
+    }
+
+    public boolean isEntityLanded() {
+        return landBuffer.isRunning() && !landBuffer.isFinished();
     }
 
     public boolean isJumping() {

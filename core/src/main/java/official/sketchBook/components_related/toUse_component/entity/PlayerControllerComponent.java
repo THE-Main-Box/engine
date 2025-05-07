@@ -1,5 +1,6 @@
 package official.sketchBook.components_related.toUse_component.entity;
 
+import com.badlogic.gdx.math.Vector2;
 import official.sketchBook.components_related.base_component.KeyBindedControllerComponent;
 import official.sketchBook.components_related.toUse_component.util.TimerComponent;
 import official.sketchBook.gameObject_related.GameObject;
@@ -14,8 +15,8 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
     private final Player player;
 
     private final float groundAccel = 50f / PPM;
-    private final float airAccel = 25f / PPM;
-    private float speedToApply;
+    private final float airAccel = 10f / PPM;
+    private float accelToApply;
 
     private boolean leftPressed = false;
     private boolean rightPressed = false;
@@ -63,7 +64,7 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
 
     }
 
-    private void updateJump(float delta){
+    private void updateJump(float delta) {
         jumpBufferTimer.update(delta);
 
         jumpBufferTimer.resetByFinished();
@@ -78,12 +79,24 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
 
     //atualiza as variaveis de movimentação em cada estado, se estivermos no ar
     private void updateAirMovementValues() {
-        speedToApply = groundAccel;
 
-        player.getMoveC().setxMaxSpeed(SpeedRelatedVariables.PLAYER_HORIZONTAL_WALK);
-        player.getMoveC().setDecelerationX(SpeedRelatedVariables.PLAYER_HORIZONTAL_WALK_DEC);
+        float accel = 0, decel = 0, maxAccel = 0;
 
-        this.speedToApply = groundAccel;
+        if (player.isOnGround()) {
+            // se está no chão
+            accel = groundAccel;
+            maxAccel = SpeedRelatedVariables.PLAYER_HORIZONTAL_WALK_MAX;
+            decel = SpeedRelatedVariables.PLAYER_HORIZONTAL_WALK_DEC;
+        } else {
+            // se está no ar
+            accel = airAccel;
+            maxAccel = SpeedRelatedVariables.PLAYER_HORIZONTAL_AIR_MAX;
+            decel = SpeedRelatedVariables.PLAYER_HORIZONTAL_AIR_DEC;
+        }
+
+        this.accelToApply = accel;
+        player.getMoveC().setxMaxSpeed(maxAccel);
+        player.getMoveC().setDecelerationX(decel);
 
     }
 
@@ -119,12 +132,12 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
             case LEFT:
                 player.setFacingForward(false);
                 player.getMoveC().setAcceleratingX(true);
-                player.getMoveC().setxAccel(-speedToApply);
+                player.getMoveC().setxAccel(-accelToApply);
                 break;
             case RIGHT:
                 player.setFacingForward(true);
                 player.getMoveC().setAcceleratingX(true);
-                player.getMoveC().setxAccel(speedToApply);
+                player.getMoveC().setxAccel(accelToApply);
                 break;
             case STILL:
                 player.getMoveC().setAcceleratingX(false);

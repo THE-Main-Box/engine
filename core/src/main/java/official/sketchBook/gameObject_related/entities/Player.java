@@ -22,13 +22,13 @@ public class Player extends Entity {
         controllerComponent = new PlayerControllerComponent(this);
         addComponent(controllerComponent);
 
-        jComponent = new JumpComponent(this, 40, 100, 0.1f);
+        jComponent = new JumpComponent(this, 35, 100, 0.1f, true);
         addComponent(jComponent);
     }
 
     @Override
     protected void setBodyDefValues() {
-        this.defDens = 1;
+        this.defDens = 0.1f;
         this.defFric = 1f;
         this.defRest = 0;
     }
@@ -56,6 +56,32 @@ public class Player extends Entity {
     public void update(float deltaTime) {
         this.updateComponents(deltaTime);
         super.update(deltaTime);
+
+    }
+
+    @Override
+    protected void applySpeedOnBody() {
+        if (physicsC == null || moveC == null) return;
+        if (jComponent.isEntityLanded() && !moveC.isAcceleratingX()) {
+
+            float reducedSpeedX = moveC.getxSpeed() * 0.7f; // exemplo de redução
+            physicsC.applyImpulseForSpeed(
+                reducedSpeedX,
+                moveC.getySpeed(),
+                moveC.getxMaxSpeed(),
+                moveC.getyMaxSpeed()
+            );
+
+        } else {
+
+            physicsC.applyImpulseForSpeed(
+                moveC.getxSpeed(),
+                moveC.getySpeed(),
+                moveC.getxMaxSpeed(),
+                moveC.getyMaxSpeed()
+            );
+
+        }
 
     }
 

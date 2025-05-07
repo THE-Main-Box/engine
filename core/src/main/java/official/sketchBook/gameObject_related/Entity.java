@@ -30,14 +30,16 @@ public abstract class Entity extends MovableGameObject{
 
         float halfWidth = (width / 2f) / PPM;
         float halfHeight = (height / 2f) / PPM;
-        float footY = center.y - halfHeight; // Origem no "pé"
+        float footY = center.y - halfHeight + 2/PPM; // Origem no "pé"
 
-        float rayLength = 1f / PPM; // Alcance pequeno pra detectar chão
+        float rayLength = 3f / PPM; // Alcance pequeno pra detectar chão
+
+        float margin = 1f / PPM; // pequeno recuo lateral
 
         Vector2[] rayStarts = new Vector2[]{
-            new Vector2(center.x - halfWidth + 2f / PPM, footY),
+            new Vector2(center.x - halfWidth + margin, footY),
             new Vector2(center.x, footY),
-            new Vector2(center.x + halfWidth - 2f / PPM, footY)
+            new Vector2(center.x + halfWidth - margin, footY)
         };
 
         for (Vector2 start : rayStarts) {

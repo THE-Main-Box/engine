@@ -3,6 +3,7 @@ package official.sketchBook.gameObject_related;
 import com.badlogic.gdx.physics.box2d.World;
 import official.sketchBook.components_related.toUse_component.object.MObjectPhysicsComponent;
 import official.sketchBook.components_related.toUse_component.object.MovementComponent;
+import official.sketchBook.room_related.model.PlayableRoom;
 
 public abstract class MovableGameObject extends GameObject {
 

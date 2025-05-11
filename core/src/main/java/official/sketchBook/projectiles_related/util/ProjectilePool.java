@@ -13,7 +13,6 @@ public class ProjectilePool<T extends Projectile> extends Pool<T> {
     private final World world;
     private final List<T> allProjectiles;
 
-
     public ProjectilePool(Class<T> type, World world) {
         this.type = type;
         this.world = world;

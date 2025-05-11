@@ -6,6 +6,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import official.sketchBook.animation_related.ObjectAnimationPlayer;
 import official.sketchBook.animation_related.SpriteSheetDatahandler;
 import official.sketchBook.components_related.base_component.Component;
+import official.sketchBook.room_related.model.PlayableRoom;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,7 @@ public abstract class GameObject {
 
     protected float defFric, defRest, defDens;
 
+    protected PlayableRoom ownerRoom;
 
     public GameObject(float x, float y, float width, float height, boolean facingForward, World world) {
         this.x = x;
@@ -94,6 +96,14 @@ public abstract class GameObject {
 
     public boolean hasComponent(Class<? extends Component> type) {
         return components.stream().anyMatch(type::isInstance);
+    }
+
+    public PlayableRoom getOwnerRoom() {
+        return ownerRoom;
+    }
+
+    public void setOwnerRoom(PlayableRoom ownerRoom) {
+        this.ownerRoom = ownerRoom;
     }
 
     public float getDefFric() {

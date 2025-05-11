@@ -1,17 +1,27 @@
 package official.sketchBook.projectiles_related.emitters;
 
 import com.badlogic.gdx.math.Vector2;
+import official.sketchBook.gameDataManagement_related.GameObjectManager;
 import official.sketchBook.gameObject_related.Entity;
 import official.sketchBook.projectiles_related.Projectile;
 import official.sketchBook.projectiles_related.util.GlobalProjectilePool;
+import official.sketchBook.util_related.poolRegisters.ProjectilePoolRegister;
 
 public class Emitter<T extends Projectile> {
-    protected final GlobalProjectilePool pool;
+    protected GlobalProjectilePool pool;
     protected final Class<T> type;
+    protected final Entity owner;
 
-    public Emitter(GlobalProjectilePool pool, Class<T> type) {
-        this.pool = pool;
+    public Emitter(Class<T> type, Entity owner) {
+        this.owner = owner;
         this.type = type;
+        updatePool();
+    }
+
+    public void updatePool() {
+        this.pool = ProjectilePoolRegister.getPool(this.owner.getOwnerRoom());
+        if (this.pool == null)
+            throw new IllegalStateException("Projectile pool not registered for the room.");
     }
 
     /**
@@ -31,13 +41,10 @@ public class Emitter<T extends Projectile> {
      *
      * @param timeToReach Tempo estimado para chegar no alvo,
      *                    pode ser ignorado caso o projétil não seja influenciado pela gravidade
-     *
      * @param p           projétil a ser atirado (precisa ser do mesmo tipo do emissor)
-     *
      * @param x           direção horizontal que o projétil deve ser lançado,
      *                    porém, caso o projétil seja afetado pela gravidade,
      *                    ele irá ser tratado como a distância que o projétil deverá alcançar, quer seja positiva ou negativa
-     *
      * @param y           direção vertical que o projétil deve ser lançado,
      *                    porém, caso o projétil seja afetado pela gravidade,
      *                    ele irá ser tratado como a altura que o projétil deverá alcançar, quer seja positiva ou negativa

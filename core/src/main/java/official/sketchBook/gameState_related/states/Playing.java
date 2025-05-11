@@ -28,7 +28,6 @@ public class Playing extends State implements StateMethods {
     public World world;
     public GameObjectManager objectManager;
 
-    private Player player;
 
     public Playing(PlayScreen game, CameraManager gameCameraManager, CameraManager uiCameraManager) {
         super(game, gameCameraManager, uiCameraManager);
@@ -39,9 +38,6 @@ public class Playing extends State implements StateMethods {
         gameCameraManager.setZoom(zoom);
 
         objectManager = new GameObjectManager(world);
-
-        player = new Player(10, 100, 16, 32, true, this.world);
-        objectManager.addGameObject(objectManager.getCurrentRoom(), player);
 
         world.setContactListener(multiContactListener);
         this.setContactListeners();
@@ -68,7 +64,7 @@ public class Playing extends State implements StateMethods {
 
         HelpMethods.updateCameraMovementParams(gameCameraManager, worldWidth, worldHeight);
         gameCameraManager.setEase(0.1f, 0.5f, 1f);
-        gameCameraManager.trackObjectByOffset(player.getX(), player.getY());
+        gameCameraManager.trackObjectByOffset(objectManager.player.getX(), objectManager.player.getY());
     }
 
     @Override

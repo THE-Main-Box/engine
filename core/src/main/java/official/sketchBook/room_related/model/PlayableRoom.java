@@ -10,6 +10,7 @@ import official.sketchBook.gameObject_related.MovableGameObject;
 import official.sketchBook.projectiles_related.util.GlobalProjectilePool;
 import official.sketchBook.room_related.worldGeneration_related.connection.RoomNode;
 import official.sketchBook.util_related.helpers.body.RoomBodyDataConversor;
+import official.sketchBook.util_related.poolRegisters.ProjectilePoolRegister;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +20,7 @@ public class PlayableRoom implements Poolable {
     private RoomNode roomConnections;
     private GlobalProjectilePool projectilePool;
 
-    private final World world;
+    private World world;
 
     private List<GameObject> gameObjects;
     private List<Body> nativeBodies;
@@ -28,19 +29,22 @@ public class PlayableRoom implements Poolable {
 
     public PlayableRoom(World world) {
         this.world = world;
-        this.projectilePool = new GlobalProjectilePool(world);
+        this.projectilePool = new GlobalProjectilePool(world, this);
+        this.gameObjects = new ArrayList<>();
     }
 
     public void initialize(Room roomData, RoomNode roomConnections) {
         this.roomData = roomData;
         this.roomConnections = roomConnections;
         this.nativeBodies = RoomBodyDataConversor.buildTileMergedBodies(roomData.getTiles(), this.world);
-        this.gameObjects = new ArrayList<>();
+
+        //Registra a pool na inicialização
+        ProjectilePoolRegister.register(this, this.projectilePool);
 
         this.active = true;
     }
 
-    /// Reseta a sala para poder ser iniciada como outra sala
+    /// Reseta a sala e a prepara para se tornar outra
     public void reset() {
         this.dispose();//limpa dados
 
@@ -55,26 +59,42 @@ public class PlayableRoom implements Poolable {
             gameObjects.clear();
         }
 
+        //Remove ela do registro para evitar uso indevido
+        ProjectilePoolRegister.unregister(this);
         projectilePool.killPool();
         roomData = null;
         roomConnections = null;
-        gameObjects = null;
         active = false;
     }
 
+    /// Limpa e elimina todos os valores dentro da sala
+    public void destroy() {
+        reset();
+
+        this.world = null;
+        this.nativeBodies = null;
+        this.gameObjects = null;
+        this.projectilePool = null;
+
+    }
+
     public void syncObjectsBodies() {
-        if (!active) return;
+        if (!active || gameObjects == null) return;
 
         for (GameObject object : gameObjects) {
             if (object instanceof MovableGameObject mObj && mObj.getPhysicsC() != null) {
                 mObj.getPhysicsC().syncBodyObjectPos();
             }
         }
+
+        this.projectilePool.syncProjectilesBodies();
     }
 
-    public void updateEntitiesRayCasts(){
-        for(GameObject object : gameObjects){
-            if(object instanceof Entity entity && entity.getRayCastHelper() != null){
+    public void updateEntitiesRayCasts() {
+        if (!active || gameObjects == null) return;
+
+        for (GameObject object : gameObjects) {
+            if (object instanceof Entity entity && entity.getRayCastHelper() != null) {
                 entity.updateRayCast();
             }
         }
@@ -89,6 +109,9 @@ public class PlayableRoom implements Poolable {
             }
         }
 
+        if (projectilePool != null) {
+            this.projectilePool.updateProjectiles(delta);
+        }
     }
 
 
@@ -111,6 +134,11 @@ public class PlayableRoom implements Poolable {
                 object.dispose();
             }
         }
+
+        if(projectilePool != null){
+            projectilePool.dispose();
+        }
+
     }
 
     public GlobalProjectilePool getProjectilePool() {

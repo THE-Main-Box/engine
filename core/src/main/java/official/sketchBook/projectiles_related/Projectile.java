@@ -11,6 +11,7 @@ import official.sketchBook.animation_related.ObjectAnimationPlayer;
 import official.sketchBook.animation_related.SpriteSheetDatahandler;
 import official.sketchBook.components_related.base_component.Component;
 import official.sketchBook.components_related.toUse_component.projectile.ProjectileControllerComponent;
+import official.sketchBook.components_related.toUse_component.projectile.ProjectilePhysicsComponent;
 import official.sketchBook.gameObject_related.Entity;
 import official.sketchBook.util_related.enumerators.types.FixtType;
 import official.sketchBook.util_related.helpers.body.BodyCreatorHelper;
@@ -23,9 +24,12 @@ public abstract class Projectile implements Pool.Poolable {
 
     protected boolean active;// flag para se está ativo
     protected float lifeTime;//tempo de vida do projétil
-    protected float radius;//raio da area da body do projétil
+    protected float radius = 0;//raio da area da body do projétil
+
     protected ProjectileControllerComponent controllerComponent;//componente de controle, tem um em cada projétil
 
+    /// Componente de física próprio do projétil
+    private final ProjectilePhysicsComponent physicsComponent;
     protected float x, y;
 
     protected List<Component> components;
@@ -44,12 +48,15 @@ public abstract class Projectile implements Pool.Poolable {
         this.world = world;
         this.active = false;
         this.components = new ArrayList<>();
-        this.controllerComponent = new ProjectileControllerComponent(this);
-
-        this.addComponent(controllerComponent);
 
         this.setBodyDefValues();
         this.createBody();
+
+        this.controllerComponent = new ProjectileControllerComponent(this);
+        this.addComponent(controllerComponent);
+
+        this.physicsComponent = new ProjectilePhysicsComponent(this);
+        this.addComponent(physicsComponent);
     }
 
     /// Inicia as informações dinâmicas do projétil
@@ -98,6 +105,7 @@ public abstract class Projectile implements Pool.Poolable {
         body.setUserData(new FixtureType(FixtType.PROJECTILE, this));
         body.setBullet(true); // Importante para colisões de alta velocidade
         body.setFixedRotation(true);
+
     }
 
     public void update(float deltaTime) {
@@ -122,12 +130,10 @@ public abstract class Projectile implements Pool.Poolable {
     /// Reset e desativação do projétil
     @Override
     public void reset() {
-        this.active = false;
+        this.setActive(false);
         this.owner = null;
 
         this.setLifeTime(0f);
-
-        this.body.setActive(false);
 
         controllerComponent.reset();
         this.dispose();
@@ -187,6 +193,10 @@ public abstract class Projectile implements Pool.Poolable {
         this.controllerComponent.setTimeAliveLimit(lifeTime);
     }
 
+    public ProjectilePhysicsComponent getPhysicsComponent() {
+        return physicsComponent;
+    }
+
     public ProjectileControllerComponent getControllerComponent() {
         return controllerComponent;
     }
@@ -194,13 +204,12 @@ public abstract class Projectile implements Pool.Poolable {
     public float getRadius() {
         return radius;
     }
-
+    public void setActive(boolean value) {
+        this.active = value;
+        body.setActive(value);
+    }
     public boolean isActive() {
         return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
     }
 
     public boolean isFacingForward() {

@@ -1,10 +1,13 @@
 package official.sketchBook.components_related.toUse_component.entity;
 
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
 import official.sketchBook.components_related.base_component.KeyBindedControllerComponent;
 import official.sketchBook.components_related.toUse_component.util.TimerComponent;
+import official.sketchBook.gameDataManagement_related.GameObjectManager;
 import official.sketchBook.gameObject_related.GameObject;
 import official.sketchBook.gameObject_related.entities.Player;
+import official.sketchBook.projectiles_related.Projectile;
 import official.sketchBook.util_related.enumerators.directions.Direction;
 import official.sketchBook.util_related.info.util.values.ControlKeys;
 import official.sketchBook.util_related.info.util.values.SpeedRelatedVariables;
@@ -32,7 +35,25 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
         bindKey(ControlKeys.move_left, this::moveLeft);
         bindKey(ControlKeys.move_right, this::moveRight);
         bindKey(ControlKeys.jump, this::jump);
+        bindKey(Input.Keys.X, this::testShoot);
 
+    }
+
+    private void testShoot(boolean pressed) {
+        if (GameObjectManager.emitter == null) return;
+
+        if (pressed) {
+            Projectile proj = GameObjectManager.emitter.obtain(
+                new Vector2(
+                    (!player.isFacingForward() ? player.getX() - 3 : player.getX() + player.getWidth() + 3) / PPM,
+                    (player.getY() + player.getHeight() / 2) / PPM
+                )
+            );
+
+            if (proj == null) return;
+
+            GameObjectManager.emitter.fire(proj, player.isFacingForward() ? 1: -1, -2, 1);
+        }
     }
 
     private void jump(boolean pressed) {
@@ -117,6 +138,7 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
         leftPressed = pressed;
         if (pressed) {
             lastDirectionPressed = Direction.LEFT;
+            player.setFacingForward(false);
         }
     }
 
@@ -124,6 +146,8 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
         rightPressed = pressed;
         if (pressed) {
             lastDirectionPressed = Direction.RIGHT;
+            player.setFacingForward(false);
+
         }
     }
 

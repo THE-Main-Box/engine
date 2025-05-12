@@ -28,11 +28,13 @@ public class Emitter<T extends Projectile> {
      * Chama para preparar um novo projétil.
      */
     @SuppressWarnings("unchecked")
-    public T obtain(Entity owner, Vector2 position) {
+    public T obtain(Vector2 position) {
         T p = (T) pool.returnProjectileRequested(type);
         p.init(owner);
         p.setX(position.x);//seta a posição x
         p.setY(position.y);//seta a posição y
+        p.getBody().setTransform(position, 0f);
+
         return p;
     }
 
@@ -49,7 +51,7 @@ public class Emitter<T extends Projectile> {
      *                    porém, caso o projétil seja afetado pela gravidade,
      *                    ele irá ser tratado como a altura que o projétil deverá alcançar, quer seja positiva ou negativa
      */
-    public void fire(T p, float x, float y, float timeToReach) {
+    public void fire(Projectile p, float x, float y, float timeToReach) {
         p.getControllerComponent().launch(new Vector2(x, y), timeToReach);
     }
 }

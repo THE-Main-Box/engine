@@ -66,7 +66,7 @@ public class GlobalProjectilePool {
                 if (!p.isActive()) continue;
 
                 p.getControllerComponent()
-                    .getPhysicsComponent()
+                    .getProjectile().getPhysicsComponent()
                     .syncBodyObjectPos();
             }
         }

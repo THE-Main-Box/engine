@@ -5,6 +5,8 @@ import com.badlogic.gdx.physics.box2d.World;
 import official.sketchBook.gameObject_related.GameObject;
 import official.sketchBook.gameObject_related.entities.Player;
 import official.sketchBook.projectiles_related.Projectile;
+import official.sketchBook.projectiles_related.emitters.Emitter;
+import official.sketchBook.projectiles_related.projectiles.TestProjectile;
 import official.sketchBook.projectiles_related.util.GlobalProjectilePool;
 import official.sketchBook.room_related.model.PlayableRoom;
 import official.sketchBook.room_related.worldGeneration_related.blueprint.RoomBlueprint;
@@ -38,6 +40,13 @@ public class GameObjectManager {
         currentRoom.addObject(player);
 
         this.initRoom();
+        createPlayerEmitter();
+    }
+
+    public static Emitter<TestProjectile> emitter;
+
+    private void createPlayerEmitter(){
+        emitter = new Emitter<>(TestProjectile.class, player);
     }
 
     private void initRoom() {

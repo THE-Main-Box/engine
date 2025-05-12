@@ -8,8 +8,6 @@ import official.sketchBook.projectiles_related.Projectile;
 public class ProjectileControllerComponent extends Component {
     /// Projétil a quem pertence esse controlador
     private Projectile projectile;
-    /// Componente de física próprio do projétil
-    private final ProjectilePhysicsComponent physicsComponent;
     /// Tempo que o projétil permaneceu ativo
     private float timeAlive;
     /// Tempo que o projétil deverá permanecer vivo
@@ -40,8 +38,6 @@ public class ProjectileControllerComponent extends Component {
 
     public ProjectileControllerComponent(Projectile projectile) {
         this.projectile = projectile;
-        this.physicsComponent = new ProjectilePhysicsComponent(projectile);
-        this.projectile.addComponent(physicsComponent);
         this.timeAliveLimit = 0f;
         this.timeAlive = 0f;
         this.inactiveTimeLimit = 3f;
@@ -83,7 +79,7 @@ public class ProjectileControllerComponent extends Component {
 
         this.timeAlive = 0f;
 
-        physicsComponent.resetMovement();
+        projectile.getPhysicsComponent().resetMovement();
 
         projectile.getBody().setTransform(
             projectile.getX(),
@@ -157,7 +153,7 @@ public class ProjectileControllerComponent extends Component {
     private void updateLifeTime(float delta) {
         timeAlive += delta;
         if (timeAlive >= timeAliveLimit) {
-            projectile.reset();
+            projectile.die();
         }
     }
 
@@ -166,21 +162,21 @@ public class ProjectileControllerComponent extends Component {
     private void updateAxisSpeedByLockState() {
         // Travas de eixo
         if (lockX || lockY) {
-            Vector2 velocity = physicsComponent.getBody().getLinearVelocity();
+            Vector2 velocity = projectile.getPhysicsComponent().getBody().getLinearVelocity();
             float x = lockX ? 0f : velocity.x;
             float y = lockY ? 0f : velocity.y;
-            physicsComponent.getBody().setLinearVelocity(x, y);
+            projectile.getPhysicsComponent().getBody().setLinearVelocity(x, y);
         }
     }
 
     /// Atualiza a posição do projétil e o lança para atingir um deslocamento no tempo desejado
     public void launch(Vector2 displacement, float timeSeconds) {
         // Posiciona o projétil corretamente
-        physicsComponent.getBody().setTransform(projectile.getX(), projectile.getY(), 0f);
-        physicsComponent.getBody().setLinearVelocity(0, 0); // reseta a velocidade
+        projectile.getPhysicsComponent().getBody().setTransform(projectile.getX(), projectile.getY(), 0f);
+        projectile.getPhysicsComponent().getBody().setLinearVelocity(0, 0); // reseta a velocidade
 
         // Aplica o impulso calculado para atingir o deslocamento no tempo desejado
-        physicsComponent.applyTimedTrajectory(displacement, timeSeconds);
+        projectile.getPhysicsComponent().applyTimedTrajectory(displacement, timeSeconds);
     }
 
     public float getInactiveTime() {
@@ -263,7 +259,7 @@ public class ProjectileControllerComponent extends Component {
 
     public void setAffectedByGravity(boolean affectedByGravity) {
         this.affectedByGravity = affectedByGravity;
-        this.physicsComponent.setAffectedByGravity(affectedByGravity);
+        this.projectile.getPhysicsComponent().setAffectedByGravity(affectedByGravity);
     }
 
     public boolean isXAxisLocked() {
@@ -312,10 +308,6 @@ public class ProjectileControllerComponent extends Component {
 
     public Projectile getProjectile() {
         return projectile;
-    }
-
-    public ProjectilePhysicsComponent getPhysicsComponent() {
-        return physicsComponent;
     }
 
     public float getTimeAlive() {

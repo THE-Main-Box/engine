@@ -7,7 +7,6 @@ import com.badlogic.gdx.physics.box2d.World;
 import official.sketchBook.components_related.toUse_component.entity.PlayerControllerComponent;
 import official.sketchBook.components_related.toUse_component.object.JumpComponent;
 import official.sketchBook.gameObject_related.Entity;
-import official.sketchBook.room_related.model.PlayableRoom;
 import official.sketchBook.util_related.enumerators.types.FixtType;
 import official.sketchBook.util_related.helpers.body.BodyCreatorHelper;
 import official.sketchBook.util_related.info.util.values.FixtureType;

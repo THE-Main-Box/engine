@@ -30,8 +30,8 @@ public class ProjectilePhysicsComponent extends Component {
     public void syncBodyObjectPos() {
         if (body == null) return;
 
-        object.setX((body.getPosition().x * PPM) - (object.getRadius() * 2) / 2f);
-        object.setY((body.getPosition().y * PPM) - (object.getRadius() * 2) / 2f);
+        object.setX((body.getPosition().x * PPM) - object.getRadius());
+        object.setY((body.getPosition().y * PPM) - object.getRadius());
     }
 
     public void applyTimedTrajectory(Vector2 displacement, float time) {

@@ -3,6 +3,7 @@ package official.sketchBook.util_related.helpers.body;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.World;
 import official.sketchBook.screen_related.PlayScreen;
 import official.sketchBook.util_related.enumerators.types.FixtType;
@@ -105,7 +106,11 @@ public class RoomBodyDataConversor {
 
                     // Cria o corpo físico somente para tiles do mesmo tipo
                     Body body = createBoxBodyForTiles(world, currentType, x, y, width, height, rows);
-                    body.setUserData(new FixtureType(FixtType.ENVIRONMENT, currentType));
+
+                    for(Fixture fix : body.getFixtureList()){
+                        fix.setUserData(new FixtureType(FixtType.ENVIRONMENT, currentType));
+                    }
+
                     bodies.add(body);
                 }
             }

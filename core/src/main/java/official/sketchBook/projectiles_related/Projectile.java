@@ -105,11 +105,7 @@ public abstract class Projectile implements Pool.Poolable {
         );
         body.setBullet(true); // Importante para colisões de alta velocidade
         body.setFixedRotation(true);
-        body.setUserData(this);
-
-        for(Fixture fix : body.getFixtureList()){
-            fix.setUserData(new FixtureType(FixtType.PROJECTILE, this));
-        }
+        body.setUserData(new FixtureType(FixtType.PROJECTILE, this));
 
     }
 

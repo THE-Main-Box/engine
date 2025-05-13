@@ -177,8 +177,8 @@ public class ProjectileContactListener implements ContactListener {
     }
 
     private FixtureType getTag(Fixture fixture) {
-        if (fixture == null || !(fixture.getUserData() instanceof FixtureType)) return null;
-        return (FixtureType) fixture.getUserData();
+        if (fixture == null || !(fixture.getBody().getUserData() instanceof FixtureType)) return null;
+        return (FixtureType) fixture.getBody().getUserData();
     }
 
 }

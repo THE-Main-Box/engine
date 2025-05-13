@@ -4,9 +4,9 @@ import com.badlogic.gdx.Input;
 
 public class ControlKeys {
 
-    public static int move_left = Input.Keys.A;
-    public static int move_right = Input.Keys.D;
-    public static int jump = Input.Keys.SPACE;
+    public static int move_left = Input.Keys.LEFT;
+    public static int move_right = Input.Keys.RIGHT;
+    public static int jump = Input.Keys.Z;
 
     // redefinir uma tecla
     public static void setKey(String action, int newKey) {

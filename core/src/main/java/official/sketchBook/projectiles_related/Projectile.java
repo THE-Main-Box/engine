@@ -2,10 +2,7 @@ package official.sketchBook.projectiles_related;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.Contact;
-import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Pool;
 import official.sketchBook.animation_related.ObjectAnimationPlayer;
 import official.sketchBook.animation_related.SpriteSheetDatahandler;
@@ -68,13 +65,17 @@ public abstract class Projectile implements Pool.Poolable {
         boolean stickOnWall,
         boolean stickOnCeiling,
         boolean stickOnGround,
-        boolean affectedByGravity
+        boolean affectedByGravity,
+        boolean collideWithItself,
+        boolean collideWithOtherProjectiles
     ) {
         this.controllerComponent.setStickOnCollision(stickOnCollision);
         this.controllerComponent.setStickToWall(stickOnWall);
         this.controllerComponent.setStickToCeiling(stickOnCeiling);
         this.controllerComponent.setStickToGround(stickOnGround);
         this.controllerComponent.setAffectedByGravity(affectedByGravity);
+        this.controllerComponent.setColideWithSameTypeProjectiles(collideWithItself);
+        this.controllerComponent.setColideWithOtherProjectiles(collideWithOtherProjectiles);
     }
 
     public abstract void onEnvironmentCollision(Contact contact, Object target);
@@ -102,9 +103,9 @@ public abstract class Projectile implements Pool.Poolable {
             0f,   // friction
             0f    // restitution
         );
-        body.setUserData(new FixtureType(FixtType.PROJECTILE, this));
         body.setBullet(true); // Importante para colisões de alta velocidade
         body.setFixedRotation(true);
+        body.setUserData(new FixtureType(FixtType.PROJECTILE, this));
 
     }
 

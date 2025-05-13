@@ -52,7 +52,7 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
 
             if (proj == null) return;
 
-            GameObjectManager.emitter.fire(proj, player.isFacingForward() ? 1: -1, -2, 1);
+            GameObjectManager.emitter.fire(proj, player.isFacingForward() ? 1000/PPM: -1000/PPM, 0, 0.1f);
         }
     }
 

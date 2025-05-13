@@ -18,6 +18,9 @@ public class ProjectileControllerComponent extends Component {
     /// Tempo que um projétil pode ficar inativo
     private float inactiveTimeLimit;
 
+    private boolean colideWithSameTypeProjectiles = false;
+    private boolean colideWithOtherProjectiles = false;
+
     /// Deve travar todos os eixos quando houver uma colisão
     private boolean stickOnCollision = false;
     /// Deve travar o eixo X ao colidir com uma parede
@@ -32,9 +35,10 @@ public class ProjectileControllerComponent extends Component {
     private boolean lockX = false;
     private boolean lockY = false;
 
-    private int groundContacts = 0;
-    private int wallContacts = 0;
-    private int ceilingContacts = 0;
+    private int downContact = 0;
+    private int leftContact = 0;
+    private int rightContact = 0;
+    private int upContact = 0;
 
     public ProjectileControllerComponent(Projectile projectile) {
         this.projectile = projectile;
@@ -51,7 +55,7 @@ public class ProjectileControllerComponent extends Component {
         if (!projectile.isActive()) return;
 
         updateLifeTime(delta);
-        updateAxisSpeedByLockState();
+        updateAxisMovementByLockState();
 
     }
 
@@ -70,9 +74,10 @@ public class ProjectileControllerComponent extends Component {
     }
 
     public void reset() {
-        this.groundContacts = 0;
-        this.ceilingContacts = 0;
-        this.wallContacts = 0;
+        this.downContact = 0;
+        this.upContact = 0;
+        this.leftContact = 0;
+        this.rightContact = 0;
 
         this.lockX = false;
         this.lockY = false;
@@ -135,18 +140,56 @@ public class ProjectileControllerComponent extends Component {
         if (stickOnCollision) {
             setLockState(collidingAny());
         } else {
-            lockX = stickToWall && wallContacts > 0;
-            lockY = (stickToGround && groundContacts > 0) || (stickToCeiling && ceilingContacts > 0);
+            lockX = stickToWall && (leftContact > 0 || rightContact > 0);
+            lockY = (stickToGround && downContact > 0) || (stickToCeiling && upContact > 0);
         }
     }
 
+
+    public void addDownContact() {
+        downContact++;
+    }
+
+    public void addUpContact() {
+        upContact++;
+    }
+
+    public void addLeftContact() {
+        leftContact++;
+    }
+
+    public void addRightContact() {
+        rightContact++;
+    }
+
+
+    public void removeDownContact() {
+        downContact = Math.max(0, downContact - 1);
+    }
+
+    public void removeUpContact() {
+        upContact = Math.max(0, upContact - 1);
+    }
+
+    public void removeLeftContact() {
+        leftContact = Math.max(0, leftContact - 1);
+    }
+
+    public void removeRightContact() {
+        rightContact = Math.max(0, rightContact - 1);
+    }
+
+
     private boolean collidingAny() {
-        return groundContacts > 0 || wallContacts > 0 || ceilingContacts > 0;
+        return downContact > 0 || upContact > 0 || leftContact > 0 || rightContact > 0;
     }
 
     private void setLockState(boolean state) {
-        lockX = state;
-        lockY = state;
+        if (state) {
+            lockAllAxes();
+        } else {
+            unlockAllAxes();
+        }
     }
 
     /// Atualiza o estado de ativo com base no tempo ativo e incrementa o tempo ativo
@@ -159,14 +202,17 @@ public class ProjectileControllerComponent extends Component {
 
     /// Valida se algum dos eixos estão travados,
     /// se houver verificamos qual deles está e assim atualizamos o valor deles corretamente
-    private void updateAxisSpeedByLockState() {
+    private void updateAxisMovementByLockState() {
         // Travas de eixo
         if (lockX || lockY) {
             Vector2 velocity = projectile.getPhysicsComponent().getBody().getLinearVelocity();
             float x = lockX ? 0f : velocity.x;
             float y = lockY ? 0f : velocity.y;
             projectile.getPhysicsComponent().getBody().setLinearVelocity(x, y);
+
         }
+
+        projectile.getPhysicsComponent().setAffectedByGravity(affectedByGravity && !lockY);
     }
 
     /// Atualiza a posição do projétil e o lança para atingir um deslocamento no tempo desejado
@@ -177,6 +223,22 @@ public class ProjectileControllerComponent extends Component {
 
         // Aplica o impulso calculado para atingir o deslocamento no tempo desejado
         projectile.getPhysicsComponent().applyTimedTrajectory(displacement, timeSeconds);
+    }
+
+    public boolean isColideWithOtherProjectiles() {
+        return colideWithOtherProjectiles;
+    }
+
+    public void setColideWithOtherProjectiles(boolean colideWithOtherProjectiles) {
+        this.colideWithOtherProjectiles = colideWithOtherProjectiles;
+    }
+
+    public boolean isColideWithSameTypeProjectiles() {
+        return colideWithSameTypeProjectiles;
+    }
+
+    public void setColideWithSameTypeProjectiles(boolean colideWithSameTypeProjectiles) {
+        this.colideWithSameTypeProjectiles = colideWithSameTypeProjectiles;
     }
 
     public float getInactiveTime() {
@@ -191,40 +253,20 @@ public class ProjectileControllerComponent extends Component {
         this.timeAliveLimit = timeAliveLimit;
     }
 
-    public void addGroundContact() {
-        groundContacts++;
+    public boolean isCollidingUnder() {
+        return downContact > 0;
     }
 
-    public void removeGroundContact() {
-        groundContacts = Math.max(0, groundContacts - 1);
+    public boolean isCollidingLeft() {
+        return leftContact > 0;
     }
 
-    public void addWallContact() {
-        wallContacts++;
+    public boolean isCollidingRight() {
+        return rightContact > 0;
     }
 
-    public void removeWallContact() {
-        wallContacts = Math.max(0, wallContacts - 1);
-    }
-
-    public void addCeilingContact() {
-        ceilingContacts++;
-    }
-
-    public void removeCeilingContact() {
-        ceilingContacts = Math.max(0, ceilingContacts - 1);
-    }
-
-    public boolean isCollidingGround() {
-        return groundContacts > 0;
-    }
-
-    public boolean isCollidingWall() {
-        return wallContacts > 0;
-    }
-
-    public boolean isCollidingCeiling() {
-        return ceilingContacts > 0;
+    public boolean isCollidingAbove() {
+        return upContact > 0;
     }
 
     public void lockXAxis() {
@@ -270,12 +312,16 @@ public class ProjectileControllerComponent extends Component {
         return lockY;
     }
 
-    public void setStickToWall(boolean stickToWall) {
-        this.stickToWall = stickToWall;
+    public boolean isStickOnCollision() {
+        return stickOnCollision;
     }
 
     public void setStickOnCollision(boolean stickOnCollision) {
         this.stickOnCollision = stickOnCollision;
+    }
+
+    public void setStickToWall(boolean stickToWall) {
+        this.stickToWall = stickToWall;
     }
 
     public void setStickToGround(boolean stickToGround) {
@@ -292,10 +338,6 @@ public class ProjectileControllerComponent extends Component {
 
     public boolean isStickToWall() {
         return stickToWall;
-    }
-
-    public boolean isStickOnCollision() {
-        return stickOnCollision;
     }
 
     public boolean isStickToGround() {

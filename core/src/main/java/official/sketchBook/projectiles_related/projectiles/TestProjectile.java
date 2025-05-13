@@ -9,13 +9,14 @@ public class TestProjectile extends Projectile {
 
     public TestProjectile(World world) {
         super(world);
-
         this.initBodyBehavior(
             true,
             false,
             false,
             false,
-            true
+            true,
+            false,
+            false
         );
     }
 
@@ -25,6 +26,9 @@ public class TestProjectile extends Projectile {
         this.defFric = 0.1f;
         this.defDens = 0.1f;
         this.defRest = 0.1f;
+
+
+
     }
 
     @Override
@@ -33,6 +37,7 @@ public class TestProjectile extends Projectile {
         this.setActive(true);
 
         this.setLifeTime(1f);
+
     }
 
     @Override

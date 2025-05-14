@@ -114,6 +114,7 @@ public class ProjectileContactListener implements ContactListener {
 
         // Se passou por tudo, pode processar colisão
         ctrl.onHitProjectile(other.owner, contact);
+        otherCtrl.onHitProjectile(ctrl.getProjectile(), contact);
     }
 
 
@@ -141,7 +142,12 @@ public class ProjectileContactListener implements ContactListener {
         FixtureType tagB = getTag(b);
         if (tagA == null || tagB == null) return;
 
-        // Verifica se ambos são projéteis
+        // Verifica se podemos interagir com projéteis
+        validateProjectileCollisionWithProjectile(tagA, tagB, contact);
+
+    }
+
+    private void validateProjectileCollisionWithProjectile(FixtureType tagA, FixtureType tagB, Contact contact){
         if (tagA.type == FixtType.PROJECTILE && tagB.type == FixtType.PROJECTILE) {
             Projectile pA = (Projectile) tagA.owner;
             Projectile pB = (Projectile) tagB.owner;

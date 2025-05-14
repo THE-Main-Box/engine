@@ -59,7 +59,23 @@ public abstract class Projectile implements Pool.Poolable {
     /// Inicia as informações dinâmicas do projétil
     public abstract void init(Entity owner);
 
-    /// Inicia o comportamento padrão do projétil(chamado no construtor)
+    /**
+     * Inicia o comportamento padrão do projétil(chamado no construtor)
+     *
+     * @param stickOnCollision            trava todos os eixos quando detectamos uma colisão
+     * @param stickOnWall                 trava o eixo X quando detectamos uma colisão na horizontal
+     * @param stickOnCeiling              trava o eixo Y quando detectamos uma colisão vinda da parte de cima do projétil
+     * @param stickOnGround               trava o eixo Y quando detectamos uma colisão vinda da parte de baixo do projétil
+     * @param affectedByGravity           se o projétil é afetado ou não pela constante da gravidade
+     * @param collideWithItself           se o projétil pode colidir com outros do mesmo tipo que o dele
+     * @param collideWithOtherProjectiles se o projétil pode colidir com outros projéteis que não são do mesmo tipo
+     * @param bXEnv                       constante de restituição do eixo X pra ambiente
+     * @param bYEnv                       constante de restituição do eixo Y pra ambiente
+     * @param bXEnt                       constante de restituição do eixo X pra entidades
+     * @param bYEnt                       constante de restituição do eixo Y pra entidades
+     * @param bXProj                      constante de restituição do eixo X pra projéteis
+     * @param bYProj                      constante de restituição do eixo Y pra projéteis
+     */
     protected void initBodyBehavior(
         boolean stickOnCollision,
         boolean stickOnWall,
@@ -67,7 +83,13 @@ public abstract class Projectile implements Pool.Poolable {
         boolean stickOnGround,
         boolean affectedByGravity,
         boolean collideWithItself,
-        boolean collideWithOtherProjectiles
+        boolean collideWithOtherProjectiles,
+        float bXEnv,
+        float bYEnv,
+        float bXEnt,
+        float bYEnt,
+        float bXProj,
+        float bYProj
     ) {
         this.controllerComponent.setStickOnCollision(stickOnCollision);
         this.controllerComponent.setStickToWall(stickOnWall);
@@ -76,6 +98,15 @@ public abstract class Projectile implements Pool.Poolable {
         this.controllerComponent.setAffectedByGravity(affectedByGravity);
         this.controllerComponent.setColideWithSameTypeProjectiles(collideWithItself);
         this.controllerComponent.setColideWithOtherProjectiles(collideWithOtherProjectiles);
+
+        this.controllerComponent.setBounceEnvironmentX(bXEnv);
+        this.controllerComponent.setBounceEnvironmentY(bYEnv);
+
+        this.controllerComponent.setBounceEntityX(bXEnt);
+        this.controllerComponent.setBounceEntityY(bYEnt);
+
+        this.controllerComponent.setBounceProjectileX(bXProj);
+        this.controllerComponent.setBounceProjectileY(bYProj);
     }
 
     public abstract void onEnvironmentCollision(Contact contact, Object target);
@@ -99,9 +130,9 @@ public abstract class Projectile implements Pool.Poolable {
             new Vector2(x, y),
             radius,
             BodyDef.BodyType.DynamicBody,
-            0.1f, // density
-            0f,   // friction
-            0f    // restitution
+            defDens, // density
+            defFric,   // friction
+            defRest // restitution
         );
         body.setBullet(true); // Importante para colisões de alta velocidade
         body.setFixedRotation(true);
@@ -114,6 +145,8 @@ public abstract class Projectile implements Pool.Poolable {
 
         updateComponents(deltaTime);
 
+        controllerComponent.resetCollisionCounters();
+
     }
 
     /// Atualiza todos os componentes existentes dentro do objeto
@@ -124,7 +157,7 @@ public abstract class Projectile implements Pool.Poolable {
     }
 
     /// Serve para "matar" o projétil, resetando as suas propriedades dinâmicas
-    public void die(){
+    public void die() {
         this.reset();
     }
 
@@ -138,6 +171,7 @@ public abstract class Projectile implements Pool.Poolable {
 
         controllerComponent.reset();
         this.dispose();
+
     }
 
 
@@ -170,7 +204,7 @@ public abstract class Projectile implements Pool.Poolable {
         }
     }
 
-    ///Limpa todas as informações do projétil para preparar ele para ser eliminado permanentemente
+    /// Limpa todas as informações do projétil para preparar ele para ser eliminado permanentemente
     public void destroy() {
         destroyPhysics();
         dispose();
@@ -205,10 +239,12 @@ public abstract class Projectile implements Pool.Poolable {
     public float getRadius() {
         return radius;
     }
+
     public void setActive(boolean value) {
         this.active = value;
         body.setActive(value);
     }
+
     public boolean isActive() {
         return active;
     }

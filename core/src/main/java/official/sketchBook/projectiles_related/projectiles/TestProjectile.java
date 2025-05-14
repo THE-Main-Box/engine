@@ -9,15 +9,31 @@ public class TestProjectile extends Projectile {
 
     public TestProjectile(World world) {
         super(world);
+
         this.initBodyBehavior(
-            true,
+            false,
+            false,
+            false,
             false,
             false,
             false,
             true,
-            false,
-            false
+            1f,
+            1f,
+            1f,
+            1f,
+            1f,
+            1f
+
         );
+
+    }
+
+    @Override
+    public void update(float deltaTime) {
+        super.update(deltaTime);
+
+
     }
 
     @Override
@@ -25,9 +41,7 @@ public class TestProjectile extends Projectile {
         this.radius = 2f;
         this.defFric = 0.1f;
         this.defDens = 0.1f;
-        this.defRest = 0.1f;
-
-
+        this.defRest = 0f;
 
     }
 
@@ -36,7 +50,7 @@ public class TestProjectile extends Projectile {
         this.owner = owner;
         this.setActive(true);
 
-        this.setLifeTime(1f);
+        this.setLifeTime(10f);
 
     }
 

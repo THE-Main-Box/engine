@@ -28,4 +28,20 @@ public enum Direction {
     public boolean isRight() {
         return this == RIGHT || this == DOWN_RIGHT || this == UP_RIGHT;
     }
+
+    public Direction getOpposite() {
+        return switch (this) {
+            case UP -> DOWN;
+            case DOWN -> UP;
+            case LEFT -> RIGHT;
+            case RIGHT -> LEFT;
+            case UP_LEFT -> DOWN_RIGHT;
+            case UP_RIGHT -> DOWN_LEFT;
+            case DOWN_LEFT -> UP_RIGHT;
+            case DOWN_RIGHT -> UP_LEFT;
+            case UP_DOWN -> LEFT_RIGHT;
+            case LEFT_RIGHT -> UP_DOWN;
+            case STILL -> STILL;
+        };
+    }
 }

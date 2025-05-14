@@ -45,14 +45,14 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
         if (pressed) {
             Projectile proj = GameObjectManager.emitter.obtain(
                 new Vector2(
-                    (!player.isFacingForward() ? player.getX() - 3 : player.getX() + player.getWidth() + 3) / PPM,
+                    (!player.isFacingForward() ? player.getX() - 4 : player.getX() + player.getWidth() + 4) / PPM,
                     (player.getY() + player.getHeight() / 2) / PPM
                 )
             );
 
             if (proj == null) return;
 
-            GameObjectManager.emitter.fire(proj, player.isFacingForward() ? 1000/PPM: -1000/PPM, 0, 0.1f);
+            GameObjectManager.emitter.fire(proj, player.isFacingForward() ? 1000/PPM: -1000/PPM, -0, 0.1f);
         }
     }
 

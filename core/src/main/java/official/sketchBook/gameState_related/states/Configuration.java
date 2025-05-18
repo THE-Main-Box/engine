@@ -28,7 +28,7 @@ public class Configuration extends State implements StateMethods {
 
     public Configuration(PlayScreen game, CameraManager gameCameraManager, CameraManager uiCameraManager) {
         super(game, gameCameraManager, uiCameraManager);
-        this.mult = 2;
+        this.multi = 2;
         initData();
     }
 
@@ -65,8 +65,8 @@ public class Configuration extends State implements StateMethods {
         int canvasWidth = 20;
         int canvasHeight = 20;
 
-        int x = (int) (menuX + 16 * mult);
-        int y = (int) (menuY + 65 * mult);
+        int x = (int) (menuX + 16 * multi);
+        int y = (int) (menuY + 65 * multi);
 
         buttons.add(
             new StateButton(
@@ -74,7 +74,7 @@ public class Configuration extends State implements StateMethods {
                 y,
                 canvasWidth,
                 canvasHeight,
-                mult,
+                multi,
                 new Sprite(0, 2),
                 previousState,
                 "return"
@@ -88,12 +88,12 @@ public class Configuration extends State implements StateMethods {
         int canvasHeight = 20;
 
 //        int width = (int) (canvasWidth * Game.SCALE * mult);
-        int height = (int) (canvasHeight * mult);
+        int height = (int) (canvasHeight * multi);
 
-        int x = (int) (menuX + 111 * mult);
-        int y = (int) (menuY + 36 * mult);
+        int x = (int) (menuX + 111 * multi);
+        int y = (int) (menuY + 36 * multi);
 
-        int yOffSet = (int) (height + 9 * mult);
+        int yOffSet = (int) (height + 9 * multi);
 
         buttons.add(
             new On_OffButton(
@@ -102,7 +102,7 @@ public class Configuration extends State implements StateMethods {
                 canvasWidth,
                 canvasHeight,
                 !PlayScreen.soundEfectsMute,
-                mult,
+                multi,
                 new Sprite(0, 0),
                 "sfx_mute"
             )
@@ -115,7 +115,7 @@ public class Configuration extends State implements StateMethods {
                 canvasWidth,
                 canvasHeight,
                 !PlayScreen.soundMute,
-                mult,
+                multi,
                 new Sprite(0, 0),
                 "vol_mute"
             )
@@ -126,12 +126,12 @@ public class Configuration extends State implements StateMethods {
         int canvasWidth = 50;
         int canvasHeight = 5;
 
-        int height = (int) (canvasHeight * mult);
+        int height = (int) (canvasHeight * multi);
 
-        int yOffSet = (int) (height + 24 * mult);
+        int yOffSet = (int) (height + 24 * multi);
 
-        int x = (int) (menuX + 69 * mult);
-        int y = (int) (menuY + 43 * mult);
+        int x = (int) (menuX + 69 * multi);
+        int y = (int) (menuY + 43 * multi);
 
 
         sliders.add(
@@ -140,7 +140,7 @@ public class Configuration extends State implements StateMethods {
                 y + yOffSet,
                 canvasWidth,
                 canvasHeight,
-                mult,
+                multi,
                 new Sprite(0, 0),
                 "sfx_volume",
                 uiCameraManager
@@ -153,7 +153,7 @@ public class Configuration extends State implements StateMethods {
                 y,
                 canvasWidth,
                 canvasHeight,
-                mult,
+                multi,
                 new Sprite(0, 0),
                 "sound_volume",
                 uiCameraManager
@@ -275,7 +275,9 @@ public class Configuration extends State implements StateMethods {
                 canvasWidth,
                 canvasHeight,
                 backGroundImage,
+                false,
                 false
+
             ),
             menuX,
             menuY,
@@ -292,12 +294,13 @@ public class Configuration extends State implements StateMethods {
         }
     }
 
-    public void handleTouchDragged(int screenX, int screenY, int touch) {
+    public boolean handleTouchDragged(int screenX, int screenY, int touch) {
         for (Slider slider : sliders) {
             if (slider.isMousePressed()) {
                 slider.changeXTickPos(screenX);
             }
         }
+        return true;
     }
 
     @Override

@@ -13,6 +13,7 @@ public class SpriteSheetDatahandler {
     private Texture spriteSheet;
 
     private boolean facingFoward;
+    private boolean upsideDown;
 
     public SpriteSheetDatahandler(
         float x,
@@ -22,6 +23,7 @@ public class SpriteSheetDatahandler {
         int spriteQuantityX,
         int spriteQuantityY,
         boolean facingFoward,
+        boolean upsideDown,
         Texture spriteSheet
     ) {
 
@@ -37,6 +39,7 @@ public class SpriteSheetDatahandler {
         this.spriteSheet = spriteSheet;
 
         this.facingFoward = facingFoward;
+        this.upsideDown = upsideDown;
 
         this.canvasWidth = spriteSheet.getWidth() / spriteQuantityX;
         this.canvasHeight = spriteSheet.getHeight() / spriteQuantityY;
@@ -72,7 +75,8 @@ public class SpriteSheetDatahandler {
                 canvasWidth,
                 canvasHeight,
                 spriteSheet,
-                !facingFoward
+                !facingFoward,//se estivermos olhando para frente não viramos
+                upsideDown//se estivermos com a imagem invertida invertemos
             ),
             x,
             y,
@@ -81,8 +85,20 @@ public class SpriteSheetDatahandler {
         );
     }
 
+    public int getCanvasHeight() {
+        return canvasHeight;
+    }
+
+    public int getCanvasWidth() {
+        return canvasWidth;
+    }
+
     public void setFacingFoward(boolean facingFoward) {
         this.facingFoward = facingFoward;
+    }
+
+    public void setUpsideDown(boolean upsideDown) {
+        this.upsideDown = upsideDown;
     }
 
     public Texture getSpriteSheet() {

@@ -144,6 +144,11 @@ public class Playing extends State implements StateMethods {
     }
 
     @Override
+    public boolean handleTouchDragged(int screenX, int screenY, int button) {
+        return false;
+    }
+
+    @Override
     public boolean handleKeyDown(int keycode) {
 
         if (keycode == Input.Keys.ESCAPE) {

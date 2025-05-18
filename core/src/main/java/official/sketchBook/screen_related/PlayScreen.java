@@ -9,12 +9,15 @@ import official.sketchBook.MainClass;
 import official.sketchBook.camera_related.CameraManager;
 import official.sketchBook.gameObject_related.Entity;
 import official.sketchBook.gameObject_related.GameObject;
+import official.sketchBook.gameState_related.model.State;
 import official.sketchBook.gameState_related.states.Configuration;
 import official.sketchBook.gameState_related.states.Menu;
 import official.sketchBook.gameState_related.states.Paused;
 import official.sketchBook.gameState_related.states.Playing;
 import official.sketchBook.input_related.InputHandler;
 import official.sketchBook.util_related.enumerators.states.GameState;
+
+import java.util.EnumMap;
 
 public class PlayScreen implements Screen {
 
@@ -26,8 +29,7 @@ public class PlayScreen implements Screen {
     public static final float FIXED_TIMESTEP = (float) 1 / UPS_TARGET; // Taxa fixa de UPS (60 Updates por segundo)
     private static final float MAX_FPS = (float) 1 / FPS_TARGET; // Taxa máxima de FPS (120 Frames por segundo)
     private float accumulator = 0f;
-    private float frameTimer = 0f; // Temporizador para controlar o FPS
-    private int frames = 0, updates = 0;
+    private int updates = 0;
     public int fps, ups;
     private long lastTime = System.nanoTime(); // Para calcular FPS e UPS
 
@@ -48,12 +50,6 @@ public class PlayScreen implements Screen {
     private final CameraManager gameCameraManager;
     private final CameraManager uiCameraManager;
 
-    //game state related
-    private final Configuration configState;
-    private final Playing playingState;
-    private final Paused pausedState;
-    private final Menu menuState;
-
     //sound related
     public static boolean soundEfectsMute = false;
     public static boolean soundMute = false;
@@ -66,6 +62,14 @@ public class PlayScreen implements Screen {
 
     private Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
 
+    //game state related
+    private Configuration configState;
+    private Playing playingState;
+    private Paused pausedState;
+    private Menu menuState;
+
+    private EnumMap<GameState, State> stateMap = new EnumMap<>(GameState.class);
+
     public PlayScreen(MainClass game) {
 
         // Inicialização dos elementos principais
@@ -76,11 +80,22 @@ public class PlayScreen implements Screen {
         uiCameraManager = new CameraManager(Gdx.graphics.getWidth() / scale, Gdx.graphics.getHeight() / scale);
         this.uiBatch = game.uiBatch;
 
-        configState = new Configuration(this, gameCameraManager, uiCameraManager);
+        //inicia os states e os salva dentro de um hashMap
+        this.initState();
+
+    }
+
+    private void initState() {
+
         playingState = new Playing(this, gameCameraManager, uiCameraManager);
+        configState = new Configuration(this, gameCameraManager, uiCameraManager);
         pausedState = new Paused(this, gameCameraManager, uiCameraManager);
         menuState = new Menu(this, gameCameraManager, uiCameraManager);
 
+        stateMap.put(GameState.CONFIGURATION, configState);
+        stateMap.put(GameState.PLAYING, playingState);
+        stateMap.put(GameState.PAUSED, pausedState);
+        stateMap.put(GameState.MENU, menuState);
     }
 
     @Override
@@ -93,7 +108,6 @@ public class PlayScreen implements Screen {
     public void render(float delta) {
         // Acumula o tempo decorrido
         accumulator += delta;
-        frameTimer += delta;
 
 
         // Atualiza a lógica do jogo em passos fixos usando um segundo loop
@@ -122,9 +136,6 @@ public class PlayScreen implements Screen {
         // Configura a projeção da câmera
         this.drawGameStates(batch, uiBatch);
 
-        frames++;
-        frameTimer -= MAX_FPS; // Reduz o tempo acumulado do FPS
-
     }
 
     private void renderDebuggVariables() {
@@ -152,64 +163,28 @@ public class PlayScreen implements Screen {
     }
 
     private void updateGameStates() {
-        switch (GameState.state) {
-            case PLAYING -> {
+        State currentState = stateMap.get(GameState.state);
+        if (currentState != null) {
+            currentState.update(FIXED_TIMESTEP);
+            currentState.updateUi(FIXED_TIMESTEP);
+        }
 
-                playingState.update(FIXED_TIMESTEP);
 
-            }
-            case MENU -> {
-
-                menuState.update(FIXED_TIMESTEP);
-
-            }
-            case CONFIGURATION -> {
-
-                configState.updateUi(FIXED_TIMESTEP);
-
-            }
-            case PAUSED -> {
-
-                pausedState.update(FIXED_TIMESTEP);
-
-            }
-            case QUIT -> {
-
-                this.quitGame();
-
-            }
-            default -> {
-            }
+        if (GameState.state.equals(GameState.QUIT)) {
+            this.quitGame();
         }
 
     }
 
     private void drawGameStates(SpriteBatch batch, SpriteBatch uiBatch) {
 
-        switch (GameState.state) {
-            case PLAYING -> {
+        State currentState = stateMap.get(GameState.state);
+        if (currentState != null) {
+            currentState.draw(batch, uiBatch);
+        }
 
-                playingState.draw(batch, uiBatch);
-                renderDebuggVariables();
-
-            }
-            case MENU -> {
-
-                menuState.draw(batch, uiBatch);
-
-            }
-            case CONFIGURATION -> {
-
-                configState.draw(batch, uiBatch);
-
-            }
-            case PAUSED -> {
-
-                pausedState.draw(batch, uiBatch);
-
-            }
-            default -> {
-            }
+        if (GameState.state.equals(GameState.PLAYING)) {
+            renderDebuggVariables();
         }
 
     }
@@ -217,9 +192,8 @@ public class PlayScreen implements Screen {
     private void calculateFpsUps() {
         long now = System.nanoTime();
         if (now - lastTime >= 1_000_000_000) { // Se 1 segundo passou
-            fps = frames;
+            fps = Gdx.graphics.getFramesPerSecond();
             ups = updates;
-            frames = 0;
             updates = 0;
             lastTime = now;
         }
@@ -230,7 +204,6 @@ public class PlayScreen implements Screen {
         // Atualiza o viewport com as dimensões ajustadas
         gameCameraManager.updateViewport(screenWidth, screenHeight);
         uiCameraManager.updateViewport(screenWidth, screenHeight);
-
     }
 
     @Override
@@ -250,10 +223,9 @@ public class PlayScreen implements Screen {
 
     @Override
     public void dispose() {
-        playingState.dispose();
-        pausedState.dispose();
-        configState.dispose();
-        menuState.dispose();
+        for (State state : stateMap.values()) {
+            state.dispose();
+        }
 
         debugRenderer.dispose();
     }
@@ -264,20 +236,47 @@ public class PlayScreen implements Screen {
         Gdx.app.exit();
     }
 
-    public Paused getPausedState() {
-        return pausedState;
-    }
-
-    public Playing getPlayingState() {
-        return playingState;
+    public EnumMap<GameState, State> getStateMap() {
+        return stateMap;
     }
 
     public Configuration getConfigState() {
         return configState;
     }
 
+    public Playing getPlayingState() {
+        return playingState;
+    }
+
+    public Paused getPausedState() {
+        return pausedState;
+    }
+
     public Menu getMenuState() {
         return menuState;
     }
 
+    public boolean handleKeyDown(int keyCode) {
+        return stateMap.get(GameState.state).handleKeyDown(keyCode);
+    }
+
+    public boolean handleKeyUp(int keyCode) {
+        return stateMap.get(GameState.state).handleKeyUp(keyCode);
+    }
+
+    public boolean handleTouchDown(int screenX, int screenY, int button) {
+        return stateMap.get(GameState.state).handleTouchDown(screenX, screenY, button);
+    }
+
+    public boolean handleTouchDragged(int screenX, int screenY, int button) {
+        return stateMap.get(GameState.state).handleTouchDragged(screenX, screenY, button);
+    }
+
+    public boolean handleTouchUp(int screenX, int screenY, int button) {
+        return stateMap.get(GameState.state).handleTouchUp(screenX, screenY, button);
+    }
+
+    public boolean handleMouseMoved(int screenX, int screenY) {
+        return stateMap.get(GameState.state).handleMouseMoved(screenX, screenY);
+    }
 }

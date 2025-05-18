@@ -13,193 +13,53 @@ public class InputHandler implements InputProcessor {
     }
 
     @Override
-    public boolean keyDown(int i) {
-
-        switch (GameState.state) {
-            case PLAYING -> {
-                playScreen.getPlayingState().handleKeyDown(i);
-            }
-            case MENU -> {
-
-                playScreen.getMenuState().handleKeyDown(i);
-
-            }
-            case PAUSED -> {
-
-                playScreen.getPausedState().handleKeyDown(i);
-
-            }
-            case CONFIGURATION -> {
-
-                playScreen.getConfigState().handleKeyDown(i);
-
-            }
-
-            default -> {
-            }
-
-        }
-
-        return true;
+    public boolean keyDown(int keycode) {
+        return playScreen.handleKeyDown(keycode);
     }
 
     @Override
-    public boolean keyUp(int i) {
-
-        switch (GameState.state) {
-            case PLAYING -> {
-                playScreen.getPlayingState().handleKeyUp(i);
-            }
-            case MENU -> {
-
-                playScreen.getMenuState().handleKeyUp(i);
-
-            }
-            case PAUSED -> {
-
-                playScreen.getPausedState().handleKeyUp(i);
-
-            }
-            case CONFIGURATION -> {
-
-                playScreen.getConfigState().handleKeyUp(i);
-
-            }
-
-            default -> {
-            }
-
-        }
-
-        return true;
+    public boolean keyUp(int keycode) {
+        return playScreen.handleKeyUp(keycode);
     }
 
     @Override
-    public boolean keyTyped(char c) {
+    public boolean keyTyped(char character) {
+        // Não utilizado por enquanto
         return false;
     }
 
     @Override
-    public boolean touchDown(int i, int i1, int i2, int i3) {
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        return playScreen.handleTouchDown(screenX, screenY, button);
 
-        // screenX: a coordenada X do toque ou clique na tela (em pixels).
-        // screenY: a coordenada Y do toque ou clique na tela (em pixels).
-        // pointer: o identificador do dedo/touch quando em dispositivos de toque (geralmente 0 para o primeiro toque).
-        // button: o botão pressionado (para mouse). Por exemplo, Input.Buttons.LEFT para o botão esquerdo.
-
-        switch (GameState.state) {
-            case PLAYING -> {
-                playScreen.getPlayingState().handleTouchDown(i, i1, i3);
-            }
-            case MENU -> {
-
-                playScreen.getMenuState().handleTouchDown(i, i1, i3);
-
-            }
-            case PAUSED -> {
-
-                playScreen.getPausedState().handleTouchDown(i, i1, i3);
-
-            }
-            case CONFIGURATION -> {
-
-                playScreen.getConfigState().handleTouchDown(i, i1, i3);
-
-            }
-
-            default -> {
-            }
-
-        }
-
-        return true;
     }
 
     @Override
-    public boolean touchUp(int i, int i1, int i2, int i3) {
-
-        // screenX: a coordenada X do toque ou clique na tela (em pixels).
-        // screenY: a coordenada Y do toque ou clique na tela (em pixels).
-        // pointer: o identificador do dedo/touch quando em dispositivos de toque (geralmente 0 para o primeiro toque).
-        // button: o botão pressionado (para mouse). Por exemplo, Input.Buttons.LEFT para o botão esquerdo.
-
-        switch (GameState.state) {
-            case PLAYING -> {
-                playScreen.getPlayingState().handleTouchUp(i, i1, i3);
-            }
-            case MENU -> {
-
-                playScreen.getMenuState().handleTouchUp(i, i1, i3);
-
-            }
-            case PAUSED -> {
-
-                playScreen.getPausedState().handleTouchUp(i, i1, i3);
-
-            }
-            case CONFIGURATION -> {
-
-                playScreen.getConfigState().handleTouchUp(i, i1, i3);
-
-            }
-
-            default -> {
-            }
-
-        }
-
-        return true;
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        return playScreen.handleTouchUp(screenX, screenY, button);
     }
 
     @Override
-    public boolean touchCancelled(int i, int i1, int i2, int i3) {
+    public boolean touchCancelled(int screenX, int screenY, int pointer, int button) {
+        // Evento não utilizado no momento
         return false;
     }
 
     @Override
-    public boolean touchDragged(int i, int i1, int i2) {
-
-        if(GameState.state == GameState.CONFIGURATION){
-            playScreen.getConfigState().handleTouchDragged(i, i1, i2);
-        }
-
-        return true;
+    public boolean touchDragged(int screenX, int screenY, int pointer) {
+        return playScreen.handleTouchDragged(screenX, screenY, pointer);
     }
 
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
+        return playScreen.handleMouseMoved(screenX, screenY);
 
-        switch (GameState.state) {
-            case PLAYING -> {
-                playScreen.getPlayingState().handleMouseMoved(screenX, screenY);
-            }
-            case MENU -> {
-
-                playScreen.getMenuState().handleMouseMoved(screenX, screenY);
-
-            }
-            case PAUSED -> {
-
-                playScreen.getPausedState().handleMouseMoved(screenX, screenY);
-
-            }
-            case CONFIGURATION -> {
-
-                playScreen.getConfigState().handleMouseMoved(screenX, screenY);
-
-            }
-
-            default -> {
-            }
-
-        }
-        return true;
     }
 
     @Override
-    public boolean scrolled(float v, float v1) {
+    public boolean scrolled(float amountX, float amountY) {
+        // Evento de rolagem do mouse, para uso futuro
         return false;
     }
-
 
 }

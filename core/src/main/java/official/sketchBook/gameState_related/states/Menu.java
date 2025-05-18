@@ -23,7 +23,7 @@ public class Menu extends State implements StateMethods {
     public Menu(PlayScreen game, CameraManager gameCameraManager, CameraManager uiCameraManager) {
         super(game, gameCameraManager, uiCameraManager);
 
-        this.mult = 2;
+        this.multi = 2;
         initData();
     }
 
@@ -43,12 +43,12 @@ public class Menu extends State implements StateMethods {
         int canvasWidth = 50;
         int canvasHeight = 25;
 
-        int height = (int) (canvasHeight * mult);
+        int height = (int) (canvasHeight * multi);
 
-        int yOffSet = (int) (height + 12 * mult);
+        int yOffSet = (int) (height + 12 * multi);
 
-        int x = (int) (menuX + 45 * mult);
-        int y = (int) (menuY + 13 * mult);
+        int x = (int) (menuX + 45 * multi);
+        int y = (int) (menuY + 13 * multi);
 
 
         buttons.add(
@@ -57,7 +57,7 @@ public class Menu extends State implements StateMethods {
                 y + yOffSet * 2,
                 canvasWidth,
                 canvasHeight,
-                mult,
+                multi,
                 new Sprite(0, 0),
                 GameState.PLAYING,
                 "play"
@@ -69,7 +69,7 @@ public class Menu extends State implements StateMethods {
                 y + yOffSet,
                 canvasWidth,
                 canvasHeight,
-                mult,
+                multi,
                 new Sprite(0, 1),
                 GameState.CONFIGURATION,
                 "configuration"
@@ -81,7 +81,7 @@ public class Menu extends State implements StateMethods {
                 y,
                 canvasWidth,
                 canvasHeight,
-                mult,
+                multi,
                 new Sprite(0, 2),
                 GameState.QUIT,
                 "quit"
@@ -133,6 +133,7 @@ public class Menu extends State implements StateMethods {
                 canvasWidth,
                 canvasHeight,
                 backGroundImage,
+                false,
                 false
             ),
             menuX,
@@ -186,6 +187,11 @@ public class Menu extends State implements StateMethods {
         }
 
         return true;
+    }
+
+    @Override
+    public boolean handleTouchDragged(int screenX, int screenY, int button) {
+        return false;
     }
 
     @Override

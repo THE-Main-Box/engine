@@ -24,7 +24,7 @@ public class Paused extends State implements StateMethods {
 
     public Paused(PlayScreen game, CameraManager gameCameraManager, CameraManager uiCameraManager) {
         super(game, gameCameraManager, uiCameraManager);
-        mult = 2;
+        multi = 2;
         initData();
     }
 
@@ -58,12 +58,12 @@ public class Paused extends State implements StateMethods {
         int canvasWidth = 20;
         int canvasHeight = 20;
 
-        int width = (int) (canvasWidth * mult);
+        int width = (int) (canvasWidth * multi);
 
-        int xOffSet = (int) (width + 9 * mult);
+        int xOffSet = (int) (width + 9 * multi);
 
-        int x = (int) (menuX + 31 * mult);
-        int y = (int) (menuY + 11* mult);
+        int x = (int) (menuX + 31 * multi);
+        int y = (int) (menuY + 11* multi);
 
 
         buttons.add(
@@ -72,7 +72,7 @@ public class Paused extends State implements StateMethods {
                 y,
                 canvasWidth,
                 canvasHeight,
-                mult,
+                multi,
                 new Sprite(0, 2),
                 GameState.CONFIGURATION,
                 "configurations"
@@ -84,7 +84,7 @@ public class Paused extends State implements StateMethods {
                 y,
                 canvasWidth,
                 canvasHeight,
-                mult,
+                multi,
                 new Sprite(0, 1),
                 GameState.MENU,
                 "menu"
@@ -96,7 +96,7 @@ public class Paused extends State implements StateMethods {
                 y,
                 canvasWidth,
                 canvasHeight,
-                mult,
+                multi,
                 new Sprite(0, 0),
                 GameState.PLAYING,
                 "return"
@@ -147,6 +147,7 @@ public class Paused extends State implements StateMethods {
                 canvasWidth,
                 canvasHeight,
                 backGroundImage,
+                false,
                 false
             ),
             menuX,
@@ -201,6 +202,11 @@ public class Paused extends State implements StateMethods {
         }
 
         return true;
+    }
+
+    @Override
+    public boolean handleTouchDragged(int screenX, int screenY, int button) {
+        return false;
     }
 
     @Override

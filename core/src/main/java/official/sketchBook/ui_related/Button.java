@@ -34,14 +34,14 @@ public abstract class Button {
         this.buttonCanvasWidth = buttonCanvasWidth;
 
         // Tamanho do botão é baseado no canvas e no multiplicador
-        this.width = buttonCanvasWidth * multiplier;
-        this.height = buttonCanvasHeight * multiplier;
+        this.width = HelpMethods.scale(buttonCanvasWidth, multiplier, shouldScaleByMultiplying()); // ou false, dependendo do seu uso
+        this.height = HelpMethods.scale(buttonCanvasHeight, multiplier, shouldScaleByMultiplying());
+
 
         this.xOffSetCenter = (int) (width / 2);
 
         this.xPos = xPos - xOffSetCenter;
         this.yPos = yPos;
-
 
 
         this.buttonCurrentSprite = buttonSprite;
@@ -50,6 +50,11 @@ public abstract class Button {
 
         this.multiplier = multiplier;
 
+    }
+
+    /// Retorna true para multiplicar e false para dividir
+    protected boolean shouldScaleByMultiplying(){
+        return true;
     }
 
     public void update() {
@@ -70,6 +75,7 @@ public abstract class Button {
                 buttonCanvasWidth,
                 buttonCanvasHeight,
                 buttonSpriteSheet,
+                false,
                 false
             ),
             xPos,

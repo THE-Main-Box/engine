@@ -8,10 +8,11 @@ import official.sketchBook.animation_related.ObjectAnimationPlayer;
 import official.sketchBook.animation_related.Sprite;
 import official.sketchBook.camera_related.CameraManager;
 import official.sketchBook.ui_related.Button;
+import official.sketchBook.util_related.helpers.HelpMethods;
 
 import java.util.List;
 
-public abstract class State {
+public abstract class State implements StateMethods {
     protected PlayScreen game;
 
     protected CameraManager gameCameraManager;
@@ -33,7 +34,8 @@ public abstract class State {
     protected ObjectAnimationPlayer aniPlayer;
 
     /// Multiplicador geral para escalar elementos internos independentemente da escala global
-    protected float mult;
+    protected float multi;
+    protected boolean shouldMultiply = true;
 
     /**
      * Construtor da classe base State.
@@ -98,8 +100,9 @@ public abstract class State {
         float canvasHeightPercentage = (float) canvasHeight / PlayScreen.GAME_HEIGHT;
 
         // Ajusta o tamanho do menu considerando o percentual e o multiplicador
-        menuWidth = (int) (PlayScreen.GAME_WIDTH * canvasWidthPercentage * mult);
-        menuHeight = (int) (PlayScreen.GAME_HEIGHT * canvasHeightPercentage * mult);
+        menuWidth = (int) HelpMethods.scale(PlayScreen.GAME_WIDTH * canvasWidthPercentage, multi, shouldMultiply);
+        menuHeight = (int) HelpMethods.scale(PlayScreen.GAME_HEIGHT * canvasHeightPercentage, multi, shouldMultiply);
+
     }
 
     /**
@@ -153,9 +156,9 @@ public abstract class State {
         }
     }
 
-    protected abstract void render(SpriteBatch batch);
+    public abstract void render(SpriteBatch batch);
 
-    protected abstract void renderUi(SpriteBatch uiBatch);
+    public abstract void renderUi(SpriteBatch uiBatch);
 
     public PlayScreen getGame() {
         return game;

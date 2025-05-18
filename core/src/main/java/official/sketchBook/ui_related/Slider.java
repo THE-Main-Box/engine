@@ -141,10 +141,11 @@ public class Slider extends On_OffButton {
                 tickCanvasWidth,
                 tickCanvasHeight,
                 tickSpriteSheet,
+                false,
                 false
             ),
-            (int) (tickXPos - 3 * multiplier),
-            (int) (yPos - 3 * multiplier),
+             shouldScaleByMultiplying()? tickXPos - 3 * multiplier : tickXPos - 3 / multiplier,
+            shouldScaleByMultiplying()? yPos - 3 * multiplier : yPos - 3 / multiplier,
             tickWidth,
             tickHeight
         );

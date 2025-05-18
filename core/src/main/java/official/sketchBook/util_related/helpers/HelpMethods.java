@@ -10,7 +10,7 @@ import official.sketchBook.gameState_related.states.Playing;
 
 public class HelpMethods {
 
-    public static TextureRegion obtainCurrentSpriteImage(Sprite sprite, int textureWidth, int textureHeight, Texture spriteSheet, boolean flipX) {
+    public static TextureRegion obtainCurrentSpriteImage(Sprite sprite, int textureWidth, int textureHeight, Texture spriteSheet, boolean flipX, boolean flipY) {
 
         TextureRegion region = new TextureRegion(
             spriteSheet,
@@ -20,13 +20,14 @@ public class HelpMethods {
             textureHeight
         );
 
-        if (flipX && !region.isFlipX()) {
-            region.flip(true, false);  // Inverte horizontalmente
-        } else if (!flipX && region.isFlipX()) {
-            region.flip(true, false);  // Corrige se já estiver invertido
-        }
+        region.flip(flipX,flipY);  // Inverte horizontalmente
+
 
         return region;
+    }
+
+    public static float scale(float value, float factor, boolean shouldMultiply) {
+        return shouldMultiply ? value * factor : value / factor;
     }
 
     public static void updateCameraMovementParams(CameraManager cameraManager, float width, float height) {

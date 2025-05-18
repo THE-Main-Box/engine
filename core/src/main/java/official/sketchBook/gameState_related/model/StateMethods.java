@@ -17,6 +17,8 @@ public interface StateMethods {
 
     public boolean handleTouchUp(int screenX, int screenY, int button);
 
+    public boolean handleTouchDragged(int screenX, int screenY, int button);
+
     public boolean handleKeyDown(int keycode);
 
     public boolean handleKeyUp(int keycode);

@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import official.sketchBook.gameObject_related.Entity;
 import official.sketchBook.projectiles_related.Projectile;
 import official.sketchBook.projectiles_related.util.GlobalProjectilePool;
-import official.sketchBook.util_related.poolRegisters.ProjectilePoolRegister;
+import official.sketchBook.util_related.registers.ProjectilePoolRegister;
 
 public class Emitter {
     private GlobalProjectilePool pool;

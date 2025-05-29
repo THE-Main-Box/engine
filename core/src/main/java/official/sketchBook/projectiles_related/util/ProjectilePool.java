@@ -32,6 +32,7 @@ public class ProjectilePool<T extends Projectile> extends Pool<T> {
         }
     }
 
+    //destrói todos os projéteis existentes dentro da pool
     public void destroyAllProjectiles() {
         for (int i = allProjectiles.size() - 1; i >= 0; i--) {
             T projectile = allProjectiles.get(i);

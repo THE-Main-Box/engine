@@ -4,17 +4,16 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.World;
 import official.sketchBook.gameObject_related.GameObject;
 import official.sketchBook.gameObject_related.entities.Player;
-import official.sketchBook.projectiles_related.Projectile;
 import official.sketchBook.projectiles_related.emitters.Emitter;
 import official.sketchBook.projectiles_related.projectiles.TestProjectile;
-import official.sketchBook.projectiles_related.util.GlobalProjectilePool;
 import official.sketchBook.room_related.model.PlayableRoom;
 import official.sketchBook.room_related.worldGeneration_related.blueprint.RoomBlueprint;
 import official.sketchBook.room_related.worldGeneration_related.generation.WorldGenerator;
 import official.sketchBook.room_related.worldGeneration_related.generation.WorldLayout;
 import official.sketchBook.screen_related.PlayScreen;
 import official.sketchBook.util_related.enumerators.types.RoomType;
-import official.sketchBook.util_related.poolRegisters.ProjectilePoolRegister;
+import official.sketchBook.util_related.registers.EmitterRegister;
+import official.sketchBook.util_related.registers.ProjectilePoolRegister;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,11 +45,11 @@ public class GameObjectManager {
         createPlayerEmitter();
     }
 
-    public static Emitter emitter;
-
     private void createPlayerEmitter() {
-        emitter = new Emitter(player);
+        Emitter emitter = new Emitter(player);
         emitter.configure(TestProjectile.class);
+
+        EmitterRegister.register(player, emitter);
     }
 
     private void initRoom() {

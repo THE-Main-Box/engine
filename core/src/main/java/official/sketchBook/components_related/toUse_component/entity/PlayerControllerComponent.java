@@ -9,9 +9,13 @@ import official.sketchBook.gameDataManagement_related.GameObjectManager;
 import official.sketchBook.gameObject_related.GameObject;
 import official.sketchBook.gameObject_related.entities.Player;
 import official.sketchBook.projectiles_related.Projectile;
+import official.sketchBook.projectiles_related.emitters.Emitter;
 import official.sketchBook.util_related.enumerators.directions.Direction;
 import official.sketchBook.util_related.info.util.values.ControlKeys;
 import official.sketchBook.util_related.info.util.values.SpeedRelatedVariables;
+import official.sketchBook.util_related.registers.EmitterRegister;
+
+import java.util.Objects;
 
 import static official.sketchBook.screen_related.PlayScreen.PPM;
 
@@ -41,7 +45,7 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
     }
 
     private void testShoot(boolean pressed) {
-        if (GameObjectManager.emitter == null) return;
+        if (EmitterRegister.getEmitter(player) == null) return;
 
         if (pressed) {
 
@@ -61,11 +65,15 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
     }
 
     private void shoot(Vector2 origin, Vector2 target, float timeToReach) {
-        Projectile proj = GameObjectManager.emitter.obtain(origin);
+        Emitter e = EmitterRegister.getEmitter(player);
+
+        if (e == null) return;
+
+        Projectile proj = e.obtain(origin);
 
         if (proj == null) return;
 
-        GameObjectManager.emitter.fire(proj, target.x, target.y, timeToReach);
+        e.fire(proj, target.x, target.y, timeToReach);
     }
 
     private void jump(boolean pressed) {

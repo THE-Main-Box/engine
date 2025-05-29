@@ -10,7 +10,8 @@ import official.sketchBook.gameObject_related.MovableGameObject;
 import official.sketchBook.projectiles_related.util.GlobalProjectilePool;
 import official.sketchBook.room_related.worldGeneration_related.connection.RoomNode;
 import official.sketchBook.util_related.helpers.body.RoomBodyDataConversor;
-import official.sketchBook.util_related.poolRegisters.ProjectilePoolRegister;
+import official.sketchBook.util_related.registers.EmitterRegister;
+import official.sketchBook.util_related.registers.ProjectilePoolRegister;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,12 +60,14 @@ public class PlayableRoom implements Poolable {
             gameObjects.clear();
         }
 
-        //Remove ela do registro para evitar uso indevido
-        ProjectilePoolRegister.unregister(this);
-        projectilePool.killPool();
-        roomData = null;
-        roomConnections = null;
-        active = false;
+        ProjectilePoolRegister.unregister(this);//Remove a sala dos registros para evitar uso indevido
+        EmitterRegister.unregisterRoom(this);
+
+        projectilePool.killPool();//destrói todos os projéteis dentro da pool global
+
+        roomData = null;//limpa os dados da sala
+        roomConnections = null; //limpam os dados da conexão
+        active = false; //desativa a sala
     }
 
     /// Limpa e elimina todos os valores dentro da sala
@@ -78,6 +81,7 @@ public class PlayableRoom implements Poolable {
 
     }
 
+    /// Sincroniza os corpos dos objetos com suas posições relativas
     public void syncObjectsBodies() {
         if (!active || gameObjects == null) return;
 
@@ -90,6 +94,7 @@ public class PlayableRoom implements Poolable {
         this.projectilePool.syncProjectilesBodies();
     }
 
+    /// Atualiza os ray casts de todas as entidades que possuem a capacidade de usar um rayCast
     public void updateEntitiesRayCasts() {
         if (!active || gameObjects == null) return;
 
@@ -100,6 +105,7 @@ public class PlayableRoom implements Poolable {
         }
     }
 
+    /// Atualiza todos os objetos
     public void updateObjects(float delta) {
         if (!active) return;
 
@@ -115,6 +121,7 @@ public class PlayableRoom implements Poolable {
     }
 
 
+    /// Renderiza todos os GameObjects
     public void render(SpriteBatch batch) {
         if (!active) return;
 
@@ -126,6 +133,7 @@ public class PlayableRoom implements Poolable {
 
     }
 
+    /// Realiza um dispose de tudo caso estejamos ativos
     public void dispose() {
         if (!active) return;
 
@@ -135,25 +143,21 @@ public class PlayableRoom implements Poolable {
             }
         }
 
-        if(projectilePool != null){
+        if (projectilePool != null) {
             projectilePool.dispose();
         }
 
     }
 
-    public GlobalProjectilePool getProjectilePool() {
-        return projectilePool;
-    }
-
-    public void addNativeBody(Body body) {
-        this.nativeBodies.add(body);
-    }
-
-    public void removeNativeBody(Body body) {
-        if (this.nativeBodies.remove(body)) {
-            this.world.destroyBody(body);
-        }
-    }
+//    public void addNativeBody(Body body) {
+//        this.nativeBodies.add(body);
+//    }
+//
+//    public void removeNativeBody(Body body) {
+//        if (this.nativeBodies.remove(body)) {
+//            this.world.destroyBody(body);
+//        }
+//    }
 
     public void addObject(GameObject object) {
         this.gameObjects.add(object);
@@ -161,8 +165,10 @@ public class PlayableRoom implements Poolable {
 
     public void removeObject(GameObject object) {
         this.gameObjects.remove(object);
+        if (object instanceof Entity entity) {
+            EmitterRegister.unregister(entity);
+        }
     }
-
 
     public boolean isActive() {
         return active;
@@ -172,20 +178,8 @@ public class PlayableRoom implements Poolable {
         return roomData;
     }
 
-    public void setRoomData(Room roomData) {
-        this.roomData = roomData;
-    }
-
     public RoomNode getRoomConnections() {
         return roomConnections;
-    }
-
-    public void setRoomConnections(RoomNode roomConnections) {
-        this.roomConnections = roomConnections;
-    }
-
-    public List<Body> getNativeBodies() {
-        return nativeBodies;
     }
 
     public List<GameObject> getGameObjects() {

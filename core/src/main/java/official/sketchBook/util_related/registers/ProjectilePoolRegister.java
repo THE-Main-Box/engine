@@ -1,4 +1,4 @@
-package official.sketchBook.util_related.poolRegisters;
+package official.sketchBook.util_related.registers;
 
 import official.sketchBook.projectiles_related.util.GlobalProjectilePool;
 import official.sketchBook.room_related.model.PlayableRoom;

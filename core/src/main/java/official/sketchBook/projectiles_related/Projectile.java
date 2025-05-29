@@ -5,7 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Pool;
 import official.sketchBook.animation_related.ObjectAnimationPlayer;
-import official.sketchBook.animation_related.SpriteSheetDatahandler;
+import official.sketchBook.animation_related.SpriteSheetDataHandler;
 import official.sketchBook.components_related.base_component.Component;
 import official.sketchBook.components_related.toUse_component.projectile.ProjectileControllerComponent;
 import official.sketchBook.components_related.toUse_component.projectile.ProjectilePhysicsComponent;
@@ -19,6 +19,8 @@ import java.util.List;
 
 public abstract class Projectile implements Pool.Poolable {
 
+    //TODO:adicionar compatibilidade para rotação, tanto na renderização quando nos objetos
+
     protected boolean active;// flag para se está ativo
     protected float lifeTime;//tempo de vida do projétil
     protected float radius = 0;//raio da area da body do projétil
@@ -31,7 +33,7 @@ public abstract class Projectile implements Pool.Poolable {
 
     protected List<Component> components;
 
-    protected SpriteSheetDatahandler spriteSheetDatahandler;
+    protected SpriteSheetDataHandler spriteSheetDatahandler;
     protected ObjectAnimationPlayer animationPlayer;
 
     protected Entity owner; //dono do projétil

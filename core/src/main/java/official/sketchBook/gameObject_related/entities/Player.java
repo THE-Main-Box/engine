@@ -24,7 +24,7 @@ public class Player extends Entity {
         controllerComponent = new PlayerControllerComponent(this);
         addComponent(controllerComponent);
 
-        jComponent = new JumpComponent(this, 35, 100, 0.1f, true);
+        jComponent = new JumpComponent(this, 35, 100, 0.1f, false);
         addComponent(jComponent);
     }
 

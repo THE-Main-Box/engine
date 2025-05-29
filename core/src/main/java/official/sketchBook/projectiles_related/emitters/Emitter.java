@@ -1,20 +1,19 @@
 package official.sketchBook.projectiles_related.emitters;
 
 import com.badlogic.gdx.math.Vector2;
-import official.sketchBook.gameDataManagement_related.GameObjectManager;
 import official.sketchBook.gameObject_related.Entity;
 import official.sketchBook.projectiles_related.Projectile;
 import official.sketchBook.projectiles_related.util.GlobalProjectilePool;
 import official.sketchBook.util_related.poolRegisters.ProjectilePoolRegister;
 
-public class Emitter<T extends Projectile> {
-    protected GlobalProjectilePool pool;
-    protected final Class<T> type;
-    protected final Entity owner;
+public class Emitter {
+    private GlobalProjectilePool pool;
+    private Class<? extends Projectile> type;
+    private final Entity owner;
+    private boolean configured = false;
 
-    public Emitter(Class<T> type, Entity owner) {
+    public Emitter(Entity owner) {
         this.owner = owner;
-        this.type = type;
         updatePool();
     }
 
@@ -24,17 +23,26 @@ public class Emitter<T extends Projectile> {
             throw new IllegalStateException("Projectile pool not registered for the room.");
     }
 
+    public void configure(Class<? extends Projectile> projectileType) {
+        this.type = projectileType;
+
+        this.configured = this.type != null;
+    }
+
     /**
      * Chama para preparar um novo projétil.
      */
     @SuppressWarnings("unchecked")
-    public T obtain(Vector2 position) {
-        T p = (T) pool.returnProjectileRequested(type);
-        p.init(owner);
-        p.setX(position.x);//seta a posição x
-        p.setY(position.y);//seta a posição y
-        p.getBody().setTransform(position, 0f);
+    public Projectile obtain(Vector2 originPosition) {
+        if (!configured || type == null || pool == null) {
+            return null;
+        }
 
+        Projectile p = pool.returnProjectileRequested(type);
+        p.init(owner);
+        p.setX(originPosition.x);
+        p.setY(originPosition.y);
+        p.getBody().setTransform(originPosition, 0f);
         return p;
     }
 
@@ -53,5 +61,17 @@ public class Emitter<T extends Projectile> {
      */
     public void fire(Projectile p, float x, float y, float timeToReach) {
         p.getControllerComponent().launch(new Vector2(x, y), timeToReach);
+    }
+
+    public Class<? extends Projectile> getType() {
+        return type;
+    }
+
+    public Entity getOwner() {
+        return owner;
+    }
+
+    public boolean isConfigured() {
+        return configured;
     }
 }

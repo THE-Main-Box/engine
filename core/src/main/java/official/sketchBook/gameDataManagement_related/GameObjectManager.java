@@ -16,6 +16,9 @@ import official.sketchBook.screen_related.PlayScreen;
 import official.sketchBook.util_related.enumerators.types.RoomType;
 import official.sketchBook.util_related.poolRegisters.ProjectilePoolRegister;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static official.sketchBook.screen_related.PlayScreen.TILES_IN_HEIGHT;
 import static official.sketchBook.screen_related.PlayScreen.TILES_IN_WIDTH;
 
@@ -34,7 +37,7 @@ public class GameObjectManager {
         this.manager = new PlayableRoomManager(world, generator.getGrid());
 
         this.currentRoom = this.manager.createNewRoom();
-        this.player = new Player(10, 100, 16, 32, true, world);
+        this.player = new Player(10, 100, 16, 16, true, world);
         this.player.setOwnerRoom(currentRoom);
 
         currentRoom.addObject(player);
@@ -43,10 +46,11 @@ public class GameObjectManager {
         createPlayerEmitter();
     }
 
-    public static Emitter<TestProjectile> emitter;
+    public static Emitter emitter;
 
-    private void createPlayerEmitter(){
-        emitter = new Emitter<>(TestProjectile.class, player);
+    private void createPlayerEmitter() {
+        emitter = new Emitter(player);
+        emitter.configure(TestProjectile.class);
     }
 
     private void initRoom() {
@@ -77,8 +81,8 @@ public class GameObjectManager {
     }
 
     private int[][] initBaseTileMap() {
-//        public static final int TILES_IN_WIDTH = 39;
-//        public static final int TILES_IN_HEIGHT = 21;
+//        TILES_IN_WIDTH = 39;
+//        TILES_IN_HEIGHT = 21;
 
         int[][] toReturn = new int[TILES_IN_HEIGHT][TILES_IN_WIDTH];
 
@@ -86,14 +90,18 @@ public class GameObjectManager {
             for (int x = 0; x < TILES_IN_WIDTH; x++) {
                 toReturn[y][x] = 0;
 
-                boolean canCreate_1 = y >= TILES_IN_HEIGHT - 2;
-                boolean canCreate_2 = y >= TILES_IN_HEIGHT - 7 && x == TILES_IN_WIDTH - 10;
-                boolean canCreate_3 = y == TILES_IN_HEIGHT - 10 && (x >= TILES_IN_WIDTH - 30 && x <= TILES_IN_WIDTH - 10 );
-                boolean canCreate_4 = y == TILES_IN_HEIGHT - 3 && x == TILES_IN_WIDTH - 21;
-                boolean canCreate_5 = y == TILES_IN_HEIGHT - 4 && x == TILES_IN_WIDTH - 24;
+                List<Boolean> canCreate = new ArrayList<>();
+                canCreate.add(y >= TILES_IN_HEIGHT - 2); // chão
+                canCreate.add(y == 0); //teto
+                canCreate.add(x == 0);//parede esquerda
+                canCreate.add(x == TILES_IN_WIDTH - 1); // parede direita
 
-                if (canCreate_1 || canCreate_2 || canCreate_3|| canCreate_4 || canCreate_5) {
-                    toReturn[y][x] = 1;
+
+                for (boolean value : canCreate) {
+                    if (value) {
+                        toReturn[y][x] = 1;
+                        break;
+                    }
                 }
 
             }

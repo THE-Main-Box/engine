@@ -2,6 +2,7 @@ package official.sketchBook.components_related.toUse_component.entity;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import official.sketchBook.components_related.base_component.KeyBindedControllerComponent;
 import official.sketchBook.components_related.toUse_component.util.TimerComponent;
 import official.sketchBook.gameDataManagement_related.GameObjectManager;
@@ -35,7 +36,7 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
         bindKey(ControlKeys.move_left, this::moveLeft);
         bindKey(ControlKeys.move_right, this::moveRight);
         bindKey(ControlKeys.jump, this::jump);
-        bindKey(Input.Keys.X, this::testShoot);
+        bindKey(Input.Keys.F, this::testShoot);
 
     }
 
@@ -43,17 +44,28 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
         if (GameObjectManager.emitter == null) return;
 
         if (pressed) {
-            Projectile proj = GameObjectManager.emitter.obtain(
-                new Vector2(
-                    (!player.isFacingForward() ? player.getX() - 4 : player.getX() + player.getWidth() + 4) / PPM,
-                    (player.getY() + player.getHeight() / 2) / PPM
-                )
+
+            Vector2 origin = new Vector2(
+                (!player.isFacingForward() ? player.getX() - 4 : player.getX() + player.getWidth() + 4) / PPM,
+                (player.getY() + player.getHeight() / 2) / PPM
             );
 
-            if (proj == null) return;
+            Vector2 target = new Vector2(
+                player.isFacingForward() ? 1000 / PPM : -1000 / PPM, -0
+            );
 
-            GameObjectManager.emitter.fire(proj, player.isFacingForward() ? 1000/PPM: -1000/PPM, -0, 0.1f);
+            float timeToReach = 0.1f;
+
+            shoot(origin, target, timeToReach);
         }
+    }
+
+    private void shoot(Vector2 origin, Vector2 target, float timeToReach) {
+        Projectile proj = GameObjectManager.emitter.obtain(origin);
+
+        if (proj == null) return;
+
+        GameObjectManager.emitter.fire(proj, target.x, target.y, timeToReach);
     }
 
     private void jump(boolean pressed) {
@@ -63,15 +75,29 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
             jumpBufferTimer.start();
 
         } else {
-
             if (player.getjComponent().isJumping()) {
                 player.getjComponent().jump(true);
 
                 jumpBufferTimer.stop();
                 jumpBufferTimer.reset();
-
             }
+        }
 
+        if (pressed && !player.isOnGround()) {
+            Vector2 origin = new Vector2(
+                (!player.isFacingForward() ? player.getX() - 2 : player.getX() + player.getWidth() + 2) / PPM,
+                (player.getY()) / PPM
+            );
+
+            Vector2 target = new Vector2(0, -1);
+
+            float timeToReach = 0.1f;
+
+            player.getBody().setLinearVelocity(
+                player.getBody().getLinearVelocity().x,
+                player.getBody().getLinearVelocity().y += 3
+            );
+            shoot(origin, target, timeToReach);
         }
     }
 

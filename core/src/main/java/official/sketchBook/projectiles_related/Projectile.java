@@ -19,6 +19,8 @@ import java.util.List;
 
 public abstract class Projectile implements Pool.Poolable {
 
+    //TODO:adicionar compatibilidade para rotação, tanto na renderização quando nos objetos
+
     protected boolean active;// flag para se está ativo
     protected float lifeTime;//tempo de vida do projétil
     protected float radius = 0;//raio da area da body do projétil

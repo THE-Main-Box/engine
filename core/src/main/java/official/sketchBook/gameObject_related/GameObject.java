@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import official.sketchBook.animation_related.ObjectAnimationPlayer;
-import official.sketchBook.animation_related.SpriteSheetDatahandler;
+import official.sketchBook.animation_related.SpriteSheetDataHandler;
 import official.sketchBook.components_related.base_component.Component;
 import official.sketchBook.room_related.model.PlayableRoom;
 
@@ -22,7 +22,7 @@ public abstract class GameObject {
     protected World world;
 
     //rendering and animation related
-    protected List<SpriteSheetDatahandler> spriteSheetDatahandlerList;
+    protected List<SpriteSheetDataHandler> spriteSheetDatahandlerList;
     protected List<ObjectAnimationPlayer> objectAnimationPlayerList;
 
     protected boolean facingForward;
@@ -71,7 +71,7 @@ public abstract class GameObject {
 
     public void dispose() {
         if (!spriteSheetDatahandlerList.isEmpty()) {
-            for (SpriteSheetDatahandler spriteSheetDatahandler : spriteSheetDatahandlerList) {
+            for (SpriteSheetDataHandler spriteSheetDatahandler : spriteSheetDatahandlerList) {
                 spriteSheetDatahandler.dispose();
             }
         }
@@ -181,14 +181,14 @@ public abstract class GameObject {
         }
     }
 
-    public void addSpriteSheetDataHandler(SpriteSheetDatahandler spriteHandler) {
+    public void addSpriteSheetDataHandler(SpriteSheetDataHandler spriteHandler) {
         if (spriteHandler != null) {
             spriteSheetDatahandlerList.add(spriteHandler);
         }
     }
 
     // Métodos para acessar os principais elementos
-    public SpriteSheetDatahandler getPrimarySpriteHandler() {
+    public SpriteSheetDataHandler getPrimarySpriteHandler() {
         return spriteSheetDatahandlerList.isEmpty() ? null : spriteSheetDatahandlerList.get(0);
     }
 
@@ -197,7 +197,7 @@ public abstract class GameObject {
     }
 
 
-    public List<SpriteSheetDatahandler> getSpriteSheetDatahandlerList() {
+    public List<SpriteSheetDataHandler> getSpriteSheetDatahandlerList() {
         return spriteSheetDatahandlerList;
     }
 

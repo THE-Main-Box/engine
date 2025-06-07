@@ -35,7 +35,7 @@ public class PlayScreen implements Screen {
 
     // game dimensions related
     public static float scale = 2f;
-    public static float zoom = 1f / scale;
+    public static float zoom = 0.7f / scale;
     public static final int TILES_IN_WIDTH = 39;
     public static final int TILES_IN_HEIGHT = 21;
     public static final int TILES_DEFAULT_SIZE = 16;

@@ -58,8 +58,13 @@ public abstract class Projectile implements Pool.Poolable {
         this.addComponent(physicsComponent);
     }
 
-    /// Inicia as informações dinâmicas do projétil
-    public abstract void init(Entity owner);
+    /** Inicia as informações dinâmicas do projétil
+     * é preciso passar o tempo de vida e outros valores que precisam ser iniciados dinamicamente
+     * */
+    public void init(Entity owner){
+        this.owner = owner;
+        this.setActive(true);
+    }
 
     /**
      * Inicia o comportamento padrão do projétil(chamado no construtor)

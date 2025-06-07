@@ -1,9 +1,8 @@
 package official.sketchBook.util_related.info.paths;
 
 public class EntitiesSpritePath {
-    private static final String sprites_path = "sprites/";
+    private static final String sprites_path = "sprites/entities/";
 
-    public static final String dexBody_SS = sprites_path + "dex_body.png";
-    public static final String dexHead_SS = sprites_path + "dex_head.png";
+    public static final String duck_path = sprites_path + "duck-Sheet.png";
 
 }

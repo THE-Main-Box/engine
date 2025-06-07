@@ -10,6 +10,7 @@ import official.sketchBook.util_related.enumerators.directions.Direction;
 public abstract class RangeWeapon {
 
     protected String name;
+    protected String description;
 
     protected Class<? extends Projectile> projectileType;
     protected Emitter projectileEmitter;
@@ -17,11 +18,16 @@ public abstract class RangeWeapon {
 
     protected SpriteSheetDataHandler spriteDataHandler;
 
+    protected void configProjectileTypeOnEmitter(Class<? extends Projectile> type){
+        this.projectileType = type;
+        this.projectileEmitter.configure(type);
+    }
+
     // Ponto de disparo com base na direção
     public final Vector2 getProjectileSpawnPosition(Direction direction) {
         Vector2 base = new Vector2(
-                (owner.getX() + owner.getWidth() / 2f),
-                (owner.getY() + owner.getHeight() / 2f)
+            (owner.getX() + owner.getWidth() / 2f),
+            (owner.getY() + owner.getHeight() / 2f)
         );
 
         return base.add(getOffsetForDirection(direction));
@@ -37,6 +43,14 @@ public abstract class RangeWeapon {
         return new Vector2(); // STILL ou default
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
     // Métodos customizáveis por subclasses
     protected Vector2 getRightOffset() {
         return new Vector2(0, 0);
@@ -47,11 +61,16 @@ public abstract class RangeWeapon {
     }
 
     protected Vector2 getDownOffset() {
-        return new Vector2(0,0);
+        return new Vector2(0, 0);
     }
 
     protected Vector2 getUpOffset() {
         return new Vector2(0, 0);
     }
 
+    public void dispose() {
+        if (spriteDataHandler != null) {
+            spriteDataHandler.dispose();
+        }
+    }
 }

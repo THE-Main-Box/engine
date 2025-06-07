@@ -10,8 +10,9 @@ import java.util.Map;
 public class EmitterRegister {
     private static final Map<PlayableRoom, Map<Entity, Emitter>> emitterMap = new HashMap<>();
 
-    public static void register(Entity entity, Emitter emitter) {
-        emitterMap.computeIfAbsent(entity.getOwnerRoom(), r -> new HashMap<>()).put(entity, emitter);
+    public static void register(Emitter emitter) {
+        emitterMap.computeIfAbsent(emitter.getOwner().getOwnerRoom(), r -> new HashMap<>())
+            .put(emitter.getOwner(), emitter);
     }
 
     public static Emitter getEmitter(Entity entity) {

@@ -5,44 +5,40 @@ import com.badlogic.gdx.physics.box2d.World;
 import official.sketchBook.gameObject_related.Entity;
 import official.sketchBook.projectiles_related.Projectile;
 
-public class TestProjectile extends Projectile {
-
-    public TestProjectile(World world) {
+public class SlugProjectile extends Projectile {
+    public SlugProjectile(World world) {
         super(world);
 
         this.initBodyBehavior(
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
             true,
-            1f,
-            1f,
-            1f,
-            1f,
-            1f,
-            1f
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            0.1f,
+            0.1f,
+            0.1f,
+            0.1f,
+            0.1f,
+            0.1f
 
         );
-
-    }
-
-    @Override
-    protected void setBodyDefValues() {
-        this.radius = 2f;
-        this.defFric = 0.1f;
-        this.defDens = 0.1f;
-        this.defRest = 0f;
-
     }
 
     @Override
     public void init(Entity owner) {
         super.init(owner);
-        this.setLifeTime(10f);
+        this.setLifeTime(5);
+    }
 
+    @Override
+    protected void setBodyDefValues() {
+        this.radius = 3f;
+        this.defFric = 0.1f;
+        this.defDens = 0.1f;
+        this.defRest = 0f;
     }
 
     @Override

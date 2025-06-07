@@ -2,7 +2,7 @@ package official.sketchBook.util_related.info.paths;
 
 public class UISpritePaths {
 
-    private static final String sprites_path = "sprites/";
+    private static final String sprites_path = "sprites/ui/";
 
     public static final String config_BG = sprites_path + "configurations_backGround.png";
     public static final String slider_BG = sprites_path + "slider.png";

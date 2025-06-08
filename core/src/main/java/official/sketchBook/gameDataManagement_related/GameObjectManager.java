@@ -36,20 +36,11 @@ public class GameObjectManager {
         this.manager = new PlayableRoomManager(world, generator.getGrid());
 
         this.currentRoom = this.manager.createNewRoom();
-        this.player = new Player(10, 100, 16, 16, true, world);
-        this.player.setOwnerRoom(currentRoom);
-
-        currentRoom.addObject(player);
 
         this.initRoom();
-        createPlayerEmitter();
-    }
 
-    private void createPlayerEmitter() {
-        Emitter emitter = new Emitter(player);
-        emitter.configure(TestProjectile.class);
-
-        EmitterRegister.register(player, emitter);
+        this.player = new Player(10, 100, 16, 16, true, world, currentRoom);
+        currentRoom.addObject(player);
     }
 
     private void initRoom() {

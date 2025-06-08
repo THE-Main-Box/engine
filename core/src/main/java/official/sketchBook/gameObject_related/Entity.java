@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
 import official.sketchBook.gameDataManagement_related.GameObjectManager;
+import official.sketchBook.projectiles_related.emitters.Emitter;
 import official.sketchBook.projectiles_related.util.GlobalProjectilePool;
 import official.sketchBook.room_related.model.PlayableRoom;
 import official.sketchBook.util_related.helpers.RayCastHelper;

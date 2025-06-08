@@ -20,7 +20,7 @@ public class Emitter {
     public void updatePool() {
         this.pool = ProjectilePoolRegister.getPool(this.owner.getOwnerRoom());
         if (this.pool == null)
-            throw new IllegalStateException("Projectile pool not registered for the room.");
+            throw new IllegalStateException("Projectile pool not registered for the room: " + owner.getOwnerRoom());
     }
 
     public void configure(Class<? extends Projectile> projectileType) {

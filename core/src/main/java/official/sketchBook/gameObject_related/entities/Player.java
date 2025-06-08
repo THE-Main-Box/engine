@@ -1,31 +1,95 @@
 package official.sketchBook.gameObject_related.entities;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
+import official.sketchBook.animation_related.ObjectAnimationPlayer;
+import official.sketchBook.animation_related.Sprite;
+import official.sketchBook.animation_related.SpriteSheetDataHandler;
 import official.sketchBook.components_related.toUse_component.entity.PlayerControllerComponent;
 import official.sketchBook.components_related.toUse_component.object.JumpComponent;
 import official.sketchBook.gameObject_related.Entity;
+import official.sketchBook.projectiles_related.emitters.Emitter;
+import official.sketchBook.room_related.model.PlayableRoom;
 import official.sketchBook.util_related.enumerators.types.FixtType;
 import official.sketchBook.util_related.helpers.body.BodyCreatorHelper;
+import official.sketchBook.util_related.info.paths.EntitiesSpritePath;
+import official.sketchBook.util_related.info.util.values.AnimationTitles;
 import official.sketchBook.util_related.info.util.values.FixtureType;
+import official.sketchBook.util_related.registers.EmitterRegister;
+import official.sketchBook.weapon_related.RangeWeapon;
+import official.sketchBook.weapon_related.Shotgun;
+
+import java.util.Arrays;
 
 public class Player extends Entity {
 
     private PlayerControllerComponent controllerComponent;
     private JumpComponent jComponent;
 
-    public Player(float x, float y, float width, float height, boolean facingForward, World world) {
+    private RangeWeapon weapon;
+
+    private boolean walking = false;
+
+    public Player(float x, float y, float width, float height, boolean facingForward, World world, PlayableRoom room) {
         super(x, y, width, height, facingForward, world);
 
-        setOwnerRoom(ownerRoom);
+        this.ownerRoom = room;
 
         controllerComponent = new PlayerControllerComponent(this);
         addComponent(controllerComponent);
 
         jComponent = new JumpComponent(this, 35, 100, 0.1f, false);
         addComponent(jComponent);
+
+        this.initSpriteSheet();
+        this.initAnimations();
+        this.initProjectileUsage();
+    }
+
+    private void initProjectileUsage() {
+        EmitterRegister.register(new Emitter(this));
+        this.weapon = new Shotgun(this);
+    }
+
+    private void initSpriteSheet() {
+        this.spriteSheetDatahandlerList.add(
+            new SpriteSheetDataHandler(
+                this.x,
+                this.y,
+                8,
+                0,
+                4,
+                3,
+                facingForward,
+                false,
+                new Texture(EntitiesSpritePath.duck_path)
+            )
+        );
+    }
+
+    private void initAnimations() {
+        this.objectAnimationPlayerList.add(new ObjectAnimationPlayer());
+        this.objectAnimationPlayerList.get(0).addAnimation(AnimationTitles.idle, Arrays.asList(
+            new Sprite(0, 0, 0.5f),
+            new Sprite(1, 0, 0.15f),
+            new Sprite(2, 0, 0.3f),
+            new Sprite(3, 0, 0.15f)
+        ));
+        this.objectAnimationPlayerList.get(0).addAnimation(AnimationTitles.run, Arrays.asList(
+            new Sprite(0, 1, 0.075f),
+            new Sprite(1, 1, 0.075f),
+            new Sprite(2, 1, 0.075f),
+            new Sprite(3, 1, 0.075f),
+            new Sprite(0, 2, 0.075f),
+            new Sprite(1, 2, 0.075f),
+            new Sprite(2, 2, 0.075f),
+            new Sprite(3, 2, 0.075f)
+        ));
+
+        objectAnimationPlayerList.get(0).setAnimation(AnimationTitles.idle);
     }
 
     @Override
@@ -59,6 +123,24 @@ public class Player extends Entity {
         this.updateComponents(deltaTime);
         super.update(deltaTime);
 
+        updateAnimation();
+        updateAnimationPlayer(deltaTime);
+    }
+
+    private void updateAnimation() {
+        for (ObjectAnimationPlayer animationPlayer : objectAnimationPlayerList) {
+            if (walking) {
+                animationPlayer.setAnimation(AnimationTitles.run);
+            } else if (onGround) {
+                animationPlayer.setAnimation(AnimationTitles.idle);
+            }
+        }
+    }
+
+    private void updateAnimationPlayer(float delta) {
+        for (ObjectAnimationPlayer animationPlayer : objectAnimationPlayerList) {
+            animationPlayer.update(delta);
+        }
     }
 
     @Override
@@ -89,7 +171,29 @@ public class Player extends Entity {
 
     @Override
     public void render(SpriteBatch batch) {
+        for (int i = 0; i < spriteSheetDatahandlerList.size(); i++) {
+            spriteSheetDatahandlerList.get(i).setFacingFoward(facingForward);
+            spriteSheetDatahandlerList.get(i).renderSprite(
+                batch,
+                objectAnimationPlayerList.get(i).getCurrentSprite()
+            );
+        }
+    }
 
+    public boolean isWalking() {
+        return walking;
+    }
+
+    public void setWalking(boolean walking) {
+        this.walking = walking;
+    }
+
+    public RangeWeapon getWeapon() {
+        return weapon;
+    }
+
+    public void setWeapon(RangeWeapon weapon) {
+        this.weapon = weapon;
     }
 
     //verifica se dá para pular

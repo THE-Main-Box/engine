@@ -1,6 +1,7 @@
 package official.sketchBook.gameObject_related;
 
 import com.badlogic.gdx.physics.box2d.World;
+import official.sketchBook.animation_related.SpriteSheetDataHandler;
 import official.sketchBook.components_related.toUse_component.object.MObjectPhysicsComponent;
 import official.sketchBook.components_related.toUse_component.object.MovementComponent;
 import official.sketchBook.room_related.model.PlayableRoom;
@@ -23,6 +24,13 @@ public abstract class MovableGameObject extends GameObject {
     @Override
     public void update(float deltaTime) {
         applySpeedOnBody();
+    }
+
+
+    public void updateSpritePos(){
+        for(SpriteSheetDataHandler dataHandler : spriteSheetDatahandlerList){
+            dataHandler.updatePosition(this.getX(), this.getY());
+        }
     }
 
     //atualiza a posição do corpo através do componente de física

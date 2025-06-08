@@ -22,7 +22,7 @@ import static official.sketchBook.screen_related.PlayScreen.PPM;
 public class PlayerControllerComponent extends KeyBindedControllerComponent {
     private final Player player;
 
-    private final float groundAccel = 50f / PPM;
+    private final float groundAccel = 70f / PPM;
     private final float airAccel = 10f / PPM;
     private float accelToApply;
 
@@ -40,40 +40,7 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
         bindKey(ControlKeys.move_left, this::moveLeft);
         bindKey(ControlKeys.move_right, this::moveRight);
         bindKey(ControlKeys.jump, this::jump);
-        bindKey(Input.Keys.F, this::testShoot);
 
-    }
-
-    private void testShoot(boolean pressed) {
-        if (EmitterRegister.getEmitter(player) == null) return;
-
-        if (pressed) {
-
-            Vector2 origin = new Vector2(
-                (!player.isFacingForward() ? player.getX() - 4 : player.getX() + player.getWidth() + 4) / PPM,
-                (player.getY() + player.getHeight() / 2) / PPM
-            );
-
-            Vector2 target = new Vector2(
-                player.isFacingForward() ? 1000 / PPM : -1000 / PPM, -0
-            );
-
-            float timeToReach = 0.1f;
-
-            shoot(origin, target, timeToReach);
-        }
-    }
-
-    private void shoot(Vector2 origin, Vector2 target, float timeToReach) {
-        Emitter e = EmitterRegister.getEmitter(player);
-
-        if (e == null) return;
-
-        Projectile proj = e.obtain(origin);
-
-        if (proj == null) return;
-
-        e.fire(proj, target.x, target.y, timeToReach);
     }
 
     private void jump(boolean pressed) {
@@ -89,23 +56,6 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
                 jumpBufferTimer.stop();
                 jumpBufferTimer.reset();
             }
-        }
-
-        if (pressed && !player.isOnGround()) {
-            Vector2 origin = new Vector2(
-                (!player.isFacingForward() ? player.getX() - 2 : player.getX() + player.getWidth() + 2) / PPM,
-                (player.getY()) / PPM
-            );
-
-            Vector2 target = new Vector2(0, -1);
-
-            float timeToReach = 0.1f;
-
-            player.getBody().setLinearVelocity(
-                player.getBody().getLinearVelocity().x,
-                player.getBody().getLinearVelocity().y += 3
-            );
-            shoot(origin, target, timeToReach);
         }
     }
 
@@ -180,9 +130,9 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
         rightPressed = pressed;
         if (pressed) {
             lastDirectionPressed = Direction.RIGHT;
-            player.setFacingForward(false);
-
+            player.setFacingForward(true);
         }
+
     }
 
     private void movePlayer(Direction directions) {
@@ -190,15 +140,18 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
             case LEFT:
                 player.setFacingForward(false);
                 player.getMoveC().setAcceleratingX(true);
+                player.setWalking(true);
                 player.getMoveC().setxAccel(-accelToApply);
                 break;
             case RIGHT:
                 player.setFacingForward(true);
                 player.getMoveC().setAcceleratingX(true);
+                player.setWalking(true);
                 player.getMoveC().setxAccel(accelToApply);
                 break;
             case STILL:
                 player.getMoveC().setAcceleratingX(false);
+                player.setWalking(false);
                 break;
             default:
                 break;

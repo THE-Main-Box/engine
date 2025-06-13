@@ -61,8 +61,8 @@ public class Player extends Entity {
                 this.y,
                 8,
                 0,
+                5,
                 4,
-                3,
                 facingForward,
                 false,
                 new Texture(EntitiesSpritePath.duck_path)
@@ -73,20 +73,20 @@ public class Player extends Entity {
     private void initAnimations() {
         this.objectAnimationPlayerList.add(new ObjectAnimationPlayer());
         this.objectAnimationPlayerList.get(0).addAnimation(AnimationTitles.idle, Arrays.asList(
-            new Sprite(0, 0, 0.5f),
+            new Sprite(0, 0, 0.15f),
             new Sprite(1, 0, 0.15f),
-            new Sprite(2, 0, 0.3f),
+            new Sprite(2, 0, 0.15f),
             new Sprite(3, 0, 0.15f)
         ));
         this.objectAnimationPlayerList.get(0).addAnimation(AnimationTitles.run, Arrays.asList(
+            new Sprite(4, 0, 0.075f),
             new Sprite(0, 1, 0.075f),
             new Sprite(1, 1, 0.075f),
             new Sprite(2, 1, 0.075f),
             new Sprite(3, 1, 0.075f),
+            new Sprite(4, 1, 0.075f),
             new Sprite(0, 2, 0.075f),
-            new Sprite(1, 2, 0.075f),
-            new Sprite(2, 2, 0.075f),
-            new Sprite(3, 2, 0.075f)
+            new Sprite(1, 2, 0.075f)
         ));
 
         objectAnimationPlayerList.get(0).setAnimation(AnimationTitles.idle);

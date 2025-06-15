@@ -119,7 +119,8 @@ public class SpriteSheetDataHandler {
                 !facingFoward,
                 upsideDown
             ),
-            x, y,
+            x,
+            y,
             originX,
             originY,
             renderWidth,
@@ -128,6 +129,14 @@ public class SpriteSheetDataHandler {
             1f,
             rotation
         );
+    }
+
+    public void setDrawOffSetX(float drawOffSetX) {
+        this.drawOffSetX = drawOffSetX;
+    }
+
+    public void setDrawOffSetY(float drawOffSetY) {
+        this.drawOffSetY = drawOffSetY;
     }
 
     public float getOriginX() {

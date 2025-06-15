@@ -31,7 +31,6 @@ public class Player extends Entity {
 
     private RangeWeapon weapon;
 
-    private boolean walking = false;
 
     public Player(float x, float y, float width, float height, boolean facingForward, World world, PlayableRoom room) {
         super(x, y, width, height, facingForward, world);
@@ -125,11 +124,15 @@ public class Player extends Entity {
 
         updateAnimation();
         updateAnimationPlayer(deltaTime);
+
+        if(weapon != null){
+            weapon.update(deltaTime);
+        }
     }
 
     private void updateAnimation() {
         for (ObjectAnimationPlayer animationPlayer : objectAnimationPlayerList) {
-            if (walking) {
+            if (moving) {
                 animationPlayer.setAnimation(AnimationTitles.run);
             } else if (onGround) {
                 animationPlayer.setAnimation(AnimationTitles.idle);
@@ -140,6 +143,10 @@ public class Player extends Entity {
     private void updateAnimationPlayer(float delta) {
         for (ObjectAnimationPlayer animationPlayer : objectAnimationPlayerList) {
             animationPlayer.update(delta);
+        }
+
+        if(weapon != null){
+            weapon.updateAniPlayer(delta);
         }
     }
 
@@ -171,21 +178,17 @@ public class Player extends Entity {
 
     @Override
     public void render(SpriteBatch batch) {
-        for (int i = 0; i < spriteSheetDatahandlerList.size(); i++) {
-            spriteSheetDatahandlerList.get(i).setFacingFoward(facingForward);
-            spriteSheetDatahandlerList.get(i).renderSprite(
-                batch,
-                objectAnimationPlayerList.get(i).getCurrentSprite()
-            );
+        if(weapon != null){
+            weapon.render(batch);
         }
+        super.render(batch);
     }
 
-    public boolean isWalking() {
-        return walking;
-    }
 
-    public void setWalking(boolean walking) {
-        this.walking = walking;
+    public void rechargeWeapon(){
+        if(weapon != null){
+            weapon.recharge();
+        }
     }
 
     public RangeWeapon getWeapon() {

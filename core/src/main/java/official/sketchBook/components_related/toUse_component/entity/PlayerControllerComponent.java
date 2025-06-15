@@ -1,21 +1,14 @@
 package official.sketchBook.components_related.toUse_component.entity;
 
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import official.sketchBook.components_related.base_component.KeyBindedControllerComponent;
 import official.sketchBook.components_related.toUse_component.util.TimerComponent;
-import official.sketchBook.gameDataManagement_related.GameObjectManager;
 import official.sketchBook.gameObject_related.GameObject;
 import official.sketchBook.gameObject_related.entities.Player;
-import official.sketchBook.projectiles_related.Projectile;
-import official.sketchBook.projectiles_related.emitters.Emitter;
 import official.sketchBook.util_related.enumerators.directions.Direction;
 import official.sketchBook.util_related.info.util.values.ControlKeys;
 import official.sketchBook.util_related.info.util.values.SpeedRelatedVariables;
-import official.sketchBook.util_related.registers.EmitterRegister;
 
-import java.util.Objects;
+import javax.naming.ldap.Control;
 
 import static official.sketchBook.screen_related.PlayScreen.PPM;
 
@@ -40,8 +33,16 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
         bindKey(ControlKeys.move_left, this::moveLeft);
         bindKey(ControlKeys.move_right, this::moveRight);
         bindKey(ControlKeys.jump, this::jump);
+        bindKey(ControlKeys.recharge, this::rechargeWeapon);
 
     }
+
+    private void rechargeWeapon(boolean pressed){
+        if(pressed){
+            player.rechargeWeapon();
+        }
+    }
+
 
     private void jump(boolean pressed) {
         if (pressed) {
@@ -85,7 +86,7 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
     //atualiza as variaveis de movimentação em cada estado, se estivermos no ar
     private void updateAirMovementValues() {
 
-        float accel = 0, decel = 0, maxAccel = 0;
+        float accel, decel, maxAccel;
 
         if (player.isOnGround()) {
             // se está no chão
@@ -140,18 +141,18 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
             case LEFT:
                 player.setFacingForward(false);
                 player.getMoveC().setAcceleratingX(true);
-                player.setWalking(true);
+                player.setMoving(true);
                 player.getMoveC().setxAccel(-accelToApply);
                 break;
             case RIGHT:
                 player.setFacingForward(true);
                 player.getMoveC().setAcceleratingX(true);
-                player.setWalking(true);
+                player.setMoving(true);
                 player.getMoveC().setxAccel(accelToApply);
                 break;
             case STILL:
                 player.getMoveC().setAcceleratingX(false);
-                player.setWalking(false);
+                player.setMoving(false);
                 break;
             default:
                 break;

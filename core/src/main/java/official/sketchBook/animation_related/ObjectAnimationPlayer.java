@@ -174,6 +174,10 @@ public class ObjectAnimationPlayer {
         this.currentAnimationKey = currentAnimationKey;
     }
 
+    public List<Sprite> getAnimationByKey(String key){
+        return animations.get(key);
+    }
+
     public Map<String, List<Sprite>> getAnimations() {
         return animations;
     }

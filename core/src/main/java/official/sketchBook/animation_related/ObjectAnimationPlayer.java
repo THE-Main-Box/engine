@@ -12,8 +12,10 @@ public class ObjectAnimationPlayer {
     private int aniTick;                                // contagem da animação
     private float frameDuration;                        // duração da animação
     private float elapsedTime;                          // tempo decorrido desde a ultima troca de sprites
-    private boolean autoUpdateAni;                      // se deve atualizar a animação automaticamente
     private double animationSpeed;
+
+    private boolean autoUpdateAni;                      // se deve atualizar a animação automaticamente
+    private boolean animationLooping = true;  // por padrão true (looping)
 
     public ObjectAnimationPlayer() {
         this.animations = new HashMap<>();
@@ -28,31 +30,58 @@ public class ObjectAnimationPlayer {
     }
 
     //atualiza o frame atual com base em parametros pré-definidos e variaveis
+//    public void update(float deltaTime) {
+//        if (currentAnimation == null || currentAnimation.isEmpty() || !autoUpdateAni) return;
+//
+//        elapsedTime += deltaTime;                 // Atualiza o tempo decorrido
+//
+//        currentSprite = getCurrentSprite();       // seleciona o sprite atual com base no aniTick
+//
+//        // se a duração for menor ou igual a 0 pula essa divisão
+//        if (currentSprite.getDuration() > 0) {
+//            frameDuration = currentSprite.getDuration();
+//        }
+//
+//        // se o tempo decorrido for maior ou igual a duração do frame atualiza ele
+//        if (elapsedTime >= (float) (frameDuration / animationSpeed)) {
+//
+//            aniTick++;
+//            elapsedTime -= (float) (frameDuration / animationSpeed);
+//
+//            if (aniTick >= currentAnimation.size()) {  // reseta o anitick para reiniciar a animação
+//                aniTick = 0;
+//            }
+//
+//        }
+//
+//    }
+
     public void update(float deltaTime) {
         if (currentAnimation == null || currentAnimation.isEmpty() || !autoUpdateAni) return;
 
-        elapsedTime += deltaTime;                 // Atualiza o tempo decorrido
+        elapsedTime += deltaTime;
 
-        currentSprite = getCurrentSprite();       // seleciona o sprite atual com base no aniTick
+        currentSprite = getCurrentSprite();
 
-        // se a duração for menor ou igual a 0 pula essa divisão
         if (currentSprite.getDuration() > 0) {
             frameDuration = currentSprite.getDuration();
         }
 
-        // se o tempo decorrido for maior ou igual a duração do frame atualiza ele
         if (elapsedTime >= (float) (frameDuration / animationSpeed)) {
-
             aniTick++;
             elapsedTime -= (float) (frameDuration / animationSpeed);
 
-            if (aniTick >= currentAnimation.size()) {  // reseta o anitick para reiniciar a animação
-                aniTick = 0;
+            if (aniTick >= currentAnimation.size()) {
+                if (animationLooping) {
+                    aniTick = 0; // reseta para looping
+                } else {
+                    aniTick = currentAnimation.size() - 1; // mantém no último frame se não for looping
+                    autoUpdateAni = false; // para de atualizar a animação, pois terminou
+                }
             }
-
         }
-
     }
+
 
     public float getTotalAnimationTime(List<Sprite> animation) {
         float value = 0;
@@ -78,7 +107,7 @@ public class ObjectAnimationPlayer {
         animationSpeed = totalAnimationTime / targetDuration;
     }
 
-    public void resetAnimationSpeed(){
+    public void resetAnimationSpeed() {
         animationSpeed = 1;
     }
 
@@ -101,10 +130,22 @@ public class ObjectAnimationPlayer {
             // se existe resetamos as contagens e setamos a currentAnimation
             currentAnimation = newAnimation;
             currentAnimationKey = title;
+            animationLooping = true;
             aniTick = 0;
             elapsedTime = 0;
 
         }
+    }
+
+    /** Se a animação não está mais atualizando (chegou ao último frame e não está looping) */
+    public boolean isAnimationFinished() {
+        // terminou quando:
+        // 1) não está em loop
+        // 2) o aniTick está no último índice
+        // 3) o autoUpdateAni foi desligado pelo update()
+        return !animationLooping
+            && aniTick == currentAnimation.size() - 1
+            && !autoUpdateAni;
     }
 
     //determina o sprite atual com base no indice da chave da animação passada
@@ -115,6 +156,17 @@ public class ObjectAnimationPlayer {
         if (frameIndex >= 0 && frameIndex < this.currentAnimation.size()) {
             aniTick = frameIndex;
         }
+    }
+
+    // Setter para o looping
+    public void setAnimationLooping(boolean looping) {
+        if(this.animationLooping != looping){
+            this.animationLooping = looping;
+        }
+    }
+
+    public boolean isAnimationLooping() {
+        return animationLooping;
     }
 
     public int getAniTick() {
@@ -145,7 +197,9 @@ public class ObjectAnimationPlayer {
 
     //determina se a animação deve tocar automaticamente ou não
     public void setAutoUpdateAni(boolean autoUpdateAni) {
-        this.autoUpdateAni = autoUpdateAni;
+        if (this.autoUpdateAni != autoUpdateAni) {
+            this.autoUpdateAni = autoUpdateAni;
+        }
     }
 
     public String getCurrentAnimationKey() {
@@ -174,7 +228,7 @@ public class ObjectAnimationPlayer {
         this.currentAnimationKey = currentAnimationKey;
     }
 
-    public List<Sprite> getAnimationByKey(String key){
+    public List<Sprite> getAnimationByKey(String key) {
         return animations.get(key);
     }
 

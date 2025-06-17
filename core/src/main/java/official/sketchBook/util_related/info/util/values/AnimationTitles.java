@@ -16,9 +16,15 @@ public class AnimationTitles {
     public static class Entity {
 
         /// Titulo de animação para entidades de ‘idle’
-        public final static String idle = "IDLE";
+        public final static String idle = "IDLE_E";
         /// Titulo de animação para entidades de corrida
-        public final static String run = "RUN";
+        public final static String run = "RUN_E";
+
+        public final static String jump = "JUMP_E";
+
+        public final static String fall = "FALL_E";
+
+        public final static String afterFall = "AFT_FALL_E";
     }
 
 }

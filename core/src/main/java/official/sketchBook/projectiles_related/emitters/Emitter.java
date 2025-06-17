@@ -46,6 +46,10 @@ public class Emitter {
         return p;
     }
 
+    public GlobalProjectilePool getPool() {
+        return pool;
+    }
+
     /**
      * Dispara o projétil que está “primed”.
      *

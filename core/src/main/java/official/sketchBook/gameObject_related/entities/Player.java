@@ -8,6 +8,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import official.sketchBook.animation_related.ObjectAnimationPlayer;
 import official.sketchBook.animation_related.Sprite;
 import official.sketchBook.animation_related.SpriteSheetDataHandler;
+import official.sketchBook.components_related.toUse_component.entity.PlayerAnimationManagerComponent;
 import official.sketchBook.components_related.toUse_component.entity.PlayerControllerComponent;
 import official.sketchBook.components_related.toUse_component.object.JumpComponent;
 import official.sketchBook.gameObject_related.base_model.ArmedEntity;
@@ -22,12 +23,13 @@ import official.sketchBook.util_related.registers.EmitterRegister;
 import official.sketchBook.weapon_related.Shotgun;
 
 import java.util.Arrays;
+import java.util.List;
 
-import static official.sketchBook.util_related.info.util.values.AnimationTitles.Entity.idle;
-import static official.sketchBook.util_related.info.util.values.AnimationTitles.Entity.run;
+import static official.sketchBook.util_related.info.util.values.AnimationTitles.Entity.*;
 
 public class Player extends ArmedEntity {
 
+    private PlayerAnimationManagerComponent animationController;
     private PlayerControllerComponent controllerComponent;
     private JumpComponent jComponent;
 
@@ -36,18 +38,36 @@ public class Player extends ArmedEntity {
 
         this.ownerRoom = room;
 
-        controllerComponent = new PlayerControllerComponent(this);
-        addComponent(controllerComponent);
-
-        jComponent = new JumpComponent(this, 35, 100, 0.1f, false);
-        addComponent(jComponent);
-
         this.initSpriteSheet();
         this.initAnimations();
         this.initProjectileUsage();
 
         this.xAP = width / 2;
         this.yAP = width / 2;
+
+        initComponents();
+    }
+
+    private void initComponents() {
+
+        ObjectAnimationPlayer aniPlayer = this.objectAnimationPlayerList.get(0);
+
+        animationController = new PlayerAnimationManagerComponent(this);
+        addComponent(animationController);
+
+        controllerComponent = new PlayerControllerComponent(this);
+        addComponent(controllerComponent);
+
+        jComponent = new JumpComponent(
+            this,
+            35,
+            100,
+            0.1f,
+            0.2f,
+            aniPlayer.getTotalAnimationTime(aniPlayer.getAnimationByKey(afterFall)),
+            false
+        );
+        addComponent(jComponent);
     }
 
     private void initProjectileUsage() {
@@ -73,12 +93,14 @@ public class Player extends ArmedEntity {
 
     private void initAnimations() {
         this.objectAnimationPlayerList.add(new ObjectAnimationPlayer());
+
         this.objectAnimationPlayerList.get(0).addAnimation(idle, Arrays.asList(
             new Sprite(0, 0, 0.15f),
             new Sprite(1, 0, 0.15f),
             new Sprite(2, 0, 0.15f),
             new Sprite(3, 0, 0.15f)
         ));
+
         this.objectAnimationPlayerList.get(0).addAnimation(run, Arrays.asList(
             new Sprite(4, 0, 0.075f),
             new Sprite(0, 1, 0.075f),
@@ -88,6 +110,20 @@ public class Player extends ArmedEntity {
             new Sprite(4, 1, 0.075f),
             new Sprite(0, 2, 0.075f),
             new Sprite(1, 2, 0.075f)
+        ));
+
+        this.objectAnimationPlayerList.get(0).addAnimation(jump, Arrays.asList(
+            new Sprite(2, 2),
+            new Sprite(3, 2)
+        ));
+
+        this.objectAnimationPlayerList.get(0).addAnimation(fall, List.of(
+            new Sprite(4, 2)
+        ));
+
+        this.objectAnimationPlayerList.get(0).addAnimation(afterFall, Arrays.asList(
+            new Sprite(0, 3, 0.1f),
+            new Sprite(1, 3, 0.1f)
         ));
 
         objectAnimationPlayerList.get(0).setAnimation(idle);
@@ -124,18 +160,7 @@ public class Player extends ArmedEntity {
         this.updateComponents(deltaTime);
         super.update(deltaTime);
 
-        updateAnimation();
         updateAnimationPlayer(deltaTime);
-    }
-
-    private void updateAnimation() {
-        for (ObjectAnimationPlayer animationPlayer : objectAnimationPlayerList) {
-            if (moveC.isMoving()) {
-                animationPlayer.setAnimation(run);
-            } else if (onGround) {
-                animationPlayer.setAnimation(idle);
-            }
-        }
     }
 
     @Override
@@ -192,7 +217,7 @@ public class Player extends ArmedEntity {
 
     //verifica se dá para pular
     public boolean canJump() {
-        return jComponent.getCoyoteTimer().isRunning() || onGround;
+        return jComponent.isCoyoteJumpAvailable() || jComponent.isOnGround();
     }
 
     public PlayerControllerComponent getControllerComponent() {

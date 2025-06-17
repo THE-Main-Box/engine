@@ -1,7 +1,7 @@
 package official.sketchBook.projectiles_related.emitters;
 
 import com.badlogic.gdx.math.Vector2;
-import official.sketchBook.gameObject_related.Entity;
+import official.sketchBook.gameObject_related.base_model.Entity;
 import official.sketchBook.projectiles_related.Projectile;
 import official.sketchBook.projectiles_related.util.GlobalProjectilePool;
 import official.sketchBook.util_related.registers.ProjectilePoolRegister;

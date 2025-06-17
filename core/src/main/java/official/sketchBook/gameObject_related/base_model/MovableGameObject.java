@@ -1,4 +1,4 @@
-package official.sketchBook.gameObject_related;
+package official.sketchBook.gameObject_related.base_model;
 
 import com.badlogic.gdx.physics.box2d.World;
 import official.sketchBook.animation_related.SpriteSheetDataHandler;

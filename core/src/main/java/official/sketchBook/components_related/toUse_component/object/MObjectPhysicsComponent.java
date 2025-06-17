@@ -1,9 +1,8 @@
 package official.sketchBook.components_related.toUse_component.object;
 
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
 import official.sketchBook.components_related.base_component.BasePhysicsComponent;
-import official.sketchBook.gameObject_related.GameObject;
+import official.sketchBook.gameObject_related.base_model.GameObject;
 
 import static official.sketchBook.screen_related.PlayScreen.PPM;
 

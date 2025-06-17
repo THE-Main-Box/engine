@@ -12,6 +12,8 @@ public class MovementComponent extends Component {
 
     private boolean acceleratingX, acceleratingY;
 
+    private boolean moving = false;
+
 
     public MovementComponent(double weight) {
         this.weight = weight;
@@ -55,6 +57,14 @@ public class MovementComponent extends Component {
     }
 
     // Getters e Setters
+    public boolean isMoving() {
+        return moving;
+    }
+
+    public void setMoving(boolean moving) {
+        this.moving = moving;
+    }
+
     public float getxSpeed() {
         return xSpeed;
     }

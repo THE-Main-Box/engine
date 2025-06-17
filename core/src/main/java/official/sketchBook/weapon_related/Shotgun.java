@@ -5,20 +5,22 @@ import official.sketchBook.animation_related.ObjectAnimationPlayer;
 import official.sketchBook.animation_related.Sprite;
 import official.sketchBook.animation_related.SpriteSheetDataHandler;
 import official.sketchBook.components_related.toUse_component.util.TimerComponent;
-import official.sketchBook.gameObject_related.Entity;
+import official.sketchBook.gameObject_related.base_model.Entity;
+import official.sketchBook.gameObject_related.util.AnchorPoint;
 import official.sketchBook.projectiles_related.projectiles.SlugProjectile;
 import official.sketchBook.projectiles_related.projectiles.TestProjectile;
 import official.sketchBook.util_related.info.paths.WeaponsSpritePath;
+import official.sketchBook.weapon_related.base_model.RangeWeapon;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static official.sketchBook.util_related.info.util.values.AnimationTitles.*;
+import static official.sketchBook.util_related.info.util.values.AnimationTitles.Weapon.*;
 
-public class Shotgun extends RangeWeapon {
+public class Shotgun extends RangeWeapon<Shotgun> {
 
-    public Shotgun(Entity owner) {
-        super(owner);
+    public Shotgun(Entity owner, AnchorPoint point) {
+        super(Shotgun.class, owner, point);
 
         updateProjectileIndex(1);
         updateRechargeTimeLimit();
@@ -36,16 +38,16 @@ public class Shotgun extends RangeWeapon {
     private void updateRechargingTime(float delta) {
         rechargingTimeLimit.update(delta);
 
-        if (rechargingTimeLimit.isRunning()) {
-            if (rechargingTimeLimit.isFinished()) {
-                rechargingTimeLimit.stop();
-                rechargingTimeLimit.reset();
-                recharging = false;
-            }
+        if (rechargingTimeLimit.isFinished()) {
+            rechargingTimeLimit.stop();
+            rechargingTimeLimit.reset();
+            recharging = false;
         }
     }
 
     private void updateRechargeTimeLimit() {
+        if(aniPlayer == null) return;
+
         if (rechargingTimeLimit == null) {
             rechargingTimeLimit = new TimerComponent(
                 aniPlayer.getTotalAnimationTime(aniPlayer.getAnimationByKey(recharge))
@@ -61,21 +63,21 @@ public class Shotgun extends RangeWeapon {
         float x, y;
 
         if (owner.isFacingForward()) {
-            x = (spriteDataHandler.getCanvasWidth() / 2f) - 16.5f;
+            x = -16f;
         } else {
-            x = (spriteDataHandler.getCanvasWidth() / 2f) + - 16.5f;
+            x = 16f;
         }
-        y = (spriteDataHandler.getCanvasHeight() / 2f) - 4;
+        y = -4;
 
-        this.xOffset = x;
-        this.yOffset = y;
+        setRelativeOffset(x, y);
+
     }
 
     @Override
     public void updateAnimations() {
-        if (!recharging && owner.isOnGround() && owner.isMoving()) {
+        if (!recharging && owner.isOnGround() && owner.getMoveC().isMoving()) {
             aniPlayer.setAnimation(run);
-        } else if (!recharging && owner.isOnGround() && !owner.isMoving()) {
+        } else if (!recharging && owner.isOnGround() && !owner.getMoveC().isMoving()) {
             aniPlayer.setAnimation(idle);
         } else if (recharging) {
             aniPlayer.setAnimation(recharge);
@@ -120,8 +122,8 @@ public class Shotgun extends RangeWeapon {
 
     protected void initSpriteSheet() {
         this.spriteDataHandler = new SpriteSheetDataHandler(
-            owner.getX(),
-            owner.getY(),
+            x,
+            y,
             0,
             0,
             3,

@@ -10,7 +10,7 @@ import official.sketchBook.animation_related.Sprite;
 import official.sketchBook.animation_related.SpriteSheetDataHandler;
 import official.sketchBook.components_related.toUse_component.entity.PlayerControllerComponent;
 import official.sketchBook.components_related.toUse_component.object.JumpComponent;
-import official.sketchBook.gameObject_related.Entity;
+import official.sketchBook.gameObject_related.base_model.ArmedEntity;
 import official.sketchBook.projectiles_related.emitters.Emitter;
 import official.sketchBook.room_related.model.PlayableRoom;
 import official.sketchBook.util_related.enumerators.types.FixtType;
@@ -19,18 +19,17 @@ import official.sketchBook.util_related.info.paths.EntitiesSpritePath;
 import official.sketchBook.util_related.info.util.values.AnimationTitles;
 import official.sketchBook.util_related.info.util.values.FixtureType;
 import official.sketchBook.util_related.registers.EmitterRegister;
-import official.sketchBook.weapon_related.RangeWeapon;
 import official.sketchBook.weapon_related.Shotgun;
 
 import java.util.Arrays;
 
-public class Player extends Entity {
+import static official.sketchBook.util_related.info.util.values.AnimationTitles.Entity.idle;
+import static official.sketchBook.util_related.info.util.values.AnimationTitles.Entity.run;
+
+public class Player extends ArmedEntity {
 
     private PlayerControllerComponent controllerComponent;
     private JumpComponent jComponent;
-
-    private RangeWeapon weapon;
-
 
     public Player(float x, float y, float width, float height, boolean facingForward, World world, PlayableRoom room) {
         super(x, y, width, height, facingForward, world);
@@ -46,11 +45,14 @@ public class Player extends Entity {
         this.initSpriteSheet();
         this.initAnimations();
         this.initProjectileUsage();
+
+        this.xAP = width / 2;
+        this.yAP = width / 2;
     }
 
     private void initProjectileUsage() {
         EmitterRegister.register(new Emitter(this));
-        this.weapon = new Shotgun(this);
+        this.weapon = new Shotgun(this, this.weaponAnchorPoint);
     }
 
     private void initSpriteSheet() {
@@ -71,13 +73,13 @@ public class Player extends Entity {
 
     private void initAnimations() {
         this.objectAnimationPlayerList.add(new ObjectAnimationPlayer());
-        this.objectAnimationPlayerList.get(0).addAnimation(AnimationTitles.idle, Arrays.asList(
+        this.objectAnimationPlayerList.get(0).addAnimation(idle, Arrays.asList(
             new Sprite(0, 0, 0.15f),
             new Sprite(1, 0, 0.15f),
             new Sprite(2, 0, 0.15f),
             new Sprite(3, 0, 0.15f)
         ));
-        this.objectAnimationPlayerList.get(0).addAnimation(AnimationTitles.run, Arrays.asList(
+        this.objectAnimationPlayerList.get(0).addAnimation(run, Arrays.asList(
             new Sprite(4, 0, 0.075f),
             new Sprite(0, 1, 0.075f),
             new Sprite(1, 1, 0.075f),
@@ -88,7 +90,7 @@ public class Player extends Entity {
             new Sprite(1, 2, 0.075f)
         ));
 
-        objectAnimationPlayerList.get(0).setAnimation(AnimationTitles.idle);
+        objectAnimationPlayerList.get(0).setAnimation(idle);
     }
 
     @Override
@@ -124,29 +126,15 @@ public class Player extends Entity {
 
         updateAnimation();
         updateAnimationPlayer(deltaTime);
-
-        if(weapon != null){
-            weapon.update(deltaTime);
-        }
     }
 
     private void updateAnimation() {
         for (ObjectAnimationPlayer animationPlayer : objectAnimationPlayerList) {
-            if (moving) {
-                animationPlayer.setAnimation(AnimationTitles.run);
+            if (moveC.isMoving()) {
+                animationPlayer.setAnimation(run);
             } else if (onGround) {
-                animationPlayer.setAnimation(AnimationTitles.idle);
+                animationPlayer.setAnimation(idle);
             }
-        }
-    }
-
-    private void updateAnimationPlayer(float delta) {
-        for (ObjectAnimationPlayer animationPlayer : objectAnimationPlayerList) {
-            animationPlayer.update(delta);
-        }
-
-        if(weapon != null){
-            weapon.updateAniPlayer(delta);
         }
     }
 
@@ -178,25 +166,28 @@ public class Player extends Entity {
 
     @Override
     public void render(SpriteBatch batch) {
-        if(weapon != null){
+        if (weapon != null) {
             weapon.render(batch);
         }
         super.render(batch);
     }
 
+    @Override
+    public void dispose() {
+        super.dispose();
 
-    public void rechargeWeapon(){
-        if(weapon != null){
-            weapon.recharge();
+        if (weapon != null) {
+            weapon.dispose();
         }
     }
 
-    public RangeWeapon getWeapon() {
-        return weapon;
-    }
+    public void rechargeWeapon() {
+        if (weapon == null) return;
 
-    public void setWeapon(RangeWeapon weapon) {
-        this.weapon = weapon;
+        if (hasRangeWeapon()) {
+            getRangeWeapon().recharge();
+        }
+
     }
 
     //verifica se dá para pular

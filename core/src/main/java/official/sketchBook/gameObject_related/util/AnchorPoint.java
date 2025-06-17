@@ -1,0 +1,29 @@
+package official.sketchBook.gameObject_related.util;
+
+import com.badlogic.gdx.math.Vector2;
+
+public class AnchorPoint {
+    private float x;
+    private float y;
+
+    public AnchorPoint() {
+    }
+
+    public float getX() {
+        return x;
+    }
+
+    public float getY() {
+        return y;
+    }
+
+    public void set(float x, float y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public void add(float dx, float dy) {
+        this.x += dx;
+        this.y += dy;
+    }
+}

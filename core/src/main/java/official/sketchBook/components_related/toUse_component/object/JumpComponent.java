@@ -13,7 +13,6 @@ public class JumpComponent extends Component {
     private boolean jumping, falling, jumpedFromGround, coyoteConsumed;
     private float jumpForce, fallSpeedAfterJCancel;
     private boolean enhancedGravity;
-    private TimerComponent coyoteTimer;
 
     private Entity entity;
 
@@ -21,11 +20,36 @@ public class JumpComponent extends Component {
     private boolean landedThisFrame;     // true somente no frame em que aterrissa
 
     private final TimerComponent landBuffer;
+    private TimerComponent coyoteTimer;
+    private TimerComponent jumpBufferTimer;
 
-    public JumpComponent(Entity entity, float jumpForce, float fallSpeedAfterJCancel, float coyoteTimeTarget, boolean enhancedGravity) {
+
+    /**
+     * Componente de pulo
+     *
+     * @param entity                entidade dona do componente
+     * @param jumpForce             força de pulo da entidade
+     * @param coyoteTimeTarget      tempo disponível para o jogador pular após começar a cair
+     * @param fallSpeedAfterJCancel Força para terminar o pulo, quanto maior o número,
+     *                              mais forte o pulo deve ser para poder parar ele
+     * @param jumpBufferTime        tempo que o jogador tem para entrar no estado de pulo,
+     *                              por pressionar o pulo uma única vez
+     * @param landBufferTime        tempo de recuperação após aterrar no chão
+     * @param enhancedGravity       a gravidade ficará mais forte na queda
+     */
+    public JumpComponent(
+        Entity entity,
+        float jumpForce,
+        float fallSpeedAfterJCancel,
+        float coyoteTimeTarget,
+        float jumpBufferTime,
+        float landBufferTime,
+        boolean enhancedGravity
+    ) {
         this.entity = entity;
         this.coyoteTimer = new TimerComponent(coyoteTimeTarget);
-        this.landBuffer = new TimerComponent(0.1f); // 100ms de buffer
+        this.landBuffer = new TimerComponent(landBufferTime);
+        this.jumpBufferTimer = new TimerComponent(jumpBufferTime);
 
         this.enhancedGravity = enhancedGravity;
 
@@ -40,6 +64,7 @@ public class JumpComponent extends Component {
 
     @Override
     public void update(float delta) {
+        jumpBufferTimer.update(delta);
         coyoteTimer.update(delta);
         landBuffer.update(delta);
 
@@ -87,10 +112,46 @@ public class JumpComponent extends Component {
         updateJumpingFallingFlags();
         updateJumpedFlag();
         updateCoyoteState();
+
+        updateJumpBasedOnBuffer();
+    }
+
+    private void updateJumpBasedOnBuffer() {
+        jumpBufferTimer.resetByFinished();
+
+        if (jumpBufferTimer.isRunning()) {
+            if (entity.canJump()) {
+                executeJump(false); // Executa o pulo real
+                jumpBufferTimer.stop();
+                jumpBufferTimer.reset();
+            }
+        }
+    }
+
+    public void jump(boolean cancel) {
+        if (!cancel) {
+            if (entity.isOnGround()) {//Se estivermos no chão já executamos o pulo
+                executeJump(false);
+            } else {//Caso precisemos executar um pulo, e não estejamos no chão, preparamos o buffer
+                jumpBufferTimer.reset();
+                jumpBufferTimer.start();
+            }
+        } else {
+            if (isJumping()) {// cancelamos o pulo caso estejamos ainda no processo de salto
+                executeJump(true);
+
+                //Preparamos o buffer para o próximo uso
+                jumpBufferTimer.stop();
+                jumpBufferTimer.reset();
+
+            }
+
+        }
+
     }
 
     //pula ou cancela um pulo
-    public void jump(boolean cancel) {
+    private void executeJump(boolean cancel) {
         if (!cancel) {
             if (entity.canJump()) {
 
@@ -126,16 +187,15 @@ public class JumpComponent extends Component {
         }
     }
 
-    //atualiza o estado do coyoteTimer
+    /**
+     * Atualiza o estado do coyoteTimer
+     * caso o jogador esteja a cair, não tenha pulado e o temporizador ainda não iniciou iniciamos ele,
+     * mas isso apenas caso ainda não tenhamos usado o primeiro pulo do coyote
+     * isso porque se não fazer isso o temporizador do coyoteTiming irá ser executado várias vezes devido
+     * às circunstâncias semelhantes a usar o pulo do coyote e não fazer isso,
+     * fazendo o temporizador reiniciar toda a vez que estivermos a cair
+     */
     private void updateCoyoteState() {
-
-        //caso o jogador esteja a cair, não tenha pulado e o temporizador ainda não iniciou iniciamos ele,
-        //mas isso apenas caso ainda não tenhamos usado o primeiro pulo do coyote
-        /*
-            isso porque se não fazer isso o temporizador do coyoteTiming irá ser executado várias vezes devido
-            às circunstâncias semelhantes a usar o pulo do coyote e não fazer isso,
-            fazendo o temporizador reiniciar toda a vez que estivermos a cair
-        */
 
         if (falling && !jumpedFromGround && !coyoteTimer.isRunning() && !coyoteConsumed) {
             coyoteTimer.reset();
@@ -145,7 +205,7 @@ public class JumpComponent extends Component {
         }
 
         //impede que o coyoteTiming exceda seus limites ao resetarmos quando tocamos no chão pulamos oou o tempo acabe
-        if (coyoteTimer.isFinished() || entity.isOnGround() || jumpedFromGround) {
+        if (coyoteTimer.isFinished() || entity.isOnGround() || jumpedFromGround || coyoteConsumed) {
             coyoteTimer.stop();
             coyoteTimer.reset();
         }
@@ -183,6 +243,16 @@ public class JumpComponent extends Component {
 
     }
 
+    //Métodos auxiliares para o "CanJump()" de uma entidade//
+    public boolean isCoyoteJumpAvailable() {
+        return coyoteTimer.isRunning();
+    }
+
+    public boolean isOnGround(){
+        return entity.isOnGround();
+    }
+
+    //Flags de estado//
     public boolean isEntityLanded() {
         return landBuffer.isRunning() && !landBuffer.isFinished();
     }
@@ -191,27 +261,19 @@ public class JumpComponent extends Component {
         return jumping;
     }
 
-    public boolean isFalling() {
-        return falling;
-    }
-
-    public boolean isJumpedFromGround() {
-        return jumpedFromGround;
-    }
-
-    public boolean isCoyoteConsumed() {
-        return coyoteConsumed;
-    }
-
-    public float getJumpForce() {
-        return jumpForce;
+    public boolean isEnhancedGravity() {
+        return enhancedGravity;
     }
 
     public float getFallSpeedAfterJCancel() {
         return fallSpeedAfterJCancel;
     }
 
-    public TimerComponent getCoyoteTimer() {
-        return coyoteTimer;
+    public float getJumpForce() {
+        return jumpForce;
+    }
+
+    public boolean isFalling() {
+        return falling;
     }
 }

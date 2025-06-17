@@ -63,7 +63,6 @@ public abstract class Projectile implements Pool.Poolable {
      * */
     public void init(Entity owner){
         this.owner = owner;
-        this.setActive(true);
     }
 
     /**

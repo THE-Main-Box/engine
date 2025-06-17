@@ -37,24 +37,11 @@ public abstract class BaseWeapon<T extends BaseWeapon<T>> {
         updatePosValues();
     }
 
-    public Class<T> getWeaponClass() {
-        return weaponClass;
-    }
+    /// Habilidade primária
+    public abstract void use();
 
-    public boolean isWeaponType(Class<?> cls) {
-        return weaponClass == cls;
-    }
-
-    public T castToSelf() {
-        return weaponClass.cast(this); // Seguro: você garantiu que T é a classe correta
-    }
-
-    public static <U extends BaseWeapon<U>> U cast(BaseWeapon<?> weapon, Class<U> cls) {
-        if (!cls.isAssignableFrom(weapon.getWeaponClass())) {
-            throw new ClassCastException("Weapon cannot be cast to " + cls.getSimpleName());
-        }
-        return cls.cast(weapon);
-    }
+    /// Habilidade secundária
+    public abstract void secondaryUse();
 
     protected void updatePosValues() {
         this.x = point.getX();
@@ -66,10 +53,8 @@ public abstract class BaseWeapon<T extends BaseWeapon<T>> {
 
         updatePosValues();
         spriteDataHandler.updatePosition(x, y);
-
         spriteDataHandler.setDrawOffSetX(xOffset);
         spriteDataHandler.setDrawOffSetY(yOffset);
-
         spriteDataHandler.setFacingFoward(owner.isFacingForward());
         spriteDataHandler.renderSprite(batch, aniPlayer.getCurrentSprite());
     }
@@ -89,13 +74,24 @@ public abstract class BaseWeapon<T extends BaseWeapon<T>> {
     /// Atualização do tocador de animações
     public void updateAniPlayer(float deltaTime) {
         if (aniPlayer != null) {
-            aniPlayer.update(deltaTime);    
+            aniPlayer.update(deltaTime);
         }
     }
 
     protected void setRelativeOffset(float xOff, float yOff){
         this.xOffset = (spriteDataHandler.getCanvasWidth() / 2f) + xOff;
         this.yOffset = (spriteDataHandler.getCanvasHeight() / 2f) + yOff;
+    }
+
+    public static <U extends BaseWeapon<U>> U cast(BaseWeapon<?> weapon, Class<U> cls) {
+        if (!cls.isAssignableFrom(weapon.getWeaponClass())) {
+            throw new ClassCastException("Weapon cannot be cast to " + cls.getSimpleName());
+        }
+        return cls.cast(weapon);
+    }
+
+    public Class<T> getWeaponClass() {
+        return weaponClass;
     }
 
     public float getX() {

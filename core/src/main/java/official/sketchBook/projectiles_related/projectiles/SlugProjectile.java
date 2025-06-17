@@ -35,7 +35,7 @@ public class SlugProjectile extends Projectile {
 
     @Override
     protected void setBodyDefValues() {
-        this.radius = 3f;
+        this.radius = 2f;
         this.defFric = 0.1f;
         this.defDens = 0.1f;
         this.defRest = 0f;

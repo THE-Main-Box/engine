@@ -7,6 +7,9 @@ public class TimerComponent extends Component {
     private float targetTime;
     private boolean running = false;
 
+    public TimerComponent() {
+    }
+
     public TimerComponent(float targetTime) {
         this.targetTime = targetTime;
     }

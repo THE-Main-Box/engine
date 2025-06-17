@@ -42,6 +42,16 @@ public abstract class ArmedEntity extends Entity {
         weaponAnchorPoint.set(x + xAP, y + yAP);
     }
 
+    public void useWeapon(){
+        if(weapon == null) return;
+        weapon.use();
+    }
+
+    public void useWeaponSecondary(){
+        if(weapon == null) return;
+        weapon.secondaryUse();
+    }
+
     public AnchorPoint getWeaponAnchorPoint() {
         return weaponAnchorPoint;
     }

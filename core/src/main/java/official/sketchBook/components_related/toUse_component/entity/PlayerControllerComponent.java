@@ -2,13 +2,11 @@ package official.sketchBook.components_related.toUse_component.entity;
 
 import official.sketchBook.components_related.base_component.KeyBindedControllerComponent;
 import official.sketchBook.components_related.toUse_component.util.TimerComponent;
-import official.sketchBook.gameObject_related.GameObject;
+import official.sketchBook.gameObject_related.base_model.GameObject;
 import official.sketchBook.gameObject_related.entities.Player;
 import official.sketchBook.util_related.enumerators.directions.Direction;
 import official.sketchBook.util_related.info.util.values.ControlKeys;
 import official.sketchBook.util_related.info.util.values.SpeedRelatedVariables;
-
-import javax.naming.ldap.Control;
 
 import static official.sketchBook.screen_related.PlayScreen.PPM;
 
@@ -37,8 +35,8 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
 
     }
 
-    private void rechargeWeapon(boolean pressed){
-        if(pressed){
+    private void rechargeWeapon(boolean pressed) {
+        if (pressed) {
             player.rechargeWeapon();
         }
     }
@@ -141,18 +139,18 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
             case LEFT:
                 player.setFacingForward(false);
                 player.getMoveC().setAcceleratingX(true);
-                player.setMoving(true);
+                player.getMoveC().setMoving(true);
                 player.getMoveC().setxAccel(-accelToApply);
                 break;
             case RIGHT:
                 player.setFacingForward(true);
                 player.getMoveC().setAcceleratingX(true);
-                player.setMoving(true);
+                player.getMoveC().setMoving(true);
                 player.getMoveC().setxAccel(accelToApply);
                 break;
             case STILL:
                 player.getMoveC().setAcceleratingX(false);
-                player.setMoving(false);
+                player.getMoveC().setMoving(false);
                 break;
             default:
                 break;

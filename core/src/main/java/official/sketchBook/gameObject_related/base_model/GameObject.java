@@ -1,4 +1,4 @@
-package official.sketchBook.gameObject_related;
+package official.sketchBook.gameObject_related.base_model;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -60,6 +60,12 @@ public abstract class GameObject {
     protected abstract void createBody();
 
     public abstract void update(float deltaTime);
+
+    protected void updateAnimationPlayer(float delta) {
+        for (ObjectAnimationPlayer animationPlayer : objectAnimationPlayerList) {
+            animationPlayer.update(delta);
+        }
+    }
 
     public void render(SpriteBatch batch) {
         if (!spriteSheetDatahandlerList.isEmpty() && !objectAnimationPlayerList.isEmpty()) {

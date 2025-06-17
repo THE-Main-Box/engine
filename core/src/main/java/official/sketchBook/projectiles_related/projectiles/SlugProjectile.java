@@ -2,7 +2,7 @@ package official.sketchBook.projectiles_related.projectiles;
 
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.World;
-import official.sketchBook.gameObject_related.Entity;
+import official.sketchBook.gameObject_related.base_model.Entity;
 import official.sketchBook.projectiles_related.Projectile;
 
 public class SlugProjectile extends Projectile {

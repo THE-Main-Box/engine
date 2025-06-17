@@ -9,7 +9,7 @@ import official.sketchBook.animation_related.SpriteSheetDataHandler;
 import official.sketchBook.components_related.base_component.Component;
 import official.sketchBook.components_related.toUse_component.projectile.ProjectileControllerComponent;
 import official.sketchBook.components_related.toUse_component.projectile.ProjectilePhysicsComponent;
-import official.sketchBook.gameObject_related.Entity;
+import official.sketchBook.gameObject_related.base_model.Entity;
 import official.sketchBook.util_related.enumerators.types.FixtType;
 import official.sketchBook.util_related.helpers.body.BodyCreatorHelper;
 import official.sketchBook.util_related.info.util.values.FixtureType;

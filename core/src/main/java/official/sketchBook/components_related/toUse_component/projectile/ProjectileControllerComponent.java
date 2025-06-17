@@ -3,7 +3,7 @@ package official.sketchBook.components_related.toUse_component.projectile;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Contact;
 import official.sketchBook.components_related.base_component.Component;
-import official.sketchBook.gameObject_related.Entity;
+import official.sketchBook.gameObject_related.base_model.Entity;
 import official.sketchBook.projectiles_related.Projectile;
 import official.sketchBook.util_related.enumerators.directions.Direction;
 

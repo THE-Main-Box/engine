@@ -3,7 +3,7 @@ package official.sketchBook.components_related.toUse_component.object;
 import com.badlogic.gdx.math.Vector2;
 import official.sketchBook.components_related.base_component.Component;
 import official.sketchBook.components_related.toUse_component.util.TimerComponent;
-import official.sketchBook.gameObject_related.Entity;
+import official.sketchBook.gameObject_related.base_model.Entity;
 
 import static official.sketchBook.screen_related.PlayScreen.PPM;
 

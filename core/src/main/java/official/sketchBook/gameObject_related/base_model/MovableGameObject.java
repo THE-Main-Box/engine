@@ -4,6 +4,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import official.sketchBook.animation_related.SpriteSheetDataHandler;
 import official.sketchBook.components_related.toUse_component.object.MObjectPhysicsComponent;
 import official.sketchBook.components_related.toUse_component.object.MovementComponent;
+import official.sketchBook.util_related.info.util.values.SpeedRelatedVariables;
 
 public abstract class MovableGameObject extends GameObject {
 
@@ -18,6 +19,13 @@ public abstract class MovableGameObject extends GameObject {
 
         physicsC = new MObjectPhysicsComponent(this);
         addComponent(physicsC);
+
+        setDefaultMovementValues();
+    }
+
+    private void setDefaultMovementValues() {
+        this.moveC.setyMaxSpeed(SpeedRelatedVariables.Mobs.VERTICAL_MAX);
+        this.moveC.setxMaxSpeed(SpeedRelatedVariables.Mobs.HORIZONTAL_MAX);
     }
 
     @Override
@@ -26,8 +34,8 @@ public abstract class MovableGameObject extends GameObject {
     }
 
 
-    public void updateSpritePos(){
-        for(SpriteSheetDataHandler dataHandler : spriteSheetDatahandlerList){
+    public void updateSpritePos() {
+        for (SpriteSheetDataHandler dataHandler : spriteSheetDatahandlerList) {
             dataHandler.updatePosition(this.getX(), this.getY());
         }
     }

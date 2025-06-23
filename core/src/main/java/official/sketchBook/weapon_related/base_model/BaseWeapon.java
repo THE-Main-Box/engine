@@ -1,11 +1,10 @@
 package official.sketchBook.weapon_related.base_model;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector2;
 import official.sketchBook.animation_related.ObjectAnimationPlayer;
 import official.sketchBook.animation_related.SpriteSheetDataHandler;
 import official.sketchBook.gameObject_related.base_model.Entity;
-import official.sketchBook.gameObject_related.util.AnchorPoint;
+import official.sketchBook.util_related.info.util.entity.AnchorPoint;
 
 public abstract class BaseWeapon<T extends BaseWeapon<T>> {
 
@@ -43,12 +42,12 @@ public abstract class BaseWeapon<T extends BaseWeapon<T>> {
     /// Habilidade secundária
     public abstract void secondaryUse();
 
-    protected void updatePosValues() {
+    protected final void updatePosValues() {
         this.x = point.getX();
         this.y = point.getY();
     }
 
-    public void render(SpriteBatch batch) {
+    public final void render(SpriteBatch batch) {
         if (spriteDataHandler == null || aniPlayer == null || owner == null) return;
 
         updatePosValues();
@@ -72,13 +71,13 @@ public abstract class BaseWeapon<T extends BaseWeapon<T>> {
     protected abstract void initSpriteSheet();
 
     /// Atualização do tocador de animações
-    public void updateAniPlayer(float deltaTime) {
+    public final void updateAniPlayer(float deltaTime) {
         if (aniPlayer != null) {
             aniPlayer.update(deltaTime);
         }
     }
 
-    protected void setRelativeOffset(float xOff, float yOff){
+    protected final void setRelativeOffset(float xOff, float yOff){
         this.xOffset = (spriteDataHandler.getCanvasWidth() / 2f) + xOff;
         this.yOffset = (spriteDataHandler.getCanvasHeight() / 2f) + yOff;
     }

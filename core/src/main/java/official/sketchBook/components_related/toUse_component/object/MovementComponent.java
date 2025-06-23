@@ -1,7 +1,10 @@
 package official.sketchBook.components_related.toUse_component.object;
 
 
+import official.sketchBook.components_related.base_component.BasePhysicsComponent;
 import official.sketchBook.components_related.base_component.Component;
+
+import static official.sketchBook.screen_related.PlayScreen.PPM;
 
 public class MovementComponent extends Component {
     private float xSpeed, ySpeed;
@@ -51,7 +54,7 @@ public class MovementComponent extends Component {
     }
 
     // Métodos para definir velocidade sem alterar aceleração
-    public void setSpeed(float x, float y) {
+    public final void setSpeed(float x, float y) {
         this.xSpeed = x;
         this.ySpeed = y;
     }

@@ -5,9 +5,9 @@ import official.sketchBook.gameObject_related.base_model.GameObject;
 import official.sketchBook.gameObject_related.entities.Player;
 import official.sketchBook.util_related.enumerators.directions.Direction;
 import official.sketchBook.util_related.info.util.values.ControlKeys;
-import official.sketchBook.util_related.info.util.values.SpeedRelatedVariables;
 
 import static official.sketchBook.screen_related.PlayScreen.PPM;
+import static official.sketchBook.util_related.info.util.values.SpeedRelatedVariables.Player.*;
 
 public class PlayerControllerComponent extends KeyBindedControllerComponent {
     private final Player player;
@@ -52,25 +52,25 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
         super.update(delta);
 
         updateMovement();
-        updateAirMovementValues();
+        updateHMovementValues();
 
     }
 
     //atualiza as variaveis de movimentação em cada estado, se estivermos no ar
-    private void updateAirMovementValues() {
+    private void updateHMovementValues() {
 
         float accel, decel, maxAccel;
 
         if (player.isOnGround()) {
             // se está no chão
             accel = groundAccel;
-            maxAccel = SpeedRelatedVariables.PLAYER_HORIZONTAL_WALK_MAX;
-            decel = SpeedRelatedVariables.PLAYER_HORIZONTAL_WALK_DEC;
+            maxAccel = HORIZONTAL_WALK_MAX;
+            decel = HORIZONTAL_WALK_DEC;
         } else {
             // se está no ar
             accel = airAccel;
-            maxAccel = SpeedRelatedVariables.PLAYER_HORIZONTAL_AIR_MAX;
-            decel = SpeedRelatedVariables.PLAYER_HORIZONTAL_AIR_DEC;
+            maxAccel = HORIZONTAL_AIR_MAX;
+            decel = HORIZONTAL_AIR_DEC;
         }
 
         this.accelToApply = accel;

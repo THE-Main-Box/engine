@@ -1,6 +1,4 @@
-package official.sketchBook.gameObject_related.util;
-
-import com.badlogic.gdx.math.Vector2;
+package official.sketchBook.util_related.info.util.entity;
 
 public class AnchorPoint {
     private float x;

@@ -22,7 +22,7 @@ public abstract class Entity extends MovableGameObject {
         updateOnGroundValue();
     }
 
-    protected void updateOnGroundValue() {
+    protected final void updateOnGroundValue() {
         if (world == null || body == null) return;
 
         onGround = false;

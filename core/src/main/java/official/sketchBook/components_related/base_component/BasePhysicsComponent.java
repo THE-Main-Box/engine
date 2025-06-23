@@ -16,20 +16,20 @@ public abstract class BasePhysicsComponent extends Component{
         this.body = body;
     }
 
-    public void applyImpulse(Vector2 impulse) {
+    public final void applyImpulse(Vector2 impulse) {
         if (body != null && !impulse.isZero()) {
             body.applyLinearImpulse(impulse, body.getWorldCenter(), true);
         }
     }
 
-    public void syncBodyObjectPos() {
+    public final void syncBodyObjectPos() {
         if (body == null) return;
 
         object.setX((body.getPosition().x * PPM) - (object.getWidth() / 2f));
         object.setY((body.getPosition().y * PPM) - (object.getHeight() / 2f));
     }
 
-    public void applyTrajectoryImpulse(float height, float distance) {
+    public final void applyTrajectoryImpulse(float height, float distance) {
         if (body == null) return;
 
         float gravity = Math.abs(body.getWorld().getGravity().y);
@@ -39,6 +39,32 @@ public abstract class BasePhysicsComponent extends Component{
         Vector2 impulse = new Vector2(distance * mass, initialVelocityY * mass);
         applyImpulse(impulse);
     }
+
+    public final void applyDirectionalImpulse(Vector2 direction, float magnitude) {
+        if (body == null) return;
+
+        Vector2 normalized = direction.nor(); // normaliza a direção
+        Vector2 impulse = normalized.scl(magnitude * body.getMass());
+        applyImpulse(impulse);
+    }
+
+    public final void limitVelocity(float maxX, float maxY) {
+        if (body == null) return;
+
+        Vector2 velocity = body.getLinearVelocity();
+
+        float maxXInMeters = maxX / PPM;
+        float maxYInMeters = maxY / PPM;
+
+        float limitedX = Math.max(-maxXInMeters, Math.min(velocity.x, maxXInMeters));
+        float limitedY = Math.max(-maxYInMeters, Math.min(velocity.y, maxYInMeters));
+
+        // Só aplica se houver alteração real
+        if (velocity.x != limitedX || velocity.y != limitedY) {
+            body.setLinearVelocity(limitedX, limitedY);
+        }
+    }
+
 
     public void resetMovement(){
         body.setLinearVelocity(0, 0);

@@ -1,4 +1,4 @@
-package official.sketchBook.weapon_related.util;
+package official.sketchBook.util_related.info.util.weapon;
 
 import official.sketchBook.components_related.toUse_component.util.TimerComponent;
 import official.sketchBook.weapon_related.base_model.RangeWeapon;

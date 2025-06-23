@@ -3,17 +3,21 @@ package official.sketchBook.components_related.toUse_component.object;
 import com.badlogic.gdx.math.Vector2;
 import official.sketchBook.components_related.base_component.BasePhysicsComponent;
 import official.sketchBook.gameObject_related.base_model.GameObject;
+import official.sketchBook.gameObject_related.base_model.MovableGameObject;
 
 import static official.sketchBook.screen_related.PlayScreen.PPM;
 
 public class MObjectPhysicsComponent extends BasePhysicsComponent {
 
+    private MovableGameObject mob;
+
     public MObjectPhysicsComponent(GameObject object) {
         super(object, object.getBody());
+        this.mob = (MovableGameObject) object;
     }
 
     public void update(float deltaTime) {
-        // Caso precise de alguma atualização por frame
+        limitVelocity(mob.getMoveC().getxMaxSpeed(), mob.getMoveC().getyMaxSpeed());
     }
 
     /**
@@ -41,7 +45,7 @@ public class MObjectPhysicsComponent extends BasePhysicsComponent {
     }
 
     //converte os valores de velocidade em pixel para metros, e os limita com base em uma velocidade maxima passada
-    public float limitAndConvertSpeedToMeters(float speedToApply, float maxSpeed, float currentSpeed) {
+    public final float limitAndConvertSpeedToMeters(float speedToApply, float maxSpeed, float currentSpeed) {
         if (speedToApply != 0) {
             return Math.max(-maxSpeed / PPM, Math.min(speedToApply / PPM, maxSpeed / PPM));
         }

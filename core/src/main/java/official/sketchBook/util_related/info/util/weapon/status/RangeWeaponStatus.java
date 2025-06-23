@@ -1,4 +1,4 @@
-package official.sketchBook.weapon_related.util;
+package official.sketchBook.util_related.info.util.weapon.status;
 
 public class RangeWeaponStatus {
     public int ammo;

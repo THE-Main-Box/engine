@@ -17,7 +17,6 @@ import official.sketchBook.room_related.model.PlayableRoom;
 import official.sketchBook.util_related.enumerators.types.FixtType;
 import official.sketchBook.util_related.helpers.body.BodyCreatorHelper;
 import official.sketchBook.util_related.info.paths.EntitiesSpritePath;
-import official.sketchBook.util_related.info.util.values.AnimationTitles;
 import official.sketchBook.util_related.info.util.values.FixtureType;
 import official.sketchBook.util_related.registers.EmitterRegister;
 import official.sketchBook.weapon_related.Shotgun;

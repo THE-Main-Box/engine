@@ -29,33 +29,8 @@ public class ObjectAnimationPlayer {
         animations.put(animationTitle, animation);
     }
 
-    //atualiza o frame atual com base em parametros pré-definidos e variaveis
-//    public void update(float deltaTime) {
-//        if (currentAnimation == null || currentAnimation.isEmpty() || !autoUpdateAni) return;
-//
-//        elapsedTime += deltaTime;                 // Atualiza o tempo decorrido
-//
-//        currentSprite = getCurrentSprite();       // seleciona o sprite atual com base no aniTick
-//
-//        // se a duração for menor ou igual a 0 pula essa divisão
-//        if (currentSprite.getDuration() > 0) {
-//            frameDuration = currentSprite.getDuration();
-//        }
-//
-//        // se o tempo decorrido for maior ou igual a duração do frame atualiza ele
-//        if (elapsedTime >= (float) (frameDuration / animationSpeed)) {
-//
-//            aniTick++;
-//            elapsedTime -= (float) (frameDuration / animationSpeed);
-//
-//            if (aniTick >= currentAnimation.size()) {  // reseta o anitick para reiniciar a animação
-//                aniTick = 0;
-//            }
-//
-//        }
-//
-//    }
-
+    //É preciso 'settar' o autoUpdateAni manualmente dentro de uma animação que será tocada várias vezes,
+    // porém não deve repetir em loop
     public void update(float deltaTime) {
         if (currentAnimation == null || currentAnimation.isEmpty() || !autoUpdateAni) return;
 

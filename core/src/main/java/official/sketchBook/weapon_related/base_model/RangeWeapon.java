@@ -55,6 +55,7 @@ public abstract class RangeWeapon<T extends RangeWeapon<T>> extends BaseWeapon<T
 
     /// Permite que a arma implemente uma mecânica de recarga customizada
     public void recharge() {
+        if(weaponStatus.ammo >= weaponStatus.maxAmmo) return;
         rechargeManager.recharge();
     }
 

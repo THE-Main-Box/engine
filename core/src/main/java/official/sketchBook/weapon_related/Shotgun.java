@@ -7,7 +7,6 @@ import official.sketchBook.animation_related.Sprite;
 import official.sketchBook.animation_related.SpriteSheetDataHandler;
 import official.sketchBook.gameObject_related.base_model.Entity;
 import official.sketchBook.gameObject_related.util.AnchorPoint;
-import official.sketchBook.weapon_related.util.RechargeManager;
 import official.sketchBook.weapon_related.util.RangeWeaponStatus;
 import official.sketchBook.projectiles_related.Projectile;
 import official.sketchBook.projectiles_related.projectiles.SlugProjectile;
@@ -62,13 +61,12 @@ public class Shotgun extends RangeWeapon<Shotgun> {
 
     @Override
     public void updateAnimations() {
-        boolean runin = !rechargeManager.isRecharging() && owner.isOnGround() && owner.getMoveC().isMoving();
-        boolean idle = !rechargeManager.isRecharging() && owner.isOnGround() && !owner.getMoveC().isMoving();
-
-        if (runin || idle) {
+        if (!rechargeManager.isRecharging() && owner.isIdle() || !rechargeManager.isRecharging() && owner.isRunning()) {
             aniPlayer.setAnimation(run);
         } else if (rechargeManager.isRecharging()) {
             aniPlayer.setAnimation(recharge);
+            aniPlayer.setAutoUpdateAni(true);
+            aniPlayer.setAnimationLooping(false);
         }
     }
 

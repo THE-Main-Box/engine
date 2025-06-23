@@ -3,7 +3,6 @@ package official.sketchBook.gameObject_related.base_model;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
-import official.sketchBook.gameObject_related.util.AnchorPoint;
 import official.sketchBook.util_related.helpers.RayCastHelper;
 
 import static official.sketchBook.screen_related.PlayScreen.PPM;
@@ -71,4 +70,12 @@ public abstract class Entity extends MovableGameObject {
         this.onGround = onGround;
     }
     public abstract boolean canJump();
+
+    public boolean isRunning(){
+        return onGround && moveC.isMoving();
+    }
+
+    public boolean isIdle(){
+        return onGround && !moveC.isMoving();
+    }
 }

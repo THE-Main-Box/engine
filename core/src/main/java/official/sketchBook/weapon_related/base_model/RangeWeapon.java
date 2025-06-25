@@ -45,6 +45,7 @@ public abstract class RangeWeapon<T extends RangeWeapon<T>> extends BaseWeapon<T
             aniPlayer.getTotalAnimationTime(aniPlayer.getAnimationByKey(recharge)),
             true
         );
+        this.rechargeManager.setOnRechargeFinishedCallback(this::onRechargeEnd);
     }
 
     @Override
@@ -64,8 +65,15 @@ public abstract class RangeWeapon<T extends RangeWeapon<T>> extends BaseWeapon<T
     /// Permite que a arma implemente uma mecânica de recarga customizada
     public void recharge() {
         if(weaponStatus.ammo >= weaponStatus.maxAmmo) return;
+        onRechargeStart();
         rechargeManager.recharge();
     }
+
+    /// Permite uma ação antes de executar a recarga
+    protected abstract void onRechargeStart();
+
+    /// Permite uma ação depois da recarga
+    protected abstract void onRechargeEnd();
 
     /// Sistema para lidar com a munição vazia
     protected abstract void dealEmptyAmmoOnShoot();

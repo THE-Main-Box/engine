@@ -13,6 +13,8 @@ public class RechargeManager extends RangeWeaponBaseManager {
     /// Flag de comportamento para dizer se pode recarregar assim que a munição acabar
     private boolean autoRecharge;
 
+    private Runnable onRechargeFinishedCallback;
+
     public RechargeManager(
         BaseWeapon<?> baseWeapon,
         RangeWeaponStatus weaponStatus,
@@ -51,10 +53,12 @@ public class RechargeManager extends RangeWeaponBaseManager {
     private void onRechargeFinish() {
         rechargingTimeLimit.stop();
         rechargingTimeLimit.reset();
-
         weaponStatus.refillOnLimit();
-    }
 
+        if (onRechargeFinishedCallback != null) {
+            onRechargeFinishedCallback.run();
+        }
+    }
     /// Atualiza o tempo de recarga com base no multiplicador de uma animação
     private void updateRechargeTimeLimit() {
         rechargingTimeLimit.setTargetTime(baseTime / weaponStatus.rechargeSpeedMultiplier);
@@ -85,5 +89,10 @@ public class RechargeManager extends RangeWeaponBaseManager {
 
     public boolean isRecharging() {
         return rechargingTimeLimit.isRunning();
+    }
+
+
+    public void setOnRechargeFinishedCallback(Runnable callback) {
+        this.onRechargeFinishedCallback = callback;
     }
 }

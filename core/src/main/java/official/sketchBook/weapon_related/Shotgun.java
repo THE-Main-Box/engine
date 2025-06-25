@@ -7,7 +7,6 @@ import official.sketchBook.animation_related.Sprite;
 import official.sketchBook.animation_related.SpriteSheetDataHandler;
 import official.sketchBook.gameObject_related.base_model.Entity;
 import official.sketchBook.util_related.util.entity.AnchorPoint;
-import official.sketchBook.util_related.util.weapon.RechargeManager;
 import official.sketchBook.util_related.util.weapon.status.RangeWeaponStatus;
 import official.sketchBook.projectiles_related.Projectile;
 import official.sketchBook.projectiles_related.projectiles.SlugProjectile;
@@ -43,6 +42,15 @@ public class Shotgun extends RangeWeapon<Shotgun> {
     @Override
     public void update(float deltaTime) {
         super.update(deltaTime);
+    }
+
+    @Override
+    protected void onRechargeStart() {
+    }
+
+    @Override
+    protected void onRechargeEnd() {
+
     }
 
     protected void updateOffSets() {

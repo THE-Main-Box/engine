@@ -84,7 +84,7 @@ public abstract class State implements StateMethods {
     protected void initIdleBackGroundAnimation() {
         aniPlayer = new ObjectAnimationPlayer();
         aniPlayer.addAnimation("idle", List.of(new Sprite(0, 0)));
-        aniPlayer.setAnimation("idle");
+        aniPlayer.playAnimation("idle");
     }
 
     /**

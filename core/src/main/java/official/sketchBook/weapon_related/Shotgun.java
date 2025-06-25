@@ -34,7 +34,8 @@ public class Shotgun extends RangeWeapon<Shotgun> {
     protected void initDefaultStatus() {
         this.weaponStatus = new RangeWeaponStatus(
             2,
-            1.5f,
+            0.1f,
+            1f,
             1f
         );
     }
@@ -69,10 +70,12 @@ public class Shotgun extends RangeWeapon<Shotgun> {
 
     @Override
     public void updateAnimations() {
-        if (!rechargeManager.isRecharging() && owner.isIdle() || !rechargeManager.isRecharging() && owner.isRunning()) {
-            aniPlayer.setAnimation(run);
+        boolean isPlayingShoot = aniPlayer.getCurrentAnimationKey().equals(shoot) && !aniPlayer.isAnimationFinished();
+
+        if (!isPlayingShoot && !rechargeManager.isRecharging() && owner.isIdle() || !rechargeManager.isRecharging() && owner.isRunning()) {
+            aniPlayer.playAnimation(run);
         } else if (rechargeManager.isRecharging()) {
-            aniPlayer.setAnimation(recharge);
+            aniPlayer.playAnimation(recharge);
             aniPlayer.setAutoUpdateAni(true);
             aniPlayer.setAnimationLooping(false);
         }
@@ -106,8 +109,6 @@ public class Shotgun extends RangeWeapon<Shotgun> {
         Projectile p = projectileEmitter.obtain(
             getProjectileSpawnPosition(owner.isFacingForward() ? Direction.RIGHT : Direction.LEFT)
         );
-
-        if (!canShoot()) return;
 
         // Supondo que você queira disparar a 300 pixels/seg
         float xSpeed = 300f / PPM;
@@ -151,7 +152,7 @@ public class Shotgun extends RangeWeapon<Shotgun> {
             new Sprite(1, 2)
         ));
 
-        aniPlayer.setAnimation(run);
+        aniPlayer.playAnimation(run);
     }
 
     protected void initSpriteSheet() {

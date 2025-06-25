@@ -97,7 +97,7 @@ public class ObjectAnimationPlayer {
     }
 
     // toca uma animação com base na chave passada
-    public void setAnimation(String title) {
+    public void playAnimation(String title) {
         List<Sprite> newAnimation = animations.get(title);
 
         // verifica se a animação a ser atualizada existe antes de atualizar

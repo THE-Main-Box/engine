@@ -3,6 +3,7 @@ package official.sketchBook.weapon_related.base_model;
 import com.badlogic.gdx.math.Vector2;
 import official.sketchBook.gameObject_related.base_model.Entity;
 import official.sketchBook.util_related.util.entity.AnchorPoint;
+import official.sketchBook.util_related.util.weapon.ShootStateManager;
 import official.sketchBook.util_related.util.weapon.status.RangeWeaponStatus;
 import official.sketchBook.projectiles_related.Projectile;
 import official.sketchBook.projectiles_related.emitters.Emitter;
@@ -15,6 +16,7 @@ import java.util.Objects;
 
 import static official.sketchBook.screen_related.PlayScreen.PPM;
 import static official.sketchBook.util_related.info.values.AnimationTitles.Weapon.recharge;
+import static official.sketchBook.util_related.info.values.AnimationTitles.Weapon.shoot;
 
 public abstract class RangeWeapon<T extends RangeWeapon<T>> extends BaseWeapon<T> implements IRangeCapable {
 
@@ -24,6 +26,7 @@ public abstract class RangeWeapon<T extends RangeWeapon<T>> extends BaseWeapon<T
     protected RangeWeaponStatus weaponStatus;
 
     protected RechargeManager rechargeManager;
+    protected ShootStateManager shootStateManager;
 
     protected RangeWeapon(Class<T> weaponClass, Entity owner, AnchorPoint point) {
         super(weaponClass, owner, point);
@@ -45,7 +48,16 @@ public abstract class RangeWeapon<T extends RangeWeapon<T>> extends BaseWeapon<T
             aniPlayer.getTotalAnimationTime(aniPlayer.getAnimationByKey(recharge)),
             true
         );
+        this.rechargeManager.setOnRechargeStartCallback(this::onRechargeStart);
         this.rechargeManager.setOnRechargeFinishedCallback(this::onRechargeEnd);
+
+        this.shootStateManager = new ShootStateManager(
+            this,
+            this.weaponStatus,
+            aniPlayer.getTotalAnimationTime(aniPlayer.getAnimationByKey(shoot)),
+            this.weaponStatus.fireCoolDown
+        );
+        this.shootStateManager.setOnShootCallback(this::performShoot);
     }
 
     @Override
@@ -53,19 +65,19 @@ public abstract class RangeWeapon<T extends RangeWeapon<T>> extends BaseWeapon<T
         updateOffSets();
         updateAnimations();
 
+        shootStateManager.update(deltaTime);
         rechargeManager.updateRechargeState(deltaTime);
     }
 
     @Override
     public void use() {
-        performShoot();
+        shootStateManager.tryToShoot();
     }
 
     //TODO: implementar um sistema para permitir um comportamento de entrando no estado de recarga e saindo do estado
+
     /// Permite que a arma implemente uma mecânica de recarga customizada
     public void recharge() {
-        if(weaponStatus.ammo >= weaponStatus.maxAmmo) return;
-        onRechargeStart();
         rechargeManager.recharge();
     }
 
@@ -88,8 +100,8 @@ public abstract class RangeWeapon<T extends RangeWeapon<T>> extends BaseWeapon<T
     protected abstract void performShoot();
 
     /// Valida para saber se podemos atirar
-    protected boolean canShoot() {
-        return isConfigured() && (!rechargeManager.isRecharging());
+    public boolean canShoot() {
+        return isConfigured() && !rechargeManager.isRecharging();
     }
 
     /// Valida se estamos configurados
@@ -135,6 +147,11 @@ public abstract class RangeWeapon<T extends RangeWeapon<T>> extends BaseWeapon<T
     @Override
     public RechargeManager getRechargeManager() {
         return this.rechargeManager;
+    }
+
+    @Override
+    public ShootStateManager getShootStateManager() {
+        return shootStateManager;
     }
 
     // Métodos customizáveis por subclasses

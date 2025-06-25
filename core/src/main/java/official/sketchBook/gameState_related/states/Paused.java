@@ -51,7 +51,7 @@ public class Paused extends State implements StateMethods {
             new Sprite(1, 0, 0.7f)
         ));
 
-        aniPlayer.setAnimation("idle");
+        aniPlayer.playAnimation("idle");
     }
 
     private void initButtons() {

@@ -31,21 +31,21 @@ public class PlayerAnimationManagerComponent implements Component {
         if (!player.isOnGround()) {
             // 1) Subida plena: vy acima do threshold de stall
             if (vy > 0.15f) {
-                ani.setAnimation(jump);
+                ani.playAnimation(jump);
                 ani.setAnimationLooping(false);
                 ani.setAutoUpdateAni(false);
                 ani.setAniTick(0);
 
                 // 2) Stall (pico do salto): vy próximo de zero, dentro do intervalo [-t, +t]
             } else if (Math.abs(vy) <= player.getjComponent().getFallSpeedAfterJCancel()) {
-                ani.setAnimation(jump);
+                ani.playAnimation(jump);
                 ani.setAnimationLooping(false);
                 ani.setAutoUpdateAni(false);
                 ani.setAniTick(1);
 
                 // 3) Queda: vy negativo além do stall threshold
             } else {
-                ani.setAnimation(fall);
+                ani.playAnimation(fall);
                 ani.setAnimationLooping(false);
                 ani.setAutoUpdateAni(false);
                 ani.setAniTick(0);
@@ -56,7 +56,7 @@ public class PlayerAnimationManagerComponent implements Component {
 
         // Quando tocar o chão, entramos no afterFall
         if (player.getjComponent().isEntityLanded() && !player.getMoveC().isMoving()) {
-            ani.setAnimation(afterFall);
+            ani.playAnimation(afterFall);
             ani.setAnimationLooping(false);
             ani.setAutoUpdateAni(true);
             return true;
@@ -78,7 +78,7 @@ public class PlayerAnimationManagerComponent implements Component {
 
         // queda livre normal (loop)
         if (player.getBody().getLinearVelocity().y < 0) {
-            ani.setAnimation(fall);
+            ani.playAnimation(fall);
             ani.setAnimationLooping(true);
             ani.setAutoUpdateAni(true);
         }
@@ -90,7 +90,7 @@ public class PlayerAnimationManagerComponent implements Component {
         if (!player.isOnGround() || !player.getMoveC().isMoving() || isPlayingAfterFall(animationPlayer)) return false;
 
         animationPlayer.setAutoUpdateAni(true);
-        animationPlayer.setAnimation(run);
+        animationPlayer.playAnimation(run);
 
         return true;
     }
@@ -99,7 +99,7 @@ public class PlayerAnimationManagerComponent implements Component {
         if (isPlayingAfterFall(animationPlayer)) return;
 
         animationPlayer.setAutoUpdateAni(true);
-        animationPlayer.setAnimation(idle);
+        animationPlayer.playAnimation(idle);
     }
 
     public boolean isPlayingAfterFall(ObjectAnimationPlayer ani) {

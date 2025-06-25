@@ -3,18 +3,23 @@ package official.sketchBook.util_related.util.weapon.status;
 public class RangeWeaponStatus {
     public int ammo;
     public int maxAmmo;
-    public float fireRate;
+    public float fireCoolDown;
+
+    public float fireCoolDownMultiplier;
     public float rechargeSpeedMultiplier;
 
     public RangeWeaponStatus(
         int maxAmmo,
-        float fireRate,
-        float rechargeSpeedMultiplier
+        float fireCoolDown,
+        float rechargeSpeedMultiplier,
+        float fireCoolDownMultiplier
     ) {
         this.ammo = maxAmmo;
         this.maxAmmo = maxAmmo;
-        this.fireRate = fireRate;
+        this.fireCoolDown = fireCoolDown;
+
         this.rechargeSpeedMultiplier = rechargeSpeedMultiplier;
+        this.fireCoolDownMultiplier = fireCoolDownMultiplier;
     }
 
 

@@ -34,7 +34,8 @@ public class Shotgun extends RangeWeapon<Shotgun> {
     protected void initDefaultStatus() {
         this.weaponStatus = new RangeWeaponStatus(
             2,
-            1.5f,
+            0.1f,
+            1f,
             1f
         );
     }
@@ -69,18 +70,28 @@ public class Shotgun extends RangeWeapon<Shotgun> {
 
     @Override
     public void updateAnimations() {
-        if (!rechargeManager.isRecharging() && owner.isIdle() || !rechargeManager.isRecharging() && owner.isRunning()) {
-            aniPlayer.setAnimation(run);
-        } else if (rechargeManager.isRecharging()) {
-            aniPlayer.setAnimation(recharge);
+        if(shootStateManager.isShooting())return;
+
+        //Se estivermos recarregando
+        if(rechargeManager.isRecharging()){
+            aniPlayer.playAnimation(recharge);
             aniPlayer.setAutoUpdateAni(true);
             aniPlayer.setAnimationLooping(false);
+        } else // Se não estivermos recarregando, mas estivermos andando ou parados sem fazer nada
+        if(owner.isRunning() || owner.isIdle()){
+            aniPlayer.playAnimation(run);
         }
+
     }
 
     @Override
     public void performShoot() {
         if (!canShoot()) return;
+
+        aniPlayer.playAnimation(shoot);
+        aniPlayer.setAutoUpdateAni(true);
+        aniPlayer.setAnimationLooping(false);
+        aniPlayer.setAniTick(0);
 
         if (weaponStatus.ammo <= 0) {
             dealEmptyAmmoOnShoot();
@@ -107,8 +118,6 @@ public class Shotgun extends RangeWeapon<Shotgun> {
             getProjectileSpawnPosition(owner.isFacingForward() ? Direction.RIGHT : Direction.LEFT)
         );
 
-        if (!canShoot()) return;
-
         // Supondo que você queira disparar a 300 pixels/seg
         float xSpeed = 300f / PPM;
         projectileEmitter.fire(p, owner.isFacingForward() ? xSpeed : -xSpeed, 0, 1f);
@@ -134,7 +143,7 @@ public class Shotgun extends RangeWeapon<Shotgun> {
 
         aniPlayer.addAnimation(shoot, Arrays.asList(
             new Sprite(0, 0, 0.1f),
-            new Sprite(1, 0, 0.1f)
+            new Sprite(1, 0, 0.05f)
         ));
 
         aniPlayer.addAnimation(recharge, Arrays.asList(
@@ -151,7 +160,7 @@ public class Shotgun extends RangeWeapon<Shotgun> {
             new Sprite(1, 2)
         ));
 
-        aniPlayer.setAnimation(run);
+        aniPlayer.playAnimation(run);
     }
 
     protected void initSpriteSheet() {

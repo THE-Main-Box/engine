@@ -96,8 +96,12 @@ public class ObjectAnimationPlayer {
         }
     }
 
+    public boolean isPlaying(String animationTitle) {
+        return currentAnimation != null && currentAnimationKey.equals(animationTitle);
+    }
+
     // toca uma animação com base na chave passada
-    public void setAnimation(String title) {
+    public void playAnimation(String title) {
         List<Sprite> newAnimation = animations.get(title);
 
         // verifica se a animação a ser atualizada existe antes de atualizar
@@ -119,7 +123,7 @@ public class ObjectAnimationPlayer {
         // 2) o aniTick está no último índice
         // 3) o autoUpdateAni foi desligado pelo update()
         return !animationLooping
-            && aniTick == currentAnimation.size() - 1
+            && aniTick == currentAnimation.size()-1
             && !autoUpdateAni;
     }
 

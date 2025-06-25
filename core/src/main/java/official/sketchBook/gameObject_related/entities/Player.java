@@ -125,7 +125,7 @@ public class Player extends ArmedEntity {
             new Sprite(1, 3, 0.1f)
         ));
 
-        objectAnimationPlayerList.get(0).setAnimation(idle);
+        objectAnimationPlayerList.get(0).playAnimation(idle);
     }
 
     @Override

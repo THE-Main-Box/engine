@@ -4,16 +4,20 @@ import official.sketchBook.components_related.toUse_component.util.TimerComponen
 import official.sketchBook.util_related.util.weapon.status.RangeWeaponStatus;
 import official.sketchBook.weapon_related.base_model.BaseWeapon;
 
-public class RechargeManager extends RangeWeaponBaseManager {
-    /// Tempo de recarga da arma
-    private TimerComponent rechargingTimeLimit;
-    /// Tempo base para validar o tempo de recarga
-    private float baseTime;
+import static official.sketchBook.util_related.info.values.AnimationTitles.Weapon.shoot;
 
-    /// Flag de comportamento para dizer se pode recarregar assim que a munição acabar
+public class RechargeManager extends RangeWeaponBaseManager {
+
+    private final TimerComponent rechargingTimeLimit;
+    private final TimerComponent rechargeInputBufferTimer;
+    private boolean bufferRechargeRequest = false;
+
+    private float baseTime;
     private boolean autoRecharge;
+    private boolean pendingRechargeAfterShoot = false;
 
     private Runnable onRechargeFinishedCallback;
+    private Runnable onRechargeStartCallback;
 
     public RechargeManager(
         BaseWeapon<?> baseWeapon,
@@ -24,73 +28,128 @@ public class RechargeManager extends RangeWeaponBaseManager {
         super(baseWeapon, weaponStatus);
 
         this.rechargingTimeLimit = new TimerComponent();
-        this.baseTime = baseTime;
+        this.rechargeInputBufferTimer = new TimerComponent(0.02f); // Buffer manual: 200ms
 
+        this.baseTime = baseTime;
         this.autoRecharge = autoRecharge;
 
         updateRechargeTimeLimit();
     }
 
     public void updateRechargeState(float delta) {
-        updateRechargeRate();
+        rechargingTimeLimit.update(delta);
+        rechargeInputBufferTimer.update(delta);
 
-        updateRechargingTime(delta);
+        syncAnimationWithRechargeState();
 
-        if (autoRecharge) {
-            autoRecharge();
+        // Finalização da recarga
+        if (rechargingTimeLimit.isFinished()) {
+            rechargingTimeLimit.stop();
+            rechargingTimeLimit.reset();
+            onRechargeFinish();
+        }
+
+        // Tentativa de auto-recarregar
+        if (autoRecharge) autoRecharge();
+
+        // Se o buffer foi solicitado, tentamos recarregar quando terminar
+        if (bufferRechargeRequest && rechargeInputBufferTimer.isFinished()) {
+            bufferRechargeRequest = false; // Reseta a flag para não repetir
+            attemptManualRecharge();       // Tenta recarregar de novo
+        }
+
+        // Se acabou de atirar e deve esperar antes de recarregar
+        if (pendingRechargeAfterShoot) {
+            if (!rangeCapableWeapon.getShootStateManager().isShooting()) {
+                pendingRechargeAfterShoot = false;
+                recharge();
+            }
         }
     }
 
-    /// Atualiza o estado de recarga da arma com base no estado do temporizador
-    private void updateRechargingTime(float delta) {
-        rechargingTimeLimit.update(delta);
+    private void autoRecharge() {
+        if (weaponStatus.ammo <= 0 && !isRecharging() && !pendingRechargeAfterShoot) {
+            if (rangeCapableWeapon.getShootStateManager().isShooting()) {
+                pendingRechargeAfterShoot = true;
+            } else {
+                recharge();
+            }
+        }
+    }
 
-        if (rechargingTimeLimit.isFinished()) {
-            onRechargeFinish();
+    public void recharge() {
+        // Chamada direta: normalmente vem de um input do jogador
+        if (canRecharge()) {
+            startRecharge();
+        }
+        // Se não puder, iniciar buffer
+        else if (!rechargeInputBufferTimer.isRunning()) {
+            rechargeInputBufferTimer.reset();
+            rechargeInputBufferTimer.start();
+            bufferRechargeRequest = true;
+        }
+    }
+
+    private void attemptManualRecharge() {
+        if (canRecharge()) {
+            startRecharge();
+        }
+        // Se ainda não puder, não tentamos novamente
+    }
+
+    private void startRecharge() {
+        rechargingTimeLimit.reset();
+        rechargingTimeLimit.start();
+        updateRechargeTimeLimit();
+
+        if (onRechargeStartCallback != null) {
+            onRechargeStartCallback.run();
         }
     }
 
     private void onRechargeFinish() {
-        rechargingTimeLimit.stop();
-        rechargingTimeLimit.reset();
         weaponStatus.refillOnLimit();
 
         if (onRechargeFinishedCallback != null) {
             onRechargeFinishedCallback.run();
         }
     }
-    /// Atualiza o tempo de recarga com base no multiplicador de uma animação
+
     private void updateRechargeTimeLimit() {
         rechargingTimeLimit.setTargetTime(baseTime / weaponStatus.rechargeSpeedMultiplier);
     }
 
-    /// Atualiza o tempo de recarga da animação com base no estado da arma e do multiplicador
-    private void updateRechargeRate() {
-        if (isRecharging() && weaponStatus.rechargeSpeedMultiplier > 1) {
-            if (weapon.getAniPlayer() != null) {
-                weapon.getAniPlayer().setAnimationSpeedToTargetDuration(rechargingTimeLimit.getTargetTime());
+    private void syncAnimationWithRechargeState() {
+        if (weapon.getAniPlayer() == null) return;
+
+        if (isRecharging()) {
+            // Se estamos recarregando e há modificador de velocidade
+            if (weaponStatus.rechargeSpeedMultiplier > 1) {
+                weapon.getAniPlayer()
+                    .setAnimationSpeedToTargetDuration(rechargingTimeLimit.getTargetTime());
             }
-            updateRechargeTimeLimit();
-        } else if (weapon.getAniPlayer() != null && weapon.getAniPlayer().getAnimationSpeed() > 1) {
-            weapon.getAniPlayer().setAnimationSpeed(1);
+        } else {
+            // Se não estamos recarregando, reseta a velocidade para o padrão
+            if (weapon.getAniPlayer().getAnimationSpeed() > 1) {
+                weapon.getAniPlayer().setAnimationSpeed(1f);
+            }
         }
     }
 
-    /// Recarrega a arma depois depois que ela estiver vazia
-    private void autoRecharge() {
-        if (weaponStatus.ammo <= 0) {
-            rangeCapableWeapon.recharge();
-        }
-    }
 
-    public void recharge() {
-        this.rechargingTimeLimit.start();
+    private boolean canRecharge() {
+        return weaponStatus.ammo < weaponStatus.maxAmmo
+            && !rangeCapableWeapon.getShootStateManager().isShooting()
+            && !isRecharging();
     }
 
     public boolean isRecharging() {
         return rechargingTimeLimit.isRunning();
     }
 
+    public void setOnRechargeStartCallback(Runnable onRechargeStartCallback) {
+        this.onRechargeStartCallback = onRechargeStartCallback;
+    }
 
     public void setOnRechargeFinishedCallback(Runnable callback) {
         this.onRechargeFinishedCallback = callback;

@@ -123,16 +123,6 @@ public class ObjectAnimationPlayer {
             && !autoUpdateAni;
     }
 
-    //determina o sprite atual com base no indice da chave da animação passada
-    public void setCurrentSprite(String animationTitle, int frameIndex) {
-
-        this.setAnimation(animationTitle); // seta a animação para a solicitada
-
-        if (frameIndex >= 0 && frameIndex < this.currentAnimation.size()) {
-            aniTick = frameIndex;
-        }
-    }
-
     // Setter para o looping
     public void setAnimationLooping(boolean looping) {
         if(this.animationLooping != looping){
@@ -142,19 +132,6 @@ public class ObjectAnimationPlayer {
 
     public boolean isAnimationLooping() {
         return animationLooping;
-    }
-
-    public int getAniTick() {
-        return aniTick;
-    }
-
-    public float getFrameDuration() {
-        return frameDuration;
-    }
-
-    // determina a duração do quanto que o sprite atual deve ser mostrado na tela
-    public void setFrameDuration(float frameDuration) {
-        this.frameDuration = frameDuration;
     }
 
     // seleciona o sprite atual baseado no index da animação que está senod tocada(anitick)
@@ -199,28 +176,8 @@ public class ObjectAnimationPlayer {
         this.animationSpeed = animationSpeed;
     }
 
-    public void setCurrentAnimationKey(String currentAnimationKey) {
-        this.currentAnimationKey = currentAnimationKey;
-    }
-
     public List<Sprite> getAnimationByKey(String key) {
         return animations.get(key);
-    }
-
-    public Map<String, List<Sprite>> getAnimations() {
-        return animations;
-    }
-
-    public void setAnimations(Map<String, List<Sprite>> animations) {
-        this.animations = animations;
-    }
-
-    public float getElapsedTime() {
-        return elapsedTime;
-    }
-
-    public void setElapsedTime(float elapsedTime) {
-        this.elapsedTime = elapsedTime;
     }
 
 }

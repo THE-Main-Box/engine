@@ -6,8 +6,9 @@ import official.sketchBook.animation_related.ObjectAnimationPlayer;
 import official.sketchBook.animation_related.Sprite;
 import official.sketchBook.animation_related.SpriteSheetDataHandler;
 import official.sketchBook.gameObject_related.base_model.Entity;
-import official.sketchBook.util_related.info.util.entity.AnchorPoint;
-import official.sketchBook.util_related.info.util.weapon.status.RangeWeaponStatus;
+import official.sketchBook.util_related.util.entity.AnchorPoint;
+import official.sketchBook.util_related.util.weapon.RechargeManager;
+import official.sketchBook.util_related.util.weapon.status.RangeWeaponStatus;
 import official.sketchBook.projectiles_related.Projectile;
 import official.sketchBook.projectiles_related.projectiles.SlugProjectile;
 import official.sketchBook.projectiles_related.projectiles.TestProjectile;
@@ -19,10 +20,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import static official.sketchBook.screen_related.PlayScreen.PPM;
-import static official.sketchBook.util_related.info.util.values.AnimationTitles.Weapon.*;
+import static official.sketchBook.util_related.info.values.AnimationTitles.Weapon.*;
 
 public class Shotgun extends RangeWeapon<Shotgun> {
-
 
     public Shotgun(Entity owner, AnchorPoint point) {
         super(Shotgun.class, owner, point);
@@ -71,7 +71,7 @@ public class Shotgun extends RangeWeapon<Shotgun> {
     }
 
     @Override
-    protected void performShoot() {
+    public void performShoot() {
         if (!canShoot()) return;
 
         if (weaponStatus.ammo <= 0) {

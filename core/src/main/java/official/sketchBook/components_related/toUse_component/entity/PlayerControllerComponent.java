@@ -4,10 +4,10 @@ import official.sketchBook.components_related.base_component.KeyBindedController
 import official.sketchBook.gameObject_related.base_model.GameObject;
 import official.sketchBook.gameObject_related.entities.Player;
 import official.sketchBook.util_related.enumerators.directions.Direction;
-import official.sketchBook.util_related.info.util.values.ControlKeys;
+import official.sketchBook.util_related.info.values.ControlKeys;
 
 import static official.sketchBook.screen_related.PlayScreen.PPM;
-import static official.sketchBook.util_related.info.util.values.SpeedRelatedVariables.Player.*;
+import static official.sketchBook.util_related.info.values.SpeedRelatedVariables.Player.*;
 
 public class PlayerControllerComponent extends KeyBindedControllerComponent {
     private final Player player;

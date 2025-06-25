@@ -7,7 +7,7 @@ import official.sketchBook.gameObject_related.base_model.Entity;
 import official.sketchBook.projectiles_related.Projectile;
 import official.sketchBook.util_related.enumerators.directions.Direction;
 
-public class ProjectileControllerComponent extends Component {
+public class ProjectileControllerComponent implements Component {
     /// Projétil a quem pertence esse controlador
     private Projectile projectile;
     /// Tempo que o projétil permaneceu ativo

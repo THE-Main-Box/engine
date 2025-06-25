@@ -8,7 +8,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import official.sketchBook.screen_related.PlayScreen;
 import official.sketchBook.util_related.enumerators.types.FixtType;
 import official.sketchBook.util_related.enumerators.types.TileType;
-import official.sketchBook.util_related.info.util.values.FixtureType;
+import official.sketchBook.util_related.info.values.FixtureType;
 
 import java.util.ArrayList;
 import java.util.List;

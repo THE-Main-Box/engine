@@ -6,7 +6,7 @@ import official.sketchBook.projectiles_related.Projectile;
 import official.sketchBook.util_related.enumerators.directions.Direction;
 import official.sketchBook.util_related.enumerators.types.FixtType;
 import official.sketchBook.util_related.helpers.ContactActions;
-import official.sketchBook.util_related.info.util.values.FixtureType;
+import official.sketchBook.util_related.info.values.FixtureType;
 
 public class ProjectileContactListener implements ContactListener {
     @Override

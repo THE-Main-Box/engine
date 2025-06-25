@@ -2,7 +2,7 @@ package official.sketchBook.components_related.toUse_component.util;
 
 import official.sketchBook.components_related.base_component.Component;
 
-public class TimerComponent extends Component {
+public class TimerComponent implements Component {
     private float timeElapsed = 0;
     private float targetTime;
     private boolean running = false;

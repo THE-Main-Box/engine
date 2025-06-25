@@ -12,7 +12,7 @@ import official.sketchBook.components_related.toUse_component.projectile.Project
 import official.sketchBook.gameObject_related.base_model.Entity;
 import official.sketchBook.util_related.enumerators.types.FixtType;
 import official.sketchBook.util_related.helpers.body.BodyCreatorHelper;
-import official.sketchBook.util_related.info.util.values.FixtureType;
+import official.sketchBook.util_related.info.values.FixtureType;
 
 import java.util.ArrayList;
 import java.util.List;

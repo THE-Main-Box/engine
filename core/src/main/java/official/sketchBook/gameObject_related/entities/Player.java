@@ -17,14 +17,14 @@ import official.sketchBook.room_related.model.PlayableRoom;
 import official.sketchBook.util_related.enumerators.types.FixtType;
 import official.sketchBook.util_related.helpers.body.BodyCreatorHelper;
 import official.sketchBook.util_related.info.paths.EntitiesSpritePath;
-import official.sketchBook.util_related.info.util.values.FixtureType;
+import official.sketchBook.util_related.info.values.FixtureType;
 import official.sketchBook.util_related.registers.EmitterRegister;
 import official.sketchBook.weapon_related.Shotgun;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static official.sketchBook.util_related.info.util.values.AnimationTitles.Entity.*;
+import static official.sketchBook.util_related.info.values.AnimationTitles.Entity.*;
 
 public class Player extends ArmedEntity {
 

@@ -4,10 +4,9 @@ import official.sketchBook.animation_related.ObjectAnimationPlayer;
 import official.sketchBook.components_related.base_component.Component;
 import official.sketchBook.gameObject_related.entities.Player;
 
-import static official.sketchBook.util_related.info.util.values.AnimationTitles.Entity.*;
-import static official.sketchBook.util_related.info.util.values.AnimationTitles.Entity.idle;
+import static official.sketchBook.util_related.info.values.AnimationTitles.Entity.*;
 
-public class PlayerAnimationManagerComponent extends Component {
+public class PlayerAnimationManagerComponent implements Component {
     private Player player;
 
     public PlayerAnimationManagerComponent(Player player) {

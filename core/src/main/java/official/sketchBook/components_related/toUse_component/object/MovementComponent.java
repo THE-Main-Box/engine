@@ -6,7 +6,7 @@ import official.sketchBook.components_related.base_component.Component;
 
 import static official.sketchBook.screen_related.PlayScreen.PPM;
 
-public class MovementComponent extends Component {
+public class MovementComponent implements Component {
     private float xSpeed, ySpeed;
     private float xAccel, yAccel;
     private float xMaxSpeed, yMaxSpeed;

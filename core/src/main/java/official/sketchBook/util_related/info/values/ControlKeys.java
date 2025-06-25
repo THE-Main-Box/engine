@@ -1,4 +1,4 @@
-package official.sketchBook.util_related.info.util.values;
+package official.sketchBook.util_related.info.values;
 
 import com.badlogic.gdx.Input;
 

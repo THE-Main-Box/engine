@@ -7,7 +7,7 @@ import official.sketchBook.gameObject_related.base_model.Entity;
 
 import static official.sketchBook.screen_related.PlayScreen.PPM;
 
-public class JumpComponent extends Component {
+public class JumpComponent implements Component {
 
 
     private boolean jumping, falling, jumpedFromGround, coyoteConsumed;

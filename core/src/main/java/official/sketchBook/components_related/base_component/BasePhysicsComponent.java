@@ -6,7 +6,7 @@ import official.sketchBook.gameObject_related.base_model.GameObject;
 
 import static official.sketchBook.screen_related.PlayScreen.PPM;
 
-public abstract class BasePhysicsComponent extends Component{
+public abstract class BasePhysicsComponent implements Component {
 
     protected GameObject object;
     protected Body body;

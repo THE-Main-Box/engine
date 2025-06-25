@@ -1,4 +1,4 @@
-package official.sketchBook.util_related.info.util.entity;
+package official.sketchBook.util_related.util.entity;
 
 public class AnchorPoint {
     private float x;

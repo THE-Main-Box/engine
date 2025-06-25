@@ -1,7 +1,7 @@
 package official.sketchBook.gameObject_related.base_model;
 
 import com.badlogic.gdx.physics.box2d.World;
-import official.sketchBook.util_related.info.util.entity.AnchorPoint;
+import official.sketchBook.util_related.util.entity.AnchorPoint;
 import official.sketchBook.weapon_related.base_model.BaseWeapon;
 import official.sketchBook.weapon_related.base_model.RangeWeapon;
 
@@ -11,7 +11,7 @@ public abstract class ArmedEntity extends Entity {
     /// Valores de ponto de ancoragem relativos
     protected float xAP, yAP;
 
-    protected BaseWeapon weapon;
+    protected BaseWeapon<?> weapon;
 
     public ArmedEntity(float x, float y, float width, float height, boolean facingForward, World world) {
         super(x, y, width, height, facingForward, world);

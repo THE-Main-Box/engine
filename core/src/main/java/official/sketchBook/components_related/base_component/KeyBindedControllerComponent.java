@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public abstract class KeyBindedControllerComponent extends Component {
+public abstract class KeyBindedControllerComponent implements Component {
 
     protected final Map<Integer, Consumer<Boolean>> keyBindings;
     protected final Map<Integer, Boolean> keyStates;

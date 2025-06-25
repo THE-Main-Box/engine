@@ -7,7 +7,7 @@ import official.sketchBook.projectiles_related.Projectile;
 
 import static official.sketchBook.screen_related.PlayScreen.PPM;
 
-public class ProjectilePhysicsComponent extends Component {
+public class ProjectilePhysicsComponent implements Component {
     protected Projectile object;
     protected Body body;
     private boolean affectedByGravity = false;

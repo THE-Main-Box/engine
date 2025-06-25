@@ -2,19 +2,21 @@ package official.sketchBook.weapon_related.base_model;
 
 import com.badlogic.gdx.math.Vector2;
 import official.sketchBook.gameObject_related.base_model.Entity;
-import official.sketchBook.util_related.info.util.entity.AnchorPoint;
-import official.sketchBook.util_related.info.util.weapon.status.RangeWeaponStatus;
+import official.sketchBook.util_related.util.entity.AnchorPoint;
+import official.sketchBook.util_related.util.weapon.status.RangeWeaponStatus;
 import official.sketchBook.projectiles_related.Projectile;
 import official.sketchBook.projectiles_related.emitters.Emitter;
 import official.sketchBook.util_related.enumerators.directions.Direction;
 import official.sketchBook.util_related.registers.EmitterRegister;
-import official.sketchBook.util_related.info.util.weapon.RechargeManager;
+import official.sketchBook.util_related.util.weapon.RechargeManager;
+import official.sketchBook.weapon_related.base_model.interfaces.IRangeCapable;
 
 import java.util.Objects;
 
 import static official.sketchBook.screen_related.PlayScreen.PPM;
+import static official.sketchBook.util_related.info.values.AnimationTitles.Weapon.recharge;
 
-public abstract class RangeWeapon<T extends RangeWeapon<T>> extends BaseWeapon<T> {
+public abstract class RangeWeapon<T extends RangeWeapon<T>> extends BaseWeapon<T> implements IRangeCapable {
 
     protected Class<? extends Projectile> projectileType;
     protected Emitter projectileEmitter;
@@ -37,7 +39,12 @@ public abstract class RangeWeapon<T extends RangeWeapon<T>> extends BaseWeapon<T
     }
 
     protected void initManagers() {
-        this.rechargeManager = new RechargeManager(this);
+        this.rechargeManager = new RechargeManager(
+            this,
+            this.weaponStatus,
+            aniPlayer.getTotalAnimationTime(aniPlayer.getAnimationByKey(recharge)),
+            true
+        );
     }
 
     @Override
@@ -53,13 +60,12 @@ public abstract class RangeWeapon<T extends RangeWeapon<T>> extends BaseWeapon<T
         performShoot();
     }
 
+    //TODO: implementar um sistema para permitir um comportamento de entrando no estado de recarga e saindo do estado
     /// Permite que a arma implemente uma mecânica de recarga customizada
     public void recharge() {
         if(weaponStatus.ammo >= weaponStatus.maxAmmo) return;
         rechargeManager.recharge();
     }
-
-    //TODO:Implementar efeito sonoro de arma vazia
 
     /// Sistema para lidar com a munição vazia
     protected abstract void dealEmptyAmmoOnShoot();
@@ -67,12 +73,11 @@ public abstract class RangeWeapon<T extends RangeWeapon<T>> extends BaseWeapon<T
     /// Inicia os valores padrão dos status de uma arma
     protected abstract void initDefaultStatus();
 
-    /// Executa o código relacionado ao disparo da arma
-    protected abstract void performShoot();
-
     /// Permite a alteração do offset gráfico da arma
     protected abstract void updateOffSets();
 
+    /// Permite uma implementação própria de um disparo
+    protected abstract void performShoot();
 
     /// Valida para saber se podemos atirar
     protected boolean canShoot() {
@@ -117,6 +122,11 @@ public abstract class RangeWeapon<T extends RangeWeapon<T>> extends BaseWeapon<T
 
     public void setWeaponStatus(RangeWeaponStatus weaponStatus) {
         this.weaponStatus = weaponStatus;
+    }
+
+    @Override
+    public RechargeManager getRechargeManager() {
+        return this.rechargeManager;
     }
 
     // Métodos customizáveis por subclasses

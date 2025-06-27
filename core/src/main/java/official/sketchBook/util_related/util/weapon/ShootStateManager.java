@@ -10,7 +10,6 @@ public class ShootStateManager extends RangeWeaponBaseManager {
 
     // Timer para controle de estado (ex: animação de tiro)
     private final TimerComponent stateBufferTimer;
-    private final float stateBufferTime;
 
     // Tempo mínimo entre disparos
     private final TimerComponent fireCooldownTimer;
@@ -29,8 +28,7 @@ public class ShootStateManager extends RangeWeaponBaseManager {
         float rateOfFire
     ) {
         super(weapon, weaponStatus);
-        this.stateBufferTimer = new TimerComponent();
-        this.stateBufferTime = stateBufferTime;
+        this.stateBufferTimer = new TimerComponent(stateBufferTime);
 
         this.fireCooldownTimer = new TimerComponent();
         this.rateOfFire = rateOfFire;
@@ -91,17 +89,10 @@ public class ShootStateManager extends RangeWeaponBaseManager {
         if (onShootCallback != null) {
             onShootCallback.run();
         }
-
-        if(weapon.getAniPlayer() != null){
-            weapon.getAniPlayer().playAnimation(shoot);
-            weapon.getAniPlayer().setAutoUpdateAni(true);
-            weapon.getAniPlayer().setAnimationLooping(false);
-            weapon.getAniPlayer().setAniTick(0);
-        }
     }
 
     private boolean canShoot() {
-        return rangeCapableWeapon.canShoot() && !isShooting() && !isCoolingDown();
+        return rangeCapableWeapon.canShoot() && !isCoolingDown() && weaponStatus.ammo > 0;
     }
 
     public boolean isShooting() {

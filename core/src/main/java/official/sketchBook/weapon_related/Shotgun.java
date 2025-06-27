@@ -70,20 +70,28 @@ public class Shotgun extends RangeWeapon<Shotgun> {
 
     @Override
     public void updateAnimations() {
-        boolean isPlayingShoot = aniPlayer.getCurrentAnimationKey().equals(shoot) && !aniPlayer.isAnimationFinished();
+        if(shootStateManager.isShooting())return;
 
-        if (!isPlayingShoot && !rechargeManager.isRecharging() && owner.isIdle() || !rechargeManager.isRecharging() && owner.isRunning()) {
-            aniPlayer.playAnimation(run);
-        } else if (rechargeManager.isRecharging()) {
+        //Se estivermos recarregando
+        if(rechargeManager.isRecharging()){
             aniPlayer.playAnimation(recharge);
             aniPlayer.setAutoUpdateAni(true);
             aniPlayer.setAnimationLooping(false);
+        } else // Se não estivermos recarregando, mas estivermos andando ou parados sem fazer nada
+        if(owner.isRunning() || owner.isIdle()){
+            aniPlayer.playAnimation(run);
         }
+
     }
 
     @Override
     public void performShoot() {
         if (!canShoot()) return;
+
+        aniPlayer.playAnimation(shoot);
+        aniPlayer.setAutoUpdateAni(true);
+        aniPlayer.setAnimationLooping(false);
+        aniPlayer.setAniTick(0);
 
         if (weaponStatus.ammo <= 0) {
             dealEmptyAmmoOnShoot();
@@ -135,7 +143,7 @@ public class Shotgun extends RangeWeapon<Shotgun> {
 
         aniPlayer.addAnimation(shoot, Arrays.asList(
             new Sprite(0, 0, 0.1f),
-            new Sprite(1, 0, 0.1f)
+            new Sprite(1, 0, 0.05f)
         ));
 
         aniPlayer.addAnimation(recharge, Arrays.asList(

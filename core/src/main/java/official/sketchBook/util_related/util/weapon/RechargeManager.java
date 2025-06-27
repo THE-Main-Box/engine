@@ -40,7 +40,7 @@ public class RechargeManager extends RangeWeaponBaseManager {
         rechargingTimeLimit.update(delta);
         rechargeInputBufferTimer.update(delta);
 
-        updateRechargeRate();
+        syncAnimationWithRechargeState();
 
         // Finalização da recarga
         if (rechargingTimeLimit.isFinished()) {
@@ -60,7 +60,7 @@ public class RechargeManager extends RangeWeaponBaseManager {
 
         // Se acabou de atirar e deve esperar antes de recarregar
         if (pendingRechargeAfterShoot) {
-            if (!isPlayingShootAnimation()) {
+            if (!rangeCapableWeapon.getShootStateManager().isShooting()) {
                 pendingRechargeAfterShoot = false;
                 recharge();
             }
@@ -69,7 +69,7 @@ public class RechargeManager extends RangeWeaponBaseManager {
 
     private void autoRecharge() {
         if (weaponStatus.ammo <= 0 && !isRecharging() && !pendingRechargeAfterShoot) {
-            if (isPlayingShootAnimation()) {
+            if (rangeCapableWeapon.getShootStateManager().isShooting()) {
                 pendingRechargeAfterShoot = true;
             } else {
                 recharge();
@@ -98,6 +98,7 @@ public class RechargeManager extends RangeWeaponBaseManager {
     }
 
     private void startRecharge() {
+        rechargingTimeLimit.reset();
         rechargingTimeLimit.start();
         updateRechargeTimeLimit();
 
@@ -118,23 +119,28 @@ public class RechargeManager extends RangeWeaponBaseManager {
         rechargingTimeLimit.setTargetTime(baseTime / weaponStatus.rechargeSpeedMultiplier);
     }
 
-    private void updateRechargeRate() {
-        if (isRecharging() && weaponStatus.rechargeSpeedMultiplier > 1 && weapon.getAniPlayer() != null) {
-            weapon.getAniPlayer().setAnimationSpeedToTargetDuration(rechargingTimeLimit.getTargetTime());
-        } else if (weapon.getAniPlayer() != null && weapon.getAniPlayer().getAnimationSpeed() > 1) {
-            weapon.getAniPlayer().setAnimationSpeed(1);
+    private void syncAnimationWithRechargeState() {
+        if (weapon.getAniPlayer() == null) return;
+
+        if (isRecharging()) {
+            // Se estamos recarregando e há modificador de velocidade
+            if (weaponStatus.rechargeSpeedMultiplier > 1) {
+                weapon.getAniPlayer()
+                    .setAnimationSpeedToTargetDuration(rechargingTimeLimit.getTargetTime());
+            }
+        } else {
+            // Se não estamos recarregando, reseta a velocidade para o padrão
+            if (weapon.getAniPlayer().getAnimationSpeed() > 1) {
+                weapon.getAniPlayer().setAnimationSpeed(1f);
+            }
         }
     }
+
 
     private boolean canRecharge() {
         return weaponStatus.ammo < weaponStatus.maxAmmo
             && !rangeCapableWeapon.getShootStateManager().isShooting()
             && !isRecharging();
-    }
-
-    private boolean isPlayingShootAnimation() {
-        return weapon.getAniPlayer() != null
-            && weapon.getAniPlayer().getCurrentAnimationKey().equals(shoot);
     }
 
     public boolean isRecharging() {

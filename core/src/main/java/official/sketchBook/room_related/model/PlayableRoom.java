@@ -117,7 +117,7 @@ public class PlayableRoom implements Poolable {
         }
 
         if (projectilePool != null) {
-            this.projectilePool.updateProjectiles(delta);
+            this.projectilePool.update(delta);
         }
     }
 

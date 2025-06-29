@@ -34,7 +34,7 @@ public class Shotgun extends RangeWeapon<Shotgun> {
     protected void initDefaultStatus() {
         this.weaponStatus = new RangeWeaponStatus(
             2,
-            0.1f,
+            0.3f,
             1f,
             1f
         );

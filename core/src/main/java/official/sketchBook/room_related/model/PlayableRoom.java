@@ -117,7 +117,7 @@ public class PlayableRoom implements Poolable {
         }
 
         if (projectilePool != null) {
-            this.projectilePool.updateProjectiles(delta);
+            this.projectilePool.update(delta);
         }
     }
 
@@ -132,6 +132,9 @@ public class PlayableRoom implements Poolable {
             }
         }
 
+        if (projectilePool != null) {
+            projectilePool.renderActiveProjectiles(batch);
+        }
     }
 
     /// Realiza um dispose de tudo caso estejamos ativos

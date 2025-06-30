@@ -1,10 +1,8 @@
-package official.sketchBook.util_related.util.weapon;
+package official.sketchBook.weapon_related.util.weapon;
 
 import official.sketchBook.components_related.toUse_component.util.TimerComponent;
-import official.sketchBook.util_related.util.weapon.status.RangeWeaponStatus;
+import official.sketchBook.weapon_related.util.weapon.status.RangeWeaponStatus;
 import official.sketchBook.weapon_related.base_model.BaseWeapon;
-
-import static official.sketchBook.util_related.info.values.AnimationTitles.Weapon.shoot;
 
 public class RechargeManager extends RangeWeaponBaseManager {
 
@@ -28,7 +26,7 @@ public class RechargeManager extends RangeWeaponBaseManager {
         super(baseWeapon, weaponStatus);
 
         this.rechargingTimeLimit = new TimerComponent();
-        this.rechargeInputBufferTimer = new TimerComponent(0.02f); // Buffer manual: 200ms
+        this.rechargeInputBufferTimer = new TimerComponent(0.1f);
 
         this.baseTime = baseTime;
         this.autoRecharge = autoRecharge;

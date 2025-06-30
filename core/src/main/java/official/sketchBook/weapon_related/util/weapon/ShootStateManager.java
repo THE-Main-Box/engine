@@ -1,10 +1,8 @@
-package official.sketchBook.util_related.util.weapon;
+package official.sketchBook.weapon_related.util.weapon;
 
 import official.sketchBook.components_related.toUse_component.util.TimerComponent;
-import official.sketchBook.util_related.util.weapon.status.RangeWeaponStatus;
+import official.sketchBook.weapon_related.util.weapon.status.RangeWeaponStatus;
 import official.sketchBook.weapon_related.base_model.BaseWeapon;
-
-import static official.sketchBook.util_related.info.values.AnimationTitles.Weapon.shoot;
 
 public class ShootStateManager extends RangeWeaponBaseManager {
 
@@ -33,7 +31,7 @@ public class ShootStateManager extends RangeWeaponBaseManager {
         this.fireCooldownTimer = new TimerComponent();
         this.rateOfFire = rateOfFire;
 
-        this.inputBufferTimer = new TimerComponent(0.002f);
+        this.inputBufferTimer = new TimerComponent(0.2f);
 
         updateFireCooldownTimer();//inicia o temporizador
     }
@@ -54,14 +52,16 @@ public class ShootStateManager extends RangeWeaponBaseManager {
 
     private void updateInputBuffer(){
         if(inputBufferTimer.isRunning()){
-            inputBufferTimer.stop();
-            inputBufferTimer.reset();
-            tryToShoot();
+            if(canShoot()){
+                inputBufferTimer.stop();
+                inputBufferTimer.reset();
+                triggerShootCallback();
+            }
         }
     }
 
     private void updateFireCooldownTimer(){
-        fireCooldownTimer.setTargetTime(rateOfFire / weaponStatus.fireCoolDownMultiplier);
+        fireCooldownTimer.setTargetTime(rateOfFire / weaponStatus.fireCoolDownSpeedMultiplier);
     }
 
     /**

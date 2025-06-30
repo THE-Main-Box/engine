@@ -132,6 +132,9 @@ public class PlayableRoom implements Poolable {
             }
         }
 
+        if (projectilePool != null) {
+            projectilePool.renderActiveProjectiles(batch);
+        }
     }
 
     /// Realiza um dispose de tudo caso estejamos ativos

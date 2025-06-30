@@ -3,13 +3,13 @@ package official.sketchBook.weapon_related.base_model;
 import com.badlogic.gdx.math.Vector2;
 import official.sketchBook.gameObject_related.base_model.Entity;
 import official.sketchBook.util_related.util.entity.AnchorPoint;
-import official.sketchBook.util_related.util.weapon.ShootStateManager;
-import official.sketchBook.util_related.util.weapon.status.RangeWeaponStatus;
+import official.sketchBook.weapon_related.util.weapon.ShootStateManager;
+import official.sketchBook.weapon_related.util.weapon.status.RangeWeaponStatus;
 import official.sketchBook.projectiles_related.Projectile;
 import official.sketchBook.projectiles_related.emitters.Emitter;
 import official.sketchBook.util_related.enumerators.directions.Direction;
 import official.sketchBook.util_related.registers.EmitterRegister;
-import official.sketchBook.util_related.util.weapon.RechargeManager;
+import official.sketchBook.weapon_related.util.weapon.RechargeManager;
 import official.sketchBook.weapon_related.base_model.interfaces.IRangeCapable;
 
 import java.util.Objects;

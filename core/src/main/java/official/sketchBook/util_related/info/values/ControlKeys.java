@@ -7,9 +7,9 @@ public class ControlKeys {
     public static int move_left = Input.Keys.LEFT;
     public static int move_right = Input.Keys.RIGHT;
     public static int jump = Input.Keys.SPACE;
-    public static int recharge = Input.Keys.R;
-    public static int use = Input.Keys.S;
-    public static int secondaryUse = Input.Keys.D;
+    public static int recharge = Input.Keys.D;
+    public static int use = Input.Keys.Z;
+    public static int secondaryUse = Input.Keys.X;
 
     // redefinir uma tecla
     public static void setKey(String action, int newKey) {

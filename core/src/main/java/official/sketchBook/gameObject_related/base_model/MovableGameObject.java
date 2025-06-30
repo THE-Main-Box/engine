@@ -6,6 +6,8 @@ import official.sketchBook.components_related.toUse_component.object.MObjectPhys
 import official.sketchBook.components_related.toUse_component.object.MovementComponent;
 import official.sketchBook.util_related.info.values.SpeedRelatedVariables;
 
+import static official.sketchBook.screen_related.PlayScreen.PPM;
+
 public abstract class MovableGameObject extends GameObject {
 
     protected MovementComponent moveC;

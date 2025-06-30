@@ -12,8 +12,6 @@ import static official.sketchBook.util_related.info.values.SpeedRelatedVariables
 public class PlayerControllerComponent extends KeyBindedControllerComponent {
     private final Player player;
 
-    private final float groundAccel = 70f / PPM;
-    private final float airAccel = 10f / PPM;
     private float accelToApply;
 
     private boolean leftPressed = false;
@@ -31,8 +29,8 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
         bindKey(ControlKeys.use, this::useWeapon);
     }
 
-    private void useWeapon(boolean pressed){
-        if(pressed){
+    private void useWeapon(boolean pressed) {
+        if (pressed) {
             player.useWeapon();
         }
     }
@@ -63,20 +61,30 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
 
         if (player.isOnGround()) {
             // se está no chão
-            accel = groundAccel;
+            accel = GROUND_ACCEL;
             maxAccel = HORIZONTAL_WALK_MAX;
             decel = HORIZONTAL_WALK_DEC;
         } else {
             // se está no ar
-            accel = airAccel;
+            accel = AIR_ACCEL;
             maxAccel = HORIZONTAL_AIR_MAX;
             decel = HORIZONTAL_AIR_DEC;
         }
 
-        this.accelToApply = accel;
+
+        this.accelToApply = accel * getAccelBoost();
         player.getMoveC().setxMaxSpeed(maxAccel);
         player.getMoveC().setDecelerationX(decel);
 
+    }
+
+    /// Obtém um valor de influência de aceleração
+    private float getAccelBoost(){
+        if (player.hasRangeWeapon() && player.getRangeWeapon().getShootStateManager().isShooting()) {
+            return 0.1f;
+        }
+
+        return 1f;
     }
 
     private void updateMovement() {

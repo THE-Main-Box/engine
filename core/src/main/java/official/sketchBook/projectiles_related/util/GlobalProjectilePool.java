@@ -48,8 +48,16 @@ public class GlobalProjectilePool {
         updateProjectiles(delta);
     }
 
+    /**
+     * Renderiza todos os projéteis ativos
+     */
     public void renderActiveProjectiles(SpriteBatch batch){
-        renderProjectiles(batch);
+        for (ProjectilePool<? extends Projectile> pool : poolMap.values()) {
+            for (Projectile p : pool.getAllProjectiles()) {
+                if (!p.isActive()) continue;
+                p.render(batch);
+            }
+        }
     }
 
     /**
@@ -69,18 +77,6 @@ public class GlobalProjectilePool {
     @SuppressWarnings("unchecked")
     public <T extends Projectile> Projectile returnProjectileRequested(Class<T> type) {
         return createPoolIfAbsent(type).getFreeOrNew();
-    }
-
-    /**
-     * Renderiza todos os projéteis ativos
-     */
-    private void renderProjectiles(SpriteBatch batch) {
-        for (ProjectilePool<? extends Projectile> pool : poolMap.values()) {
-            for (Projectile p : pool.getAllProjectiles()) {
-                if (!p.isActive()) continue;
-                p.render(batch);
-            }
-        }
     }
 
     /**

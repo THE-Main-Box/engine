@@ -7,7 +7,7 @@ import official.sketchBook.animation_related.Sprite;
 import official.sketchBook.animation_related.SpriteSheetDataHandler;
 import official.sketchBook.gameObject_related.base_model.Entity;
 import official.sketchBook.util_related.util.entity.AnchorPoint;
-import official.sketchBook.util_related.util.weapon.status.RangeWeaponStatus;
+import official.sketchBook.weapon_related.util.weapon.status.RangeWeaponStatus;
 import official.sketchBook.projectiles_related.Projectile;
 import official.sketchBook.projectiles_related.projectiles.SlugProjectile;
 import official.sketchBook.projectiles_related.projectiles.TestProjectile;
@@ -20,6 +20,7 @@ import java.util.List;
 
 import static official.sketchBook.screen_related.PlayScreen.PPM;
 import static official.sketchBook.util_related.info.values.AnimationTitles.Weapon.*;
+import static official.sketchBook.util_related.info.values.RangeWeaponBaseStatus.Shotgun.*;
 
 public class Shotgun extends RangeWeapon<Shotgun> {
 
@@ -33,10 +34,10 @@ public class Shotgun extends RangeWeapon<Shotgun> {
     @Override
     protected void initDefaultStatus() {
         this.weaponStatus = new RangeWeaponStatus(
-            2,
-            0.3f,
-            1f,
-            1f
+            maxAmmo,
+            fireCooldown,
+            rechargeSpeedMulti,
+            fireCooldownSpeedMulti
         );
     }
 

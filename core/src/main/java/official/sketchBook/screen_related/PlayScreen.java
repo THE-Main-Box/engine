@@ -59,6 +59,8 @@ public class PlayScreen implements Screen {
     //debug related
     public static boolean showHitBox = true;
     public static boolean showRayCast = true;
+    public static boolean showProjectilesActive = true;
+    public static boolean showActiveProjectilePools = true;
 
     private Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
 

@@ -5,8 +5,8 @@ import official.sketchBook.gameObject_related.base_model.GameObject;
 import official.sketchBook.gameObject_related.entities.Player;
 import official.sketchBook.util_related.enumerators.directions.Direction;
 import official.sketchBook.util_related.info.values.ControlKeys;
+import official.sketchBook.weapon_related.base_model.BaseWeapon;
 
-import static official.sketchBook.screen_related.PlayScreen.PPM;
 import static official.sketchBook.util_related.info.values.SpeedRelatedVariables.Player.*;
 
 public class PlayerControllerComponent extends KeyBindedControllerComponent {
@@ -18,6 +18,8 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
     private boolean rightPressed = false;
     private Direction lastDirectionPressed = Direction.STILL;
 
+    private boolean holdingUse = false;
+
     public PlayerControllerComponent(GameObject gameObject) {
         this.player = (Player) gameObject;
 
@@ -26,13 +28,18 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
         bindKey(ControlKeys.move_right, this::moveRight);
         bindKey(ControlKeys.jump, this::jump);
         bindKey(ControlKeys.recharge, this::rechargeWeapon);
-        bindKey(ControlKeys.use, this::useWeapon);
+        bindKey(ControlKeys.use, this::use);
     }
 
-    private void useWeapon(boolean pressed) {
+    private void use(boolean pressed) {
         if (pressed) {
-            player.useWeapon();
+            if(player.getWeapon(BaseWeapon.class) != null){
+                player.useWeapon();
+            }
         }
+
+        holdingUse = pressed;
+
     }
 
     private void rechargeWeapon(boolean pressed) {
@@ -52,6 +59,15 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
         updateMovement();
         updateHMovementValues();
 
+        continueToUseWeapon();
+    }
+
+    private void continueToUseWeapon(){
+        if(holdingUse){
+            if(player.getWeapon(BaseWeapon.class) != null){
+                player.useWeapon();
+            }
+        }
     }
 
     //atualiza as variaveis de movimentação em cada estado, se estivermos no ar

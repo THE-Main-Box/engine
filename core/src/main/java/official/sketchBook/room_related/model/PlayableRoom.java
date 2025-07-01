@@ -193,4 +193,8 @@ public class PlayableRoom implements Poolable {
     public World getWorld() {
         return world;
     }
+
+    public GlobalProjectilePool getProjectilePool() {
+        return projectilePool;
+    }
 }

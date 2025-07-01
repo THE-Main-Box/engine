@@ -35,6 +35,7 @@ public class Shotgun extends RangeWeapon<Shotgun> {
     protected void initDefaultStatus() {
         this.weaponStatus = new RangeWeaponStatus(
             maxAmmo,
+            ammoCost,
             fireCooldown,
             rechargeSpeedMulti,
             fireCooldownSpeedMulti
@@ -87,8 +88,6 @@ public class Shotgun extends RangeWeapon<Shotgun> {
 
     @Override
     public void performShoot() {
-        if (!canShoot()) return;
-
         aniPlayer.playAnimation(shoot);
         aniPlayer.setAutoUpdateAni(true);
         aniPlayer.setAnimationLooping(false);
@@ -103,7 +102,6 @@ public class Shotgun extends RangeWeapon<Shotgun> {
         if (projectileType.equals(SlugProjectile.class)) {
             slugShot();
         }
-        weaponStatus.ammo--;
     }
 
     @Override

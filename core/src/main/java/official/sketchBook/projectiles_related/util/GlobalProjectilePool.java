@@ -2,6 +2,7 @@ package official.sketchBook.projectiles_related.util;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Pool;
 import official.sketchBook.projectiles_related.Projectile;
 import official.sketchBook.room_related.model.PlayableRoom;
 
@@ -141,5 +142,40 @@ public class GlobalProjectilePool {
      */
     public PlayableRoom getRoomOwner() {
         return roomOwner;
+    }
+
+    public int getTotalActiveProjectiles(){
+        int value = 0;
+
+        for (ProjectilePool<? extends Projectile> pool : poolMap.values()) {
+            for (Projectile p : pool.getAllProjectiles()) {
+                if (!p.isActive()) continue;
+                value ++;
+            }
+        }
+
+        return value;
+    }
+
+    public int getTotalWaitingProjectiles(){
+        int value = 0;
+
+        for (ProjectilePool<? extends Projectile> pool : poolMap.values()) {
+            for (Projectile p : pool.getAllProjectiles()) {
+                value ++;
+            }
+        }
+
+        return value;
+    }
+
+    public int getTotalPools(){
+        int value = 0;
+
+        for (ProjectilePool<? extends Projectile> pool : poolMap.values()) {
+            value ++;
+        }
+
+        return value;
     }
 }

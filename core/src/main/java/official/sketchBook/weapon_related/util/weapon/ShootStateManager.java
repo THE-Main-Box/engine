@@ -89,6 +89,8 @@ public class ShootStateManager extends RangeWeaponBaseManager {
         if (onShootCallback != null) {
             onShootCallback.run();
         }
+
+        weaponStatus.ammo -= weaponStatus.ammoCost;
     }
 
     private boolean canShoot() {

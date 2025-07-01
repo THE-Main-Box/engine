@@ -96,7 +96,7 @@ public abstract class RangeWeapon<T extends RangeWeapon<T>> extends BaseWeapon<T
     /// Permite a alteração do offset gráfico da arma
     protected abstract void updateOffSets();
 
-    /// Permite uma implementação própria de um disparo
+    /// Permite uma implementação própria de um disparo, executado apenas caso possamos atirar de fato
     protected abstract void performShoot();
 
     /// Valida para saber se podemos atirar

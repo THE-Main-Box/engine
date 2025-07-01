@@ -3,6 +3,7 @@ package official.sketchBook.components_related.toUse_component.projectile;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Contact;
 import official.sketchBook.components_related.base_component.Component;
+import official.sketchBook.components_related.toUse_component.util.TimerComponent;
 import official.sketchBook.gameObject_related.base_model.Entity;
 import official.sketchBook.projectiles_related.Projectile;
 import official.sketchBook.util_related.enumerators.directions.Direction;
@@ -10,15 +11,9 @@ import official.sketchBook.util_related.enumerators.directions.Direction;
 public class ProjectileControllerComponent implements Component {
     /// Projétil a quem pertence esse controlador
     private Projectile projectile;
-    /// Tempo que o projétil permaneceu ativo
-    private float timeAlive;
-    /// Tempo que o projétil deverá permanecer vivo
-    private float timeAliveLimit;
 
-    /// Tempo que o projétil está inativo
-    private float inactiveTime;
-    /// Tempo que um projétil pode ficar inativo
-    private float inactiveTimeLimit;
+    /// Temporizador do tempo de vida do projétil
+    private TimerComponent activeTimeLimit;
 
     private boolean colideWithSameTypeProjectiles = false;
     private boolean colideWithOtherProjectiles = false;
@@ -42,29 +37,16 @@ public class ProjectileControllerComponent implements Component {
     private int rightContact = 0;
     private int upContact = 0;
 
-    private float bounceEnvironmentX = 0f;
-    private float bounceEnvironmentY = 0f;
-
-    private float bounceEntityX = 0f;
-    private float bounceEntityY = 0f;
-
-    private float bounceProjectileX = 0f;
-    private float bounceProjectileY = 0f;
-
-    //TODO: Verificar a nescessidade de complexidade de sistema
+    private float bounceX = 0f;
+    private float bounceY = 0f;
 
     public ProjectileControllerComponent(Projectile projectile) {
         this.projectile = projectile;
-        this.timeAliveLimit = 0f;
-        this.timeAlive = 0f;
-        this.inactiveTimeLimit = 3f;
-        this.inactiveTime = 0f;
+        this.activeTimeLimit = new TimerComponent();
     }
 
     @Override
     public void update(float delta) {
-        updateInactiveTime(delta);
-
         if (!projectile.isActive()) return;
 
         updateLifeTime(delta);
@@ -72,19 +54,44 @@ public class ProjectileControllerComponent implements Component {
 
     }
 
-    private void updateInactiveTime(float delta) {
-        if (projectile.isActive()) {
-            inactiveTime = 0;
-            return;
+    /// Atualiza o estado de ativo com base no tempo ativo e incrementa o tempo ativo
+    private void updateLifeTime(float delta) {
+
+        if (!activeTimeLimit.isRunning()) {
+            activeTimeLimit.reset();
+            activeTimeLimit.start();
         }
 
-        if (inactiveTime < inactiveTimeLimit) {
-            inactiveTime += delta;
-            if (inactiveTime > inactiveTimeLimit) {
-                inactiveTime = inactiveTimeLimit; // opcional, por segurança
-            }
+        //Caso tenha acabado
+        if (activeTimeLimit.isFinished()) {
+            //paramos e resetamos o componente de tempo de vida
+            activeTimeLimit.stop();
+            activeTimeLimit.reset();
+
+            projectile.die();//matamos o projétil
+        }
+
+        //Atualizamos o temporizador
+        activeTimeLimit.update(delta);
+    }
+
+    /// Valida se algum dos eixos estão travados,
+    /// se houver verificamos qual deles está e assim atualizamos o valor deles corretamente
+    private void updateAxisMovementByLockState() {
+
+        // verificamos há alguma alteração no lockX e lockY
+        if (lockX || lockY) {
+            projectile.getBody().setLinearVelocity(
+                lockX ? 0f : projectile.getBody().getLinearVelocity().x,
+                lockY ? 0f : projectile.getBody().getLinearVelocity().y
+            );
+
+            //determinamos se podemos permitir o efeito de gravidade caso sejamos afetados
+            // e não estejamos a travar o eixo vertical
+            projectile.getPhysicsComponent().setAffectedByGravity(affectedByGravity && !lockY);
         }
     }
+
 
     public void reset() {
         resetCollisionCounters();
@@ -92,7 +99,9 @@ public class ProjectileControllerComponent implements Component {
         this.lockX = false;
         this.lockY = false;
 
-        this.timeAlive = 0f;
+        //paramos e resetamos o tempo de vida caso estejamos desativando o projétil
+        this.activeTimeLimit.stop();
+        this.activeTimeLimit.reset();
 
         projectile.getPhysicsComponent().resetMovement();
 
@@ -104,50 +113,7 @@ public class ProjectileControllerComponent implements Component {
 
     }
 
-    public void bounceFromEnvironment(Direction direction) {
-        applyBounceStatic(direction, bounceEnvironmentX, bounceEnvironmentY);
-    }
-
-    public void bounceFromEntity(Direction direction, Vector2 entityVelocity) {
-        applyBounceDynamic(direction, entityVelocity, bounceEntityX, bounceEntityY);
-    }
-
-    public void bounceFromProjectile(Direction direction, Vector2 otherProjectileVelocity) {
-        applyBounceDynamic(direction, otherProjectileVelocity, bounceProjectileX, bounceProjectileY);
-    }
-
-    private void applyBounceStatic(Direction direction, float bounceX, float bounceY) {
-        Vector2 v = projectile.getBody().getLinearVelocity().cpy();
-
-        if ((direction.isLeft() || direction.isRight()) && !lockX && bounceX != 0f) {
-            v.x = -v.x * bounceX;
-        }
-        if ((direction.isUp() || direction.isDown()) && !lockY && bounceY != 0f) {
-            v.y = -v.y * bounceY;
-        }
-
-
-        projectile.getBody().setLinearVelocity(v);
-    }
-
-    private void applyBounceDynamic(Direction direction, Vector2 targetVelocity, float bounceX, float bounceY) {
-        Vector2 selfVel = projectile.getBody().getLinearVelocity();
-        Vector2 rel = selfVel.cpy().sub(targetVelocity);
-
-        // idem: só inverte e multiplica se coeficiente não for zero
-        if ((direction.isLeft() || direction.isRight()) && !lockX && bounceX > 0f) {
-            rel.x = -rel.x * bounceX;
-        }
-        if ((direction.isUp() || direction.isDown()) && !lockY && bounceY > 0f) {
-            rel.y = -rel.y * bounceY;
-        }
-
-        // volta para o referencial do alvo
-        Vector2 finalVel = rel.add(targetVelocity);
-        projectile.getBody().setLinearVelocity(finalVel);
-    }
-
-
+    /// Zeramos o contador de colisões, tornando assim o projétil limpo de colisões
     public void resetCollisionCounters() {
         this.downContact = 0;
         this.upContact = 0;
@@ -198,7 +164,7 @@ public class ProjectileControllerComponent implements Component {
 
         Direction direction = resolveCollisionDirection();
 
-        if(target instanceof Projectile targetProjectile) {
+        if (target instanceof Projectile targetProjectile) {
             Vector2 targetVelocity = targetProjectile.getBody().getLinearVelocity();
 
             bounceFromProjectile(direction, targetVelocity);
@@ -210,6 +176,51 @@ public class ProjectileControllerComponent implements Component {
         if (!projectile.isActive()) return;
 
         projectile.onProjectileEndCollision(contact, target);
+    }
+
+    public void bounceFromEnvironment(Direction direction) {
+        applyBounceStatic(direction, bounceX, bounceY);
+    }
+
+    public void bounceFromEntity(Direction direction, Vector2 entityVelocity) {
+        applyBounceDynamic(direction, entityVelocity, bounceX, bounceY);
+    }
+
+    public void bounceFromProjectile(Direction direction, Vector2 otherProjectileVelocity) {
+        applyBounceDynamic(direction, otherProjectileVelocity, bounceX, bounceY);
+    }
+
+    //TODO:impedir o efeito de colisão caso não possamos nos mover no eixo a ser afetado
+
+    private void applyBounceStatic(Direction direction, float bounceX, float bounceY) {
+        Vector2 v = projectile.getBody().getLinearVelocity().cpy();
+
+        if ((direction.isLeft() || direction.isRight()) && !lockX && bounceX != 0f) {
+            v.x = -v.x * bounceX;
+        }
+        if ((direction.isUp() || direction.isDown()) && !lockY && bounceY != 0f) {
+            v.y = -v.y * bounceY;
+        }
+
+
+        projectile.getBody().setLinearVelocity(v);
+    }
+
+    private void applyBounceDynamic(Direction direction, Vector2 targetVelocity, float bounceX, float bounceY) {
+        Vector2 selfVel = projectile.getBody().getLinearVelocity();
+        Vector2 rel = selfVel.cpy().sub(targetVelocity);
+
+        // idem: só inverte e multiplica se coeficiente não for zero
+        if ((direction.isLeft() || direction.isRight()) && !lockX && bounceX > 0f) {
+            rel.x = -rel.x * bounceX;
+        }
+        if ((direction.isUp() || direction.isDown()) && !lockY && bounceY > 0f) {
+            rel.y = -rel.y * bounceY;
+        }
+
+        // volta para o referencial do alvo
+        Vector2 finalVel = rel.add(targetVelocity);
+        projectile.getBody().setLinearVelocity(finalVel);
     }
 
     private Direction resolveCollisionDirection() {
@@ -229,6 +240,80 @@ public class ProjectileControllerComponent implements Component {
         }
     }
 
+    public void lockAllAxes() {
+        this.lockX = true;
+        this.lockY = true;
+    }
+
+    public void unlockAllAxes() {
+        this.lockX = false;
+        this.lockY = false;
+    }
+
+    /// Atualiza a posição do projétil e o lança para atingir um deslocamento no tempo desejado
+    public void launch(Vector2 displacement, float timeSeconds) {
+        projectile.setActive(true);
+
+        // Posiciona o projétil corretamente
+        projectile.getPhysicsComponent().getBody().setTransform(projectile.getX(), projectile.getY(), 0f);
+        projectile.getPhysicsComponent().getBody().setLinearVelocity(0, 0); // reseta a velocidade
+
+        // Aplica o impulso calculado para atingir o deslocamento no tempo desejado
+        projectile.getPhysicsComponent().applyTimedTrajectory(displacement, timeSeconds);
+    }
+
+    public boolean isColideWithOtherProjectiles() {
+        return colideWithOtherProjectiles;
+    }
+
+    public void setColideWithOtherProjectiles(boolean colideWithOtherProjectiles) {
+        this.colideWithOtherProjectiles = colideWithOtherProjectiles;
+    }
+
+    public boolean isColideWithSameTypeProjectiles() {
+        return colideWithSameTypeProjectiles;
+    }
+
+    public void setColideWithSameTypeProjectiles(boolean colideWithSameTypeProjectiles) {
+        this.colideWithSameTypeProjectiles = colideWithSameTypeProjectiles;
+    }
+
+    public void setTimeAliveLimit(float targetTime) {
+        this.activeTimeLimit.setTargetTime(targetTime);
+    }
+
+    public void setAffectedByGravity(boolean affectedByGravity) {
+        this.affectedByGravity = affectedByGravity;
+        this.projectile.getPhysicsComponent().setAffectedByGravity(affectedByGravity);
+    }
+
+    public void setStickOnCollision(boolean stickOnCollision) {
+        this.stickOnCollision = stickOnCollision;
+    }
+
+    public void setStickToWall(boolean stickToWall) {
+        this.stickToWall = stickToWall;
+    }
+
+    public void setStickToGround(boolean stickToGround) {
+        this.stickToGround = stickToGround;
+    }
+
+    public void setStickToCeiling(boolean stickToCeiling) {
+        this.stickToCeiling = stickToCeiling;
+    }
+
+    public Projectile getProjectile() {
+        return projectile;
+    }
+
+    public void setBounceX(float bounceX) {
+        this.bounceX = bounceX;
+    }
+
+    public void setBounceY(float bounceY) {
+        this.bounceY = bounceY;
+    }
 
     public void addDownContact() {
         downContact++;
@@ -274,128 +359,5 @@ public class ProjectileControllerComponent implements Component {
         } else {
             unlockAllAxes();
         }
-    }
-
-    /// Atualiza o estado de ativo com base no tempo ativo e incrementa o tempo ativo
-    private void updateLifeTime(float delta) {
-        timeAlive += delta;
-        if (timeAlive >= timeAliveLimit) {
-            projectile.die();
-        }
-
-    }
-
-    /// Valida se algum dos eixos estão travados,
-    /// se houver verificamos qual deles está e assim atualizamos o valor deles corretamente
-    private void updateAxisMovementByLockState() {
-        // Travas de eixo
-        if (lockX || lockY) {
-            Vector2 velocity = projectile.getBody().getLinearVelocity();
-            float x = lockX ? 0f : velocity.x;
-            float y = lockY ? 0f : velocity.y;
-
-            projectile.getBody().setLinearVelocity(x, y);
-        }
-
-        projectile.getPhysicsComponent().setAffectedByGravity(affectedByGravity && !lockY);
-    }
-
-    /// Atualiza a posição do projétil e o lança para atingir um deslocamento no tempo desejado
-    public void launch(Vector2 displacement, float timeSeconds) {
-        projectile.setActive(true);
-
-        // Posiciona o projétil corretamente
-        projectile.getPhysicsComponent().getBody().setTransform(projectile.getX(), projectile.getY(), 0f);
-        projectile.getPhysicsComponent().getBody().setLinearVelocity(0, 0); // reseta a velocidade
-
-        // Aplica o impulso calculado para atingir o deslocamento no tempo desejado
-        projectile.getPhysicsComponent().applyTimedTrajectory(displacement, timeSeconds);
-    }
-
-    public boolean isColideWithOtherProjectiles() {
-        return colideWithOtherProjectiles;
-    }
-
-    public void setColideWithOtherProjectiles(boolean colideWithOtherProjectiles) {
-        this.colideWithOtherProjectiles = colideWithOtherProjectiles;
-    }
-
-    public boolean isColideWithSameTypeProjectiles() {
-        return colideWithSameTypeProjectiles;
-    }
-
-    public void setColideWithSameTypeProjectiles(boolean colideWithSameTypeProjectiles) {
-        this.colideWithSameTypeProjectiles = colideWithSameTypeProjectiles;
-    }
-
-    public float getInactiveTime() {
-        return inactiveTime;
-    }
-
-    public float getInactiveTimeLimit() {
-        return inactiveTimeLimit;
-    }
-
-    public void setTimeAliveLimit(float timeAliveLimit) {
-        this.timeAliveLimit = timeAliveLimit;
-    }
-
-    public void lockAllAxes() {
-        this.lockX = true;
-        this.lockY = true;
-    }
-
-    public void unlockAllAxes() {
-        this.lockX = false;
-        this.lockY = false;
-    }
-
-    public void setAffectedByGravity(boolean affectedByGravity) {
-        this.affectedByGravity = affectedByGravity;
-        this.projectile.getPhysicsComponent().setAffectedByGravity(affectedByGravity);
-    }
-
-    public void setStickOnCollision(boolean stickOnCollision) {
-        this.stickOnCollision = stickOnCollision;
-    }
-
-    public void setStickToWall(boolean stickToWall) {
-        this.stickToWall = stickToWall;
-    }
-
-    public void setStickToGround(boolean stickToGround) {
-        this.stickToGround = stickToGround;
-    }
-
-    public void setStickToCeiling(boolean stickToCeiling) {
-        this.stickToCeiling = stickToCeiling;
-    }
-
-    public Projectile getProjectile() {
-        return projectile;
-    }
-
-    public void setBounceEnvironmentX(float bounceEnvironmentX) {
-        this.bounceEnvironmentX = bounceEnvironmentX;
-    }
-
-    public void setBounceEnvironmentY(float bounceEnvironmentY) {
-        this.bounceEnvironmentY = bounceEnvironmentY;
-    }
-
-    public void setBounceEntityX(float bounceEntityX) {
-        this.bounceEntityX = bounceEntityX;
-    }
-
-    public void setBounceEntityY(float bounceEntityY) {
-        this.bounceEntityY = bounceEntityY;
-    }
-
-    public void setBounceProjectileX(float bounceProjectileX) {
-        this.bounceProjectileX = bounceProjectileX;
-    }
-
-    public void setBounceProjectileY(float bounceProjectileY) {
-        this.bounceProjectileY = bounceProjectileY;
     }
 }

@@ -9,11 +9,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProjectilePool<T extends Projectile> extends Pool<T> {
-    /** Guarda o tipo de projétil gerenciado por essa pool */
+    /**
+     * Guarda o tipo de projétil gerenciado por essa pool
+     */
     private final Class<T> type;
-    /** Referência ao mundo físico para criação dos projéteis */
+    /**
+     * Referência ao mundo físico para criação dos projéteis
+     */
     private final World world;
-    /** Lista com todos os projéteis já criados por essa pool */
+    /**
+     * Lista com todos os projéteis já criados por essa pool
+     */
     private final List<T> allProjectiles;
 
     public ProjectilePool(Class<T> type, World world) {
@@ -22,18 +28,26 @@ public class ProjectilePool<T extends Projectile> extends Pool<T> {
         this.allProjectiles = new ArrayList<>();
     }
 
-    /** Destroi apenas projéteis que devem ser removidos permanentemente */
+    /**
+     * Destrói apenas projéteis que devem ser removidos permanentemente
+     */
     public void destroyInactiveProjectiles() {
         for (int i = allProjectiles.size() - 1; i >= 0; i--) {
             T projectile = allProjectiles.get(i);
-            if (projectile.shouldBeDestroyedPermanently()) {
+            if (
+                projectile.getWorld() != null
+                    && !projectile.getWorld().isLocked()
+                    && !projectile.isActive()
+            ) {
                 projectile.destroy();
                 allProjectiles.remove(i);
             }
         }
     }
 
-    /** Destroi todos os projéteis ativos e limpa a lista */
+    /**
+     * Destrói todos os projéteis ativos e limpa a lista
+     */
     public void destroyAllProjectiles() {
         for (int i = allProjectiles.size() - 1; i >= 0; i--) {
             T projectile = allProjectiles.get(i);
@@ -42,7 +56,9 @@ public class ProjectilePool<T extends Projectile> extends Pool<T> {
         }
     }
 
-    /** Cria um projétil e adiciona à lista de controle */
+    /**
+     * Cria um projétil e adiciona à lista de controle
+     */
     @Override
     protected T newObject() {
         T projectile = ProjectileFactory.createByType(type, world);
@@ -50,7 +66,9 @@ public class ProjectilePool<T extends Projectile> extends Pool<T> {
         return projectile;
     }
 
-    /** Retorna um projétil livre ou cria um se necessário */
+    /**
+     * Retorna um projétil livre ou cria um se necessário
+     */
     public T getFreeOrNew() {
         for (T projectile : allProjectiles) {
             if (!projectile.isActive()) {
@@ -60,7 +78,9 @@ public class ProjectilePool<T extends Projectile> extends Pool<T> {
         return obtain();
     }
 
-    /** Retorna a lista com todos os projéteis gerenciados */
+    /**
+     * Retorna a lista com todos os projéteis gerenciados
+     */
     public List<T> getAllProjectiles() {
         return allProjectiles;
     }

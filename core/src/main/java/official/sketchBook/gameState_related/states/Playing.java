@@ -1,5 +1,6 @@
 package official.sketchBook.gameState_related.states;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -14,6 +15,7 @@ import official.sketchBook.util_related.contactListeners.ProjectileContactListen
 import official.sketchBook.util_related.enumerators.states.GameState;
 import official.sketchBook.util_related.helpers.HelpMethods;
 import official.sketchBook.util_related.helpers.MultiContactListener;
+import official.sketchBook.util_related.registers.ProjectilePoolRegister;
 
 import static official.sketchBook.screen_related.PlayScreen.*;
 import static official.sketchBook.util_related.helpers.HelpMethods.handleContactListener;
@@ -126,6 +128,28 @@ public class Playing extends State implements StateMethods {
         // Exibe FPS e UPS na tela
         font.draw(uiBatch, "FPS: " + game.fps, 10, GAME_HEIGHT - 10);
         font.draw(uiBatch, "UPS: " + game.ups, 10, GAME_HEIGHT - 30);
+
+        if (showProjectilesActive) {
+            font.draw(
+                uiBatch,
+                "projectiles: "
+                    + objectManager.getCurrentRoom().getProjectilePool().getTotalActiveProjectiles()
+                    + " / "
+                + objectManager.getCurrentRoom().getProjectilePool().getTotalWaitingProjectiles(),
+                10,
+                GAME_HEIGHT - 50
+            );
+
+            if (showProjectilesActive) {
+                font.draw(
+                    uiBatch,
+                    "pools: "
+                        + objectManager.getCurrentRoom().getProjectilePool().getTotalPools(),
+                    10,
+                    GAME_HEIGHT - 70
+                );
+            }
+        }
     }
 
     @Override

@@ -75,12 +75,8 @@ public abstract class Projectile implements Pool.Poolable {
      * @param affectedByGravity           se o projétil é afetado ou não pela constante da gravidade
      * @param collideWithItself           se o projétil pode colidir com outros do mesmo tipo que o dele
      * @param collideWithOtherProjectiles se o projétil pode colidir com outros projéteis que não são do mesmo tipo
-     * @param bXEnv                       constante de restituição do eixo X pra ambiente
-     * @param bYEnv                       constante de restituição do eixo Y pra ambiente
-     * @param bXEnt                       constante de restituição do eixo X pra entidades
-     * @param bYEnt                       constante de restituição do eixo Y pra entidades
-     * @param bXProj                      constante de restituição do eixo X pra projéteis
-     * @param bYProj                      constante de restituição do eixo Y pra projéteis
+     * @param bounceX                       constante de restituição do eixo X pra ambiente
+     * @param bounceY                       constante de restituição do eixo Y pra ambiente
      */
     protected void initBodyBehavior(
         boolean stickOnCollision,
@@ -90,12 +86,8 @@ public abstract class Projectile implements Pool.Poolable {
         boolean affectedByGravity,
         boolean collideWithItself,
         boolean collideWithOtherProjectiles,
-        float bXEnv,
-        float bYEnv,
-        float bXEnt,
-        float bYEnt,
-        float bXProj,
-        float bYProj
+        float bounceX,
+        float bounceY
     ) {
         this.controllerComponent.setStickOnCollision(stickOnCollision);
         this.controllerComponent.setStickToWall(stickOnWall);
@@ -105,14 +97,8 @@ public abstract class Projectile implements Pool.Poolable {
         this.controllerComponent.setColideWithSameTypeProjectiles(collideWithItself);
         this.controllerComponent.setColideWithOtherProjectiles(collideWithOtherProjectiles);
 
-        this.controllerComponent.setBounceEnvironmentX(bXEnv);
-        this.controllerComponent.setBounceEnvironmentY(bYEnv);
-
-        this.controllerComponent.setBounceEntityX(bXEnt);
-        this.controllerComponent.setBounceEntityY(bYEnt);
-
-        this.controllerComponent.setBounceProjectileX(bXProj);
-        this.controllerComponent.setBounceProjectileY(bYProj);
+        this.controllerComponent.setBounceX(bounceX);
+        this.controllerComponent.setBounceY(bounceY);
     }
 
     public abstract void onEnvironmentCollision(Contact contact, Object target);
@@ -147,20 +133,19 @@ public abstract class Projectile implements Pool.Poolable {
     }
 
     public void update(float deltaTime) {
-        if (!active) return;
-
         updateComponents(deltaTime);
-
         controllerComponent.resetCollisionCounters();
 
     }
 
     /// Atualiza todos os componentes existentes dentro do objeto
     protected void updateComponents(float delta) {
-        for (Component component : components) {
-            component.update(delta);
+        if (!active) return;        // Nenhum componente precisa rodar se está inativo
+        for (Component c : components) {
+            c.update(delta);
         }
     }
+
 
     /// Serve para "matar" o projétil, resetando as suas propriedades dinâmicas
     public void die() {
@@ -172,26 +157,15 @@ public abstract class Projectile implements Pool.Poolable {
     public void reset() {
         this.setActive(false);
         this.owner = null;
-
         this.setLifeTime(0f);
-
         controllerComponent.reset();
-        this.dispose();
 
+        this.dispose();
     }
 
 
     public void render(SpriteBatch batch) {
 
-    }
-
-    /// Valida se o projétil deve ser destruído permanentemente,
-    /// verifica se o tempo inativo foi atingido e também se podemos eliminar a body do mundo
-    public boolean shouldBeDestroyedPermanently() {
-        boolean recycleByTime = controllerComponent.getInactiveTime() >= controllerComponent.getInactiveTimeLimit();
-        boolean recycleByWorld = world != null && !world.isLocked();
-
-        return !active && recycleByTime && recycleByWorld;
     }
 
     /// Limpa os dados mais pesados que precisam ser reciclados períodicamente
@@ -301,19 +275,6 @@ public abstract class Projectile implements Pool.Poolable {
 
     public void addComponent(Component comp) {
         components.add(comp);
-    }
-
-    public <T> T getComponent(Class<T> componentClass) {
-        for (Component comp : components) {
-            if (componentClass.isInstance(comp)) {
-                return componentClass.cast(comp);
-            }
-        }
-        return null;
-    }
-
-    public boolean hasComponent(Class<? extends Component> type) {
-        return components.stream().anyMatch(type::isInstance);
     }
 
 }

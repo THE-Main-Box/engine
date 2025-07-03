@@ -133,7 +133,7 @@ public class PlayableRoom implements Poolable {
         }
 
         if (projectilePool != null) {
-            projectilePool.renderActiveProjectiles(batch);
+            projectilePool. renderActiveProjectiles(batch);
         }
     }
 

@@ -10,6 +10,7 @@ import official.sketchBook.components_related.base_component.Component;
 import official.sketchBook.components_related.toUse_component.projectile.ProjectileControllerComponent;
 import official.sketchBook.components_related.toUse_component.projectile.ProjectilePhysicsComponent;
 import official.sketchBook.gameObject_related.base_model.Entity;
+import official.sketchBook.projectiles_related.util.ProjectilePool;
 import official.sketchBook.util_related.enumerators.types.FixtType;
 import official.sketchBook.util_related.helpers.body.BodyCreatorHelper;
 import official.sketchBook.util_related.info.values.FixtureType;
@@ -22,13 +23,13 @@ public abstract class Projectile implements Pool.Poolable {
     //TODO:adicionar compatibilidade para rotação, tanto na renderização quando nos objetos
 
     protected boolean active;// flag para se está ativo
-    protected float lifeTime;//tempo de vida do projétil
     protected float radius = 0;//raio da area da body do projétil
 
-    protected ProjectileControllerComponent controllerComponent;//componente de controle, tem um em cada projétil
-
+    ///Componente de controle, tem um em cada projétil
+    protected ProjectileControllerComponent controllerComponent;
     /// Componente de física próprio do projétil
     private final ProjectilePhysicsComponent physicsComponent;
+
     protected float x, y;
 
     protected List<Component> components;
@@ -42,6 +43,8 @@ public abstract class Projectile implements Pool.Poolable {
 
     protected boolean facingForward;
     protected float defFric, defRest, defDens;
+
+    protected ProjectilePool<?> ownerPool;
 
     public Projectile(World world) {
         this.world = world;
@@ -139,20 +142,14 @@ public abstract class Projectile implements Pool.Poolable {
     }
 
     /// Atualiza todos os componentes existentes dentro do objeto
-    protected void updateComponents(float delta) {
+    private void updateComponents(float delta) {
         if (!active) return;        // Nenhum componente precisa rodar se está inativo
         for (Component c : components) {
             c.update(delta);
         }
     }
 
-
-    /// Serve para "matar" o projétil, resetando as suas propriedades dinâmicas
-    public void die() {
-        this.reset();
-    }
-
-    /// Reset e desativação do projétil
+    /// Reset e desativação do projétil junto da liberação da memória
     @Override
     public void reset() {
         this.setActive(false);
@@ -163,9 +160,29 @@ public abstract class Projectile implements Pool.Poolable {
         this.dispose();
     }
 
-
     public void render(SpriteBatch batch) {
 
+    }
+
+    /// Destrói a body e a física do projétil permanentemente dentro do mundo e a limpa da memória
+    protected void destroyPhysics() {
+        if (body != null && world != null && !world.isLocked()) {
+            world.destroyBody(body);
+            this.body = null;
+            this.world = null;
+        }
+    }
+
+    /// Destrói todos os componentes antes de limpar a lista
+    private void clearComponents(){
+        components.replaceAll(ignored -> null);
+        components.clear();
+    }
+
+    /// Limpa todas as informações do projétil após ser resetado, para ser destruído
+    public void destroy() {
+        destroyPhysics();
+        clearComponents();
     }
 
     /// Limpa os dados mais pesados que precisam ser reciclados períodicamente
@@ -175,36 +192,26 @@ public abstract class Projectile implements Pool.Poolable {
         }
     }
 
-    /// Destrói a body e a física do projétil permanentemente
-    public void destroyPhysics() {
-        if (body != null && world != null && !world.isLocked()) {
-            world.destroyBody(body);
-            this.body = null;
-            this.world = null;
+    public void setOwnerPool(ProjectilePool<?> ownerPool) {
+        this.ownerPool = ownerPool;
+    }
+
+    /// Libera de dentro da pool
+    public void release() {
+        if (ownerPool != null) {
+            ownerPool.free(this);
         }
     }
 
-    /// Limpa todas as informações do projétil para preparar ele para ser eliminado permanentemente
-    public void destroy() {
-        destroyPhysics();
-        dispose();
-        components.clear();
+    public ProjectilePool<?> getOwnerPool() {
+        return ownerPool;
     }
 
     public Entity getOwner() {
         return owner;
     }
 
-    public void setOwner(Entity owner) {
-        this.owner = owner;
-    }
-
-    public float getLifeTime() {
-        return lifeTime;
-    }
-
     public void setLifeTime(float lifeTime) {
-        this.lifeTime = lifeTime;
         this.controllerComponent.setTimeAliveLimit(lifeTime);
     }
 
@@ -257,20 +264,8 @@ public abstract class Projectile implements Pool.Poolable {
         return body;
     }
 
-    public void setBody(Body body) {
-        this.body = body;
-    }
-
     public World getWorld() {
         return world;
-    }
-
-    public void setWorld(World world) {
-        this.world = world;
-    }
-
-    public List<Component> getComponents() {
-        return components;
     }
 
     public void addComponent(Component comp) {

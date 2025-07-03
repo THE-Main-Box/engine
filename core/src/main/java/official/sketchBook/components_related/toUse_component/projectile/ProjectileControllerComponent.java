@@ -68,7 +68,7 @@ public class ProjectileControllerComponent implements Component {
             activeTimeLimit.stop();
             activeTimeLimit.reset();
 
-            projectile.die();//matamos o projétil
+            projectile.release();//matamos o projétil
         }
 
         //Atualizamos o temporizador
@@ -253,6 +253,7 @@ public class ProjectileControllerComponent implements Component {
     /// Atualiza a posição do projétil e o lança para atingir um deslocamento no tempo desejado
     public void launch(Vector2 displacement, float timeSeconds) {
         projectile.setActive(true);
+        projectile.getOwnerPool().addToActive(projectile);
 
         // Posiciona o projétil corretamente
         projectile.getPhysicsComponent().getBody().setTransform(projectile.getX(), projectile.getY(), 0f);

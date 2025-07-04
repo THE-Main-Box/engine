@@ -22,10 +22,11 @@ public abstract class Projectile implements Pool.Poolable {
 
     //TODO:adicionar compatibilidade para rotação, tanto na renderização quando nos objetos
 
+    private boolean reset;
     protected boolean active;// flag para se está ativo
     protected float radius = 0;//raio da area da body do projétil
 
-    ///Componente de controle, tem um em cada projétil
+    /// Componente de controle, tem um em cada projétil
     protected ProjectileControllerComponent controllerComponent;
     /// Componente de física próprio do projétil
     private final ProjectilePhysicsComponent physicsComponent;
@@ -61,11 +62,13 @@ public abstract class Projectile implements Pool.Poolable {
         this.addComponent(physicsComponent);
     }
 
-    /** Inicia as informações dinâmicas do projétil
+    /**
+     * Inicia as informações dinâmicas do projétil
      * é preciso passar o tempo de vida e outros valores que precisam ser iniciados dinamicamente
-     * */
-    public void init(Entity owner){
+     */
+    public void init(Entity owner) {
         this.owner = owner;
+        this.reset = false;
     }
 
     /**
@@ -78,8 +81,8 @@ public abstract class Projectile implements Pool.Poolable {
      * @param affectedByGravity           se o projétil é afetado ou não pela constante da gravidade
      * @param collideWithItself           se o projétil pode colidir com outros do mesmo tipo que o dele
      * @param collideWithOtherProjectiles se o projétil pode colidir com outros projéteis que não são do mesmo tipo
-     * @param bounceX                       constante de restituição do eixo X pra ambiente
-     * @param bounceY                       constante de restituição do eixo Y pra ambiente
+     * @param bounceX                     constante de restituição do eixo X pra ambiente
+     * @param bounceY                     constante de restituição do eixo Y pra ambiente
      */
     protected void initBodyBehavior(
         boolean stickOnCollision,
@@ -152,12 +155,16 @@ public abstract class Projectile implements Pool.Poolable {
     /// Reset e desativação do projétil junto da liberação da memória
     @Override
     public void reset() {
+        if(reset) return;
+
         this.setActive(false);
         this.owner = null;
         this.setLifeTime(0f);
         controllerComponent.reset();
 
         this.dispose();
+
+        reset = true;
     }
 
     public void render(SpriteBatch batch) {
@@ -165,7 +172,7 @@ public abstract class Projectile implements Pool.Poolable {
     }
 
     /// Destrói a body e a física do projétil permanentemente dentro do mundo e a limpa da memória
-    protected void destroyPhysics() {
+    private void destroyPhysics() {
         if (body != null && world != null && !world.isLocked()) {
             world.destroyBody(body);
             this.body = null;
@@ -174,13 +181,14 @@ public abstract class Projectile implements Pool.Poolable {
     }
 
     /// Destrói todos os componentes antes de limpar a lista
-    private void clearComponents(){
+    private void clearComponents() {
         components.replaceAll(ignored -> null);
         components.clear();
     }
 
     /// Limpa todas as informações do projétil após ser resetado, para ser destruído
     public void destroy() {
+        if(!reset) return;
         destroyPhysics();
         clearComponents();
     }
@@ -229,7 +237,13 @@ public abstract class Projectile implements Pool.Poolable {
 
     public void setActive(boolean value) {
         this.active = value;
-        body.setActive(value);
+        if (body != null) { // se houver uma instancia válida de body permitimos sua alteração
+            body.setActive(value);
+        }
+    }
+
+    public boolean isReset() {
+        return reset;
     }
 
     public boolean isActive() {

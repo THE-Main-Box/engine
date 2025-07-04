@@ -1,6 +1,6 @@
-package official.sketchBook.util_related.info.values;
+package official.sketchBook.util_related.info.values.constants;
 
-public class RangeWeaponBaseStatus {
+public class RangeWeaponsStatusConstants {
 
     public static class Shotgun {
         public static int maxAmmo;

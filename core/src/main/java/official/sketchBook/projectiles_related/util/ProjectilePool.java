@@ -26,6 +26,8 @@ public class ProjectilePool<T extends Projectile> extends Pool<T> {
         for (T proj : activeProjectiles) {
             proj.update(delta);
         }
+
+        destroyInactiveProjectiles();
     }
 
     /// Renderiza todos os projéteis ativos
@@ -39,17 +41,26 @@ public class ProjectilePool<T extends Projectile> extends Pool<T> {
         for (int i = 0; i < activeProjectiles.size; i++) {
             activeProjectiles.get(i).release();
         }
-
-        destroyProjectiles();
+        destroyInactiveProjectiles();
     }
 
-    /// Destrói apenas projéteis que devem ser removidos permanentemente
-    public void destroyProjectiles() {
-        for (int i = 0; i < toDestroy.size; i++) {
+    /// Destrói apenas projéteis que podem ser removidos permanentemente (estão inativos)
+    public void destroyInactiveProjectiles() {
+        int maxToDestroyPerFrame = 5; // limite por frame
+        int count = Math.min(toDestroy.size, maxToDestroyPerFrame);
+
+        for (int i = 0; i < count; i++) {
             toDestroy.get(i).destroy();
         }
-        clear();
+
+        // remove só os destruídos
+        for (int i = 0; i < count; i++) {
+            toDestroy.removeIndex(0);
+        }
+
+        clear(); // limpa objetos reciclados da pool
     }
+
 
     /// Cria um projétil e adiciona à lista de controle
     @Override

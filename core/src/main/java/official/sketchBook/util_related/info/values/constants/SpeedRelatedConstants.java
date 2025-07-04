@@ -1,8 +1,6 @@
-package official.sketchBook.util_related.info.values;
+package official.sketchBook.util_related.info.values.constants;
 
-import static official.sketchBook.screen_related.PlayScreen.PPM;
-
-public class SpeedRelatedVariables {
+public class SpeedRelatedConstants {
 
     /**
      * DECELERATION - a desaceleração é em "%", então não precisa ser muito alto que não tem sentido

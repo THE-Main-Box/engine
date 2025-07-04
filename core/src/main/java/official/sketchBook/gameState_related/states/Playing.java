@@ -19,6 +19,7 @@ import official.sketchBook.util_related.registers.ProjectilePoolRegister;
 
 import static official.sketchBook.screen_related.PlayScreen.*;
 import static official.sketchBook.util_related.helpers.HelpMethods.handleContactListener;
+import static official.sketchBook.util_related.info.values.constants.GameConstants.Debug.*;
 
 public class Playing extends State implements StateMethods {
 
@@ -140,7 +141,7 @@ public class Playing extends State implements StateMethods {
                 GAME_HEIGHT - 50
             );
 
-            if (showProjectilesActive) {
+            if (showActiveProjectilePools) {
                 font.draw(
                     uiBatch,
                     "pools: "
@@ -184,6 +185,12 @@ public class Playing extends State implements StateMethods {
         }
         if (keycode == Input.Keys.F2) {
             showRayCast = !showRayCast;
+        }
+        if (keycode == Input.Keys.F3) {
+            showProjectilesActive = !showProjectilesActive;
+        }
+        if (keycode == Input.Keys.F4) {
+            showActiveProjectilePools = !showActiveProjectilePools;
         }
 
         return true;

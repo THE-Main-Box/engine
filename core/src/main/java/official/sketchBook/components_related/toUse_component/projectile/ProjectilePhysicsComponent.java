@@ -73,6 +73,7 @@ public class ProjectilePhysicsComponent implements Component {
         applyImpulse(impulse);
     }
 
+    /// Reset da velocidade da body do projétil
     public void resetMovement() {
         body.setLinearVelocity(0, 0);
         body.setAngularVelocity(0);

@@ -7,7 +7,7 @@ import official.sketchBook.util_related.enumerators.directions.Direction;
 import official.sketchBook.util_related.info.values.ControlKeys;
 import official.sketchBook.weapon_related.base_model.BaseWeapon;
 
-import static official.sketchBook.util_related.info.values.SpeedRelatedVariables.Player.*;
+import static official.sketchBook.util_related.info.values.constants.SpeedRelatedConstants.Player.*;
 
 public class PlayerControllerComponent extends KeyBindedControllerComponent {
     private final Player player;

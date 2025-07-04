@@ -10,10 +10,10 @@ import official.sketchBook.util_related.enumerators.directions.Direction;
 
 public class ProjectileControllerComponent implements Component {
     /// Projétil a quem pertence esse controlador
-    private Projectile projectile;
+    private final Projectile projectile;
 
     /// Temporizador do tempo de vida do projétil
-    private TimerComponent activeTimeLimit;
+    private final TimerComponent activeTimeLimit;
 
     private boolean colideWithSameTypeProjectiles = false;
     private boolean colideWithOtherProjectiles = false;
@@ -94,6 +94,8 @@ public class ProjectileControllerComponent implements Component {
 
 
     public void reset() {
+        if(projectile.isReset()) return;
+
         resetCollisionCounters();
 
         this.lockX = false;

@@ -5,7 +5,8 @@ import official.sketchBook.components_related.base_component.Component;
 import official.sketchBook.components_related.toUse_component.util.TimerComponent;
 import official.sketchBook.gameObject_related.base_model.Entity;
 
-import static official.sketchBook.screen_related.PlayScreen.PPM;
+import static official.sketchBook.util_related.info.values.constants.GameConstants.Physics.PPM;
+
 
 public class JumpComponent implements Component {
 

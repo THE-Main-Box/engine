@@ -14,15 +14,11 @@ public class SlugProjectile extends Projectile {
             false,
             false,
             false,
+            true,
             false,
             false,
-            false,
-            0.1f,
-            0.1f,
-            0.1f,
-            0.1f,
-            0.1f,
-            0.1f
+            1f,
+            1f
 
         );
     }

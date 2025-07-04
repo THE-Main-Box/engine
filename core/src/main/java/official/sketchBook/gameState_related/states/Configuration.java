@@ -3,11 +3,11 @@ package official.sketchBook.gameState_related.states;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import official.sketchBook.screen_related.PlayScreen;
 import official.sketchBook.animation_related.Sprite;
 import official.sketchBook.camera_related.CameraManager;
 import official.sketchBook.gameState_related.model.State;
 import official.sketchBook.gameState_related.model.StateMethods;
+import official.sketchBook.screen_related.PlayScreen;
 import official.sketchBook.ui_related.Button;
 import official.sketchBook.ui_related.On_OffButton;
 import official.sketchBook.ui_related.Slider;
@@ -18,6 +18,10 @@ import official.sketchBook.util_related.info.paths.UISpritePaths;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static official.sketchBook.screen_related.PlayScreen.GAME_HEIGHT;
+import static official.sketchBook.screen_related.PlayScreen.GAME_WIDTH;
+import static official.sketchBook.util_related.info.values.constants.GameConstants.Sound.*;
 
 public class Configuration extends State implements StateMethods {
 
@@ -37,8 +41,8 @@ public class Configuration extends State implements StateMethods {
             UISpritePaths.config_BG,
             1,
             1,
-            PlayScreen.GAME_WIDTH / 2,
-            PlayScreen.GAME_HEIGHT / 2
+            GAME_WIDTH / 2,
+            GAME_HEIGHT / 2
         );
         this.initButtons();
         this.initSliders();
@@ -101,7 +105,7 @@ public class Configuration extends State implements StateMethods {
                 y + yOffSet,
                 canvasWidth,
                 canvasHeight,
-                !PlayScreen.soundEfectsMute,
+                !soundEffectsMute,
                 multi,
                 new Sprite(0, 0),
                 "sfx_mute"
@@ -114,7 +118,7 @@ public class Configuration extends State implements StateMethods {
                 y,
                 canvasWidth,
                 canvasHeight,
-                !PlayScreen.soundMute,
+                !soundMute,
                 multi,
                 new Sprite(0, 0),
                 "vol_mute"
@@ -163,13 +167,13 @@ public class Configuration extends State implements StateMethods {
         for (Slider slider : sliders) {
 
             if (slider.getType().equals("sfx_volume")) {
-                slider.setTickPositionFromValue(PlayScreen.soundEfectsVolume);
-                slider.setTurnedOn(!PlayScreen.soundEfectsMute);  // Garanta que o estado do mute é refletido
+                slider.setTickPositionFromValue(soundEffectsVolume);
+                slider.setTurnedOn(!soundEffectsMute);  // Garanta que o estado do mute é refletido
             }
 
             if (slider.getType().equals("sound_volume")) {
-                slider.setTickPositionFromValue(PlayScreen.soundVolume);
-                slider.setTurnedOn(!PlayScreen.soundMute);  // Garanta que o estado do mute é refletido
+                slider.setTickPositionFromValue(soundVolume);
+                slider.setTurnedOn(!soundMute);  // Garanta que o estado do mute é refletido
             }
         }
     }
@@ -189,22 +193,22 @@ public class Configuration extends State implements StateMethods {
     private void updateSliders() {
         for (Slider slider : sliders) {
             if (slider.getType().equals("sfx_volume")) {
-                if (PlayScreen.soundEfectsMute == slider.isTurnedOn()) {
-                    slider.setTurnedOn(!PlayScreen.soundEfectsMute);
+                if (soundEffectsMute == slider.isTurnedOn()) {
+                    slider.setTurnedOn(!soundEffectsMute);
                 }
-                if (slider.getValue() != PlayScreen.soundEfectsVolume) {
-                    PlayScreen.soundEfectsVolume = slider.getValue();
+                if (slider.getValue() != soundEffectsVolume) {
+                    soundEffectsVolume = slider.getValue();
                 }
 
             }
             if (slider.getType().equals("sound_volume")) {
 
-                if (PlayScreen.soundMute == slider.isTurnedOn()) {
-                    slider.setTurnedOn(!PlayScreen.soundMute);
+                if (soundMute == slider.isTurnedOn()) {
+                    slider.setTurnedOn(!soundMute);
                 }
 
-                if (slider.getValue() != PlayScreen.soundVolume) {
-                    PlayScreen.soundVolume = slider.getValue();
+                if (slider.getValue() != soundVolume) {
+                    soundVolume = slider.getValue();
                 }
 
             }
@@ -225,16 +229,16 @@ public class Configuration extends State implements StateMethods {
                     break;
                 case "vol_mute":
                     if (button instanceof On_OffButton soundButton
-                        && PlayScreen.soundMute == soundButton.isTurnedOn()
+                        && soundMute == soundButton.isTurnedOn()
                     ) {
-                        PlayScreen.soundMute = !soundButton.isTurnedOn();
+                        soundMute = !soundButton.isTurnedOn();
                     }
                     break;
                 case "sfx_mute":
                     if (button instanceof On_OffButton soundButton
-                        && PlayScreen.soundEfectsMute == soundButton.isTurnedOn()
+                        && soundEffectsMute == soundButton.isTurnedOn()
                     ) {
-                        PlayScreen.soundEfectsMute = !soundButton.isTurnedOn();
+                        soundEffectsMute = !soundButton.isTurnedOn();
                     }
                     break;
             }
@@ -357,8 +361,8 @@ public class Configuration extends State implements StateMethods {
     public boolean handleKeyDown(int keycode) {
         if (keycode == Input.Keys.ENTER) {
             System.out.println(
-                "sound volume: " + PlayScreen.soundVolume + " | mute: " + PlayScreen.soundMute +
-                    " | sfx volume: " + PlayScreen.soundEfectsVolume + " | mute: " + PlayScreen.soundEfectsMute
+                "sound volume: " + soundVolume + " | mute: " + soundMute +
+                    " | sfx volume: " + soundEffectsVolume + " | mute: " + soundEffectsMute
             );
         }
 

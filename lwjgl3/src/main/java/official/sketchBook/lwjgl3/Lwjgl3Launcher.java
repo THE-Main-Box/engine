@@ -5,6 +5,8 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import official.sketchBook.MainClass;
 import official.sketchBook.screen_related.PlayScreen;
 
+import static official.sketchBook.util_related.info.values.constants.GameConstants.Screen.scale;
+
 /** Launches the desktop (LWJGL3) application. */
 public class Lwjgl3Launcher {
     public static void main(String[] args) {
@@ -28,7 +30,7 @@ public class Lwjgl3Launcher {
         //// If you remove the above line and set Vsync to false, you can get unlimited FPS, which can be
         //// useful for testing performance, but can also be very stressful to some hardware.
         //// You may also need to configure GPU drivers to fully disable Vsync; this can cause screen tearing.
-        configuration.setWindowedMode((int) (PlayScreen.GAME_WIDTH * PlayScreen.scale), (int) (PlayScreen.GAME_HEIGHT* PlayScreen.scale));
+        configuration.setWindowedMode((int) (PlayScreen.GAME_WIDTH * scale), (int) (PlayScreen.GAME_HEIGHT* scale));
         //// You can change these files; they are in lwjgl3/src/main/resources/ .
         configuration.setWindowIcon("libgdx128.png", "libgdx64.png", "libgdx32.png", "libgdx16.png");
         return configuration;

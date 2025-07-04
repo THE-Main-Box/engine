@@ -13,6 +13,8 @@ import official.sketchBook.util_related.info.values.FixtureType;
 import java.util.ArrayList;
 import java.util.List;
 
+import static official.sketchBook.util_related.info.values.constants.GameConstants.Screen.TILES_DEFAULT_SIZE;
+
 public class RoomBodyDataConversor {
 
     /**
@@ -42,7 +44,7 @@ public class RoomBodyDataConversor {
 
     /// Cria uma body quadrada para as tiles
     private static Body createBoxBodyForTiles(World world, TileType type, int x, int y, int width, int height, int totalRows) {
-        float tileSize = PlayScreen.TILES_DEFAULT_SIZE;
+        float tileSize = TILES_DEFAULT_SIZE;
         int invY = (totalRows - 1) - y;
 
         float worldX = (x + width / 2f) * tileSize;

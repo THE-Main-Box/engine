@@ -1,67 +1,99 @@
 package official.sketchBook.projectiles_related.util;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import official.sketchBook.projectiles_related.Projectile;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class ProjectilePool<T extends Projectile> extends Pool<T> {
-    /** Guarda o tipo de projétil gerenciado por essa pool */
-    private final Class<T> type;
-    /** Referência ao mundo físico para criação dos projéteis */
+
+    /// Referência ao mundo físico para criação dos projéteis
     private final World world;
-    /** Lista com todos os projéteis já criados por essa pool */
-    private final List<T> allProjectiles;
+    private final Class<T> type;
+    private final Array<T> toDestroy;
+    private final Array<T> activeProjectiles;
 
     public ProjectilePool(Class<T> type, World world) {
         this.type = type;
         this.world = world;
-        this.allProjectiles = new ArrayList<>();
+        this.toDestroy = new Array<>();
+        this.activeProjectiles = new Array<>();
     }
 
-    /** Destroi apenas projéteis que devem ser removidos permanentemente */
-    public void destroyInactiveProjectiles() {
-        for (int i = allProjectiles.size() - 1; i >= 0; i--) {
-            T projectile = allProjectiles.get(i);
-            if (projectile.shouldBeDestroyedPermanently()) {
-                projectile.destroy();
-                allProjectiles.remove(i);
-            }
+    /// Atualiza todos os projéteis ativos
+    public void updateAll(float delta) {
+        for (T proj : activeProjectiles) {
+            proj.update(delta);
+        }
+
+        destroyInactiveProjectiles();
+    }
+
+    /// Renderiza todos os projéteis ativos
+    public void renderAll(SpriteBatch batch) {
+        for (T proj : activeProjectiles) {
+            proj.render(batch);
         }
     }
 
-    /** Destroi todos os projéteis ativos e limpa a lista */
     public void destroyAllProjectiles() {
-        for (int i = allProjectiles.size() - 1; i >= 0; i--) {
-            T projectile = allProjectiles.get(i);
-            projectile.destroy();
-            allProjectiles.remove(i);
+        for (int i = 0; i < activeProjectiles.size; i++) {
+            activeProjectiles.get(i).release();
         }
+        destroyInactiveProjectiles();
     }
 
-    /** Cria um projétil e adiciona à lista de controle */
+    /// Destrói apenas projéteis que podem ser removidos permanentemente (estão inativos)
+    public void destroyInactiveProjectiles() {
+        int maxToDestroyPerFrame = 5; // limite por frame
+        int count = Math.min(toDestroy.size, maxToDestroyPerFrame);
+
+        for (int i = 0; i < count; i++) {
+            toDestroy.get(i).destroy();
+        }
+
+        // remove só os destruídos
+        for (int i = 0; i < count; i++) {
+            toDestroy.removeIndex(0);
+        }
+
+        clear(); // limpa objetos reciclados da pool
+    }
+
+
+    /// Cria um projétil e adiciona à lista de controle
     @Override
     protected T newObject() {
-        T projectile = ProjectileFactory.createByType(type, world);
-        allProjectiles.add(projectile);
-        return projectile;
+        return ProjectileFactory.createByType(type, world);
     }
 
-    /** Retorna um projétil livre ou cria um se necessário */
+    /// Retorna um projétil livre ou cria um se necessário
     public T getFreeOrNew() {
-        for (T projectile : allProjectiles) {
-            if (!projectile.isActive()) {
-                return projectile;
-            }
-        }
-        return obtain();
+        T proj = obtain();
+        proj.setOwnerPool(this);
+        toDestroy.removeValue(proj, true);
+        return proj;
     }
 
-    /** Retorna a lista com todos os projéteis gerenciados */
-    public List<T> getAllProjectiles() {
-        return allProjectiles;
+    @SuppressWarnings("unchecked")
+    public void free(Projectile projectile) {
+        super.free((T) projectile);
+
+        toDestroy.add((T) projectile);
+        activeProjectiles.removeValue((T) projectile, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    public void addToActive(Projectile proj) {
+        this.activeProjectiles.add((T) proj);
+    }
+
+    public Array<T> getActiveProjectiles() {
+        return activeProjectiles;
+    }
+
+    public Array<T> getToDestroy() {
+        return toDestroy;
     }
 }

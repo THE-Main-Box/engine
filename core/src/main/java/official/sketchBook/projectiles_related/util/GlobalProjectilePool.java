@@ -34,7 +34,7 @@ public class GlobalProjectilePool {
     /**
      * Intervalo entre limpezas de pools
      */
-    private final float CLEAN_INTERVAL = 0.4f;
+    private final float CLEAN_INTERVAL = 1f;
 
     /**
      * Atualiza projéteis e realiza limpezas periódicas
@@ -42,7 +42,6 @@ public class GlobalProjectilePool {
     public void update(float delta) {
         cleanTimer += delta;
         if (cleanTimer >= CLEAN_INTERVAL) {
-            cleanEmptyPools();
             cleanTimer = 0f;
         }
         updateProjectiles(delta);
@@ -51,12 +50,9 @@ public class GlobalProjectilePool {
     /**
      * Renderiza todos os projéteis ativos
      */
-    public void renderActiveProjectiles(SpriteBatch batch){
+    public void renderActiveProjectiles(SpriteBatch batch) {
         for (ProjectilePool<? extends Projectile> pool : poolMap.values()) {
-            for (Projectile p : pool.getAllProjectiles()) {
-                if (!p.isActive()) continue;
-                p.render(batch);
-            }
+            pool.renderAll(batch);
         }
     }
 
@@ -84,40 +80,21 @@ public class GlobalProjectilePool {
      */
     private void updateProjectiles(float delta) {
         for (ProjectilePool<? extends Projectile> pool : poolMap.values()) {
-            for (Projectile p : pool.getAllProjectiles()) {
-                if (!p.isActive()) continue;
-                p.update(delta);
-            }
+            pool.updateAll(delta);
         }
     }
 
-    /**
-     * Remove pools vazias e destrói projéteis inativos
-     */
-    private void cleanEmptyPools() {
-        poolMap.entrySet().removeIf(entry -> {
-            ProjectilePool<? extends Projectile> pool = entry.getValue();
-            pool.destroyInactiveProjectiles();
-            return pool.getAllProjectiles().isEmpty();
-        });
-    }
-
-    /**
-     * Destroi todos os projéteis de todas as pools
-     */
+    /// Destrói todos os projéteis de todas as pools
     public void killPool() {
         for (ProjectilePool<? extends Projectile> pool : poolMap.values()) {
             pool.destroyAllProjectiles();
         }
     }
 
-    /**
-     * Sincroniza posição física dos projéteis ativos
-     */
+    /// Sincroniza posição física dos projéteis ativos
     public void syncProjectilesBodies() {
         for (ProjectilePool<? extends Projectile> pool : poolMap.values()) {
-            for (Projectile p : pool.getAllProjectiles()) {
-                if (!p.isActive()) continue;
+            for (Projectile p : pool.getActiveProjectiles()) {
                 p.getControllerComponent()
                     .getProjectile().getPhysicsComponent()
                     .syncBodyObjectPos();
@@ -125,21 +102,41 @@ public class GlobalProjectilePool {
         }
     }
 
-    /**
-     * Libera recursos de todos os projéteis
-     */
+    /// Libera recursos de todos os projéteis
     public void dispose() {
         for (ProjectilePool<? extends Projectile> pool : poolMap.values()) {
-            for (Projectile proj : pool.getAllProjectiles()) {
+            for (Projectile proj : pool.getActiveProjectiles()) {
                 proj.dispose();
             }
         }
     }
 
-    /**
-     * Retorna sala que possui a pool
-     */
+    /// Retorna sala que possui a pool
     public PlayableRoom getRoomOwner() {
         return roomOwner;
+    }
+
+    public int getTotalActiveProjectiles() {
+        int value = 0;
+
+        for (ProjectilePool<? extends Projectile> pool : poolMap.values()) {
+            value = pool.getActiveProjectiles().size;
+        }
+
+        return value;
+    }
+
+    public int getTotalWaitingProjectiles() {
+        int value = 0;
+
+        for (ProjectilePool<? extends Projectile> pool : poolMap.values()) {
+            value = pool.getToDestroy().size;
+        }
+
+        return value;
+    }
+
+    public int getTotalPools() {
+        return poolMap.size();
     }
 }

@@ -14,9 +14,9 @@ import official.sketchBook.weapon_related.base_model.interfaces.IRangeCapable;
 
 import java.util.Objects;
 
-import static official.sketchBook.screen_related.PlayScreen.PPM;
 import static official.sketchBook.util_related.info.values.AnimationTitles.Weapon.recharge;
 import static official.sketchBook.util_related.info.values.AnimationTitles.Weapon.shoot;
+import static official.sketchBook.util_related.info.values.constants.GameConstants.Physics.PPM;
 
 public abstract class RangeWeapon<T extends RangeWeapon<T>> extends BaseWeapon<T> implements IRangeCapable {
 
@@ -96,7 +96,7 @@ public abstract class RangeWeapon<T extends RangeWeapon<T>> extends BaseWeapon<T
     /// Permite a alteração do offset gráfico da arma
     protected abstract void updateOffSets();
 
-    /// Permite uma implementação própria de um disparo
+    /// Permite uma implementação própria de um disparo, executado apenas caso possamos atirar de fato
     protected abstract void performShoot();
 
     /// Valida para saber se podemos atirar

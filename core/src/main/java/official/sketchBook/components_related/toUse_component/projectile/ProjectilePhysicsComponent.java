@@ -5,7 +5,8 @@ import com.badlogic.gdx.physics.box2d.Body;
 import official.sketchBook.components_related.base_component.Component;
 import official.sketchBook.projectiles_related.Projectile;
 
-import static official.sketchBook.screen_related.PlayScreen.PPM;
+import static official.sketchBook.util_related.info.values.constants.GameConstants.Physics.PPM;
+
 
 public class ProjectilePhysicsComponent implements Component {
     protected Projectile object;
@@ -73,6 +74,7 @@ public class ProjectilePhysicsComponent implements Component {
         applyImpulse(impulse);
     }
 
+    /// Reset da velocidade da body do projétil
     public void resetMovement() {
         body.setLinearVelocity(0, 0);
         body.setAngularVelocity(0);

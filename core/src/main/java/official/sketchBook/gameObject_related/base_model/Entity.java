@@ -5,7 +5,8 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
 import official.sketchBook.util_related.helpers.RayCastHelper;
 
-import static official.sketchBook.screen_related.PlayScreen.PPM;
+import static official.sketchBook.util_related.info.values.constants.GameConstants.Physics.PPM;
+
 
 public abstract class Entity extends MovableGameObject {
 

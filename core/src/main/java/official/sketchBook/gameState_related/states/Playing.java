@@ -17,6 +17,9 @@ import official.sketchBook.util_related.helpers.MultiContactListener;
 
 import static official.sketchBook.screen_related.PlayScreen.*;
 import static official.sketchBook.util_related.helpers.HelpMethods.handleContactListener;
+import static official.sketchBook.util_related.info.values.constants.GameConstants.Debug.*;
+import static official.sketchBook.util_related.info.values.constants.GameConstants.Screen.*;
+import static official.sketchBook.util_related.info.values.constants.GameConstants.Physics.*;
 
 public class Playing extends State implements StateMethods {
 
@@ -53,7 +56,7 @@ public class Playing extends State implements StateMethods {
 
         if (world != null) {
             world.step(
-                FIXED_TIMESTEP,
+                delta,
                 VELOCITY_ITERATIONS,
                 POSITION_ITERATIONS
             );
@@ -126,6 +129,28 @@ public class Playing extends State implements StateMethods {
         // Exibe FPS e UPS na tela
         font.draw(uiBatch, "FPS: " + game.fps, 10, GAME_HEIGHT - 10);
         font.draw(uiBatch, "UPS: " + game.ups, 10, GAME_HEIGHT - 30);
+
+        if (showProjectilesActive) {
+            font.draw(
+                uiBatch,
+                "projectiles: "
+                    + objectManager.getCurrentRoom().getProjectilePool().getTotalActiveProjectiles()
+                    + " / "
+                    + objectManager.getCurrentRoom().getProjectilePool().getTotalWaitingProjectiles(),
+                10,
+                GAME_HEIGHT - 50
+            );
+
+            if (showActiveProjectilePools) {
+                font.draw(
+                    uiBatch,
+                    "pools: "
+                        + objectManager.getCurrentRoom().getProjectilePool().getTotalPools(),
+                    10,
+                    GAME_HEIGHT - 70
+                );
+            }
+        }
     }
 
     @Override
@@ -160,6 +185,12 @@ public class Playing extends State implements StateMethods {
         }
         if (keycode == Input.Keys.F2) {
             showRayCast = !showRayCast;
+        }
+        if (keycode == Input.Keys.F3) {
+            showProjectilesActive = !showProjectilesActive;
+        }
+        if (keycode == Input.Keys.F4) {
+            showActiveProjectilePools = !showActiveProjectilePools;
         }
 
         return true;

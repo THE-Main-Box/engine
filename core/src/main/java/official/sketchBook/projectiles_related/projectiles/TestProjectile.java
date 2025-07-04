@@ -19,10 +19,6 @@ public class TestProjectile extends Projectile {
             false,
             true,
             1f,
-            1f,
-            1f,
-            1f,
-            1f,
             1f
 
         );

@@ -19,48 +19,27 @@ import official.sketchBook.util_related.enumerators.states.GameState;
 
 import java.util.EnumMap;
 
+import static official.sketchBook.util_related.info.values.constants.GameConstants.Physics.*;
+import static official.sketchBook.util_related.info.values.constants.GameConstants.Debug.*;
+import static official.sketchBook.util_related.info.values.constants.GameConstants.Screen.*;
+
 public class PlayScreen implements Screen {
 
-    //update related
-    public static final int VELOCITY_ITERATIONS = 8;
-    public static final int POSITION_ITERATIONS = 3;
-    private static final int FPS_TARGET = 60;
-    private static final int UPS_TARGET = 60;
-    public static final float FIXED_TIMESTEP = (float) 1 / UPS_TARGET; // Taxa fixa de UPS (60 Updates por segundo)
-    private static final float MAX_FPS = (float) 1 / FPS_TARGET; // Taxa máxima de FPS (120 Frames por segundo)
+    public int fps, ups;
+
+    private long lastTime = System.nanoTime(); // Para calcular FPS e UPS
     private float accumulator = 0f;
     private int updates = 0;
-    public int fps, ups;
-    private long lastTime = System.nanoTime(); // Para calcular FPS e UPS
 
-    // game dimensions related
-    public static float scale = 2f;
-    public static float zoom = 0.7f / scale;
-    public static final int TILES_IN_WIDTH = 39;
-    public static final int TILES_IN_HEIGHT = 21;
-    public static final int TILES_DEFAULT_SIZE = 16;
     public static final int GAME_WIDTH = TILES_DEFAULT_SIZE * TILES_IN_WIDTH;
     public static final int GAME_HEIGHT = TILES_DEFAULT_SIZE * TILES_IN_HEIGHT;
     public static float worldWidth, worldHeight;
-    public final static float PPM = 100;
 
     //rendering related
     public SpriteBatch batch;
     public SpriteBatch uiBatch;
     private final CameraManager gameCameraManager;
     private final CameraManager uiCameraManager;
-
-    //sound related
-    public static boolean soundEfectsMute = false;
-    public static boolean soundMute = false;
-    public static int soundEfectsVolume = 90;
-    public static int soundVolume = 50;
-
-    //debug related
-    public static boolean showHitBox = true;
-    public static boolean showRayCast = true;
-    public static boolean showProjectilesActive = true;
-    public static boolean showActiveProjectilePools = true;
 
     private Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
 
@@ -113,9 +92,9 @@ public class PlayScreen implements Screen {
 
 
         // Atualiza a lógica do jogo em passos fixos usando um segundo loop
-        while (accumulator >= FIXED_TIMESTEP) {
+        while (accumulator >= FIXED_TIMESTAMP) {
             updateGameStates(); // Use FIXED_TIMESTEP para manter a lógica consistente
-            accumulator -= FIXED_TIMESTEP;
+            accumulator -= FIXED_TIMESTAMP;
             updates++;
         }
 
@@ -140,7 +119,7 @@ public class PlayScreen implements Screen {
 
     }
 
-    private void renderDebuggVariables() {
+    private void renderDebugVariables() {
 
         if (showHitBox) {
             debugRenderer.render(
@@ -167,8 +146,8 @@ public class PlayScreen implements Screen {
     private void updateGameStates() {
         State currentState = stateMap.get(GameState.state);
         if (currentState != null) {
-            currentState.update(FIXED_TIMESTEP);
-            currentState.updateUi(FIXED_TIMESTEP);
+            currentState.update(FIXED_TIMESTAMP);
+            currentState.updateUi(FIXED_TIMESTAMP);
         }
 
 
@@ -186,7 +165,7 @@ public class PlayScreen implements Screen {
         }
 
         if (GameState.state.equals(GameState.PLAYING)) {
-            renderDebuggVariables();
+            renderDebugVariables();
         }
 
     }

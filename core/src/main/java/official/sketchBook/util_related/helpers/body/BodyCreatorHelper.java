@@ -3,7 +3,8 @@ package official.sketchBook.util_related.helpers.body;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 
-import static official.sketchBook.screen_related.PlayScreen.PPM;
+import static official.sketchBook.util_related.info.values.constants.GameConstants.Physics.PPM;
+
 
 public class BodyCreatorHelper {
 

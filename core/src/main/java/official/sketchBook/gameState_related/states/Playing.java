@@ -1,6 +1,5 @@
 package official.sketchBook.gameState_related.states;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -15,11 +14,12 @@ import official.sketchBook.util_related.contactListeners.ProjectileContactListen
 import official.sketchBook.util_related.enumerators.states.GameState;
 import official.sketchBook.util_related.helpers.HelpMethods;
 import official.sketchBook.util_related.helpers.MultiContactListener;
-import official.sketchBook.util_related.registers.ProjectilePoolRegister;
 
 import static official.sketchBook.screen_related.PlayScreen.*;
 import static official.sketchBook.util_related.helpers.HelpMethods.handleContactListener;
 import static official.sketchBook.util_related.info.values.constants.GameConstants.Debug.*;
+import static official.sketchBook.util_related.info.values.constants.GameConstants.Screen.*;
+import static official.sketchBook.util_related.info.values.constants.GameConstants.Physics.*;
 
 public class Playing extends State implements StateMethods {
 
@@ -56,7 +56,7 @@ public class Playing extends State implements StateMethods {
 
         if (world != null) {
             world.step(
-                FIXED_TIMESTEP,
+                delta,
                 VELOCITY_ITERATIONS,
                 POSITION_ITERATIONS
             );
@@ -136,7 +136,7 @@ public class Playing extends State implements StateMethods {
                 "projectiles: "
                     + objectManager.getCurrentRoom().getProjectilePool().getTotalActiveProjectiles()
                     + " / "
-                + objectManager.getCurrentRoom().getProjectilePool().getTotalWaitingProjectiles(),
+                    + objectManager.getCurrentRoom().getProjectilePool().getTotalWaitingProjectiles(),
                 10,
                 GAME_HEIGHT - 50
             );

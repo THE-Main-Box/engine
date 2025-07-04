@@ -14,9 +14,9 @@ import official.sketchBook.weapon_related.base_model.interfaces.IRangeCapable;
 
 import java.util.Objects;
 
-import static official.sketchBook.screen_related.PlayScreen.PPM;
 import static official.sketchBook.util_related.info.values.AnimationTitles.Weapon.recharge;
 import static official.sketchBook.util_related.info.values.AnimationTitles.Weapon.shoot;
+import static official.sketchBook.util_related.info.values.constants.GameConstants.Physics.PPM;
 
 public abstract class RangeWeapon<T extends RangeWeapon<T>> extends BaseWeapon<T> implements IRangeCapable {
 

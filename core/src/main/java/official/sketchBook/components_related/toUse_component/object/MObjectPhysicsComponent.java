@@ -5,7 +5,8 @@ import official.sketchBook.components_related.base_component.BasePhysicsComponen
 import official.sketchBook.gameObject_related.base_model.GameObject;
 import official.sketchBook.gameObject_related.base_model.MovableGameObject;
 
-import static official.sketchBook.screen_related.PlayScreen.PPM;
+import static official.sketchBook.util_related.info.values.constants.GameConstants.Physics.PPM;
+
 
 public class MObjectPhysicsComponent extends BasePhysicsComponent {
 

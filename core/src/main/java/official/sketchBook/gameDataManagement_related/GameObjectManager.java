@@ -15,8 +15,7 @@ import official.sketchBook.util_related.registers.ProjectilePoolRegister;
 import java.util.ArrayList;
 import java.util.List;
 
-import static official.sketchBook.screen_related.PlayScreen.TILES_IN_HEIGHT;
-import static official.sketchBook.screen_related.PlayScreen.TILES_IN_WIDTH;
+import static official.sketchBook.util_related.info.values.constants.GameConstants.Screen.*;
 
 public class GameObjectManager {
 

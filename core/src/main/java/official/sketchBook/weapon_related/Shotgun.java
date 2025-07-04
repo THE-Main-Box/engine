@@ -18,8 +18,8 @@ import official.sketchBook.weapon_related.base_model.RangeWeapon;
 import java.util.Arrays;
 import java.util.List;
 
-import static official.sketchBook.screen_related.PlayScreen.PPM;
 import static official.sketchBook.util_related.info.values.AnimationTitles.Weapon.*;
+import static official.sketchBook.util_related.info.values.constants.GameConstants.Physics.PPM;
 import static official.sketchBook.util_related.info.values.constants.RangeWeaponsStatusConstants.Shotgun.*;
 
 public class Shotgun extends RangeWeapon<Shotgun> {

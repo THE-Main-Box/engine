@@ -1,8 +1,9 @@
 package official.sketchBook.room_related.model;
 
-import official.sketchBook.screen_related.PlayScreen;
 import official.sketchBook.util_related.enumerators.types.RoomType;
 import official.sketchBook.util_related.enumerators.types.TileType;
+
+import static official.sketchBook.util_related.info.values.constants.GameConstants.Screen.TILES_DEFAULT_SIZE;
 
 public class Room {
 
@@ -12,8 +13,8 @@ public class Room {
     private final String tag;//identificação
 
     public Room(TileType[][] tileTypes, RoomType roomType, String tag) {
-        this.widthInP = tileTypes[0].length * PlayScreen.TILES_DEFAULT_SIZE;
-        this.heightInP = tileTypes.length * PlayScreen.TILES_DEFAULT_SIZE;
+        this.widthInP = tileTypes[0].length * TILES_DEFAULT_SIZE;
+        this.heightInP = tileTypes.length * TILES_DEFAULT_SIZE;
         this.type = roomType;
         this.tag = tag;
 

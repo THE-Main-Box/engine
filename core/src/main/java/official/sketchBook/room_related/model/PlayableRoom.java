@@ -30,7 +30,7 @@ public class PlayableRoom implements Poolable {
 
     public PlayableRoom(World world) {
         this.world = world;
-        this.projectilePool = new GlobalProjectilePool(world, this);
+        this.projectilePool = new GlobalProjectilePool(this);
         this.gameObjects = new ArrayList<>();
     }
 

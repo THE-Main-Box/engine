@@ -6,6 +6,8 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import official.sketchBook.projectiles_related.Projectile;
 
+import static official.sketchBook.util_related.info.values.constants.ProjectileManagementConstants.maxToDestroyPerFrame;
+
 public class ProjectilePool<T extends Projectile> extends Pool<T> {
 
     /// Referência ao mundo físico para criação dos projéteis
@@ -26,8 +28,6 @@ public class ProjectilePool<T extends Projectile> extends Pool<T> {
         for (T proj : activeProjectiles) {
             proj.update(delta);
         }
-
-        destroyInactiveProjectiles();
     }
 
     /// Renderiza todos os projéteis ativos
@@ -44,23 +44,22 @@ public class ProjectilePool<T extends Projectile> extends Pool<T> {
         destroyInactiveProjectiles();
     }
 
-    /// Destrói apenas projéteis que podem ser removidos permanentemente (estão inativos)
     public void destroyInactiveProjectiles() {
-        int maxToDestroyPerFrame = 5; // limite por frame
-        int count = Math.min(toDestroy.size, maxToDestroyPerFrame);
+        if (world.isLocked()) return;//Valida se o world permite destruir
 
-        for (int i = 0; i < count; i++) {
+        int count = 0;
+        for (int i = toDestroy.size - 1; i >= 0 && count < maxToDestroyPerFrame; i--) {
+
             toDestroy.get(i).destroy();
-        }
-
-        // remove só os destruídos
-        for (int i = 0; i < count; i++) {
-            toDestroy.removeIndex(0);
+            toDestroy.removeIndex(i);
+            count++;
         }
 
         clear(); // limpa objetos reciclados da pool
+        for (T proj : toDestroy) {
+            free(proj); // recoloca só os válidos destruídos
+        }
     }
-
 
     /// Cria um projétil e adiciona à lista de controle
     @Override
@@ -80,7 +79,10 @@ public class ProjectilePool<T extends Projectile> extends Pool<T> {
     public void free(Projectile projectile) {
         super.free((T) projectile);
 
-        toDestroy.add((T) projectile);
+        if (!toDestroy.contains((T) projectile, true)) {
+            toDestroy.add((T) projectile);
+        }
+
         activeProjectiles.removeValue((T) projectile, true);
     }
 
@@ -95,5 +97,9 @@ public class ProjectilePool<T extends Projectile> extends Pool<T> {
 
     public Array<T> getToDestroy() {
         return toDestroy;
+    }
+
+    public Class<T> getType() {
+        return type;
     }
 }

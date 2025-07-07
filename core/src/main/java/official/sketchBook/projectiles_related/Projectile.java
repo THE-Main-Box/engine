@@ -150,15 +150,14 @@ public abstract class Projectile implements CustomPool.Poolable {
         body = BodyCreatorHelper.createCircle(
             world,
             new Vector2(x, y),
-            r,
             radius,
+            r,
             BodyDef.BodyType.DynamicBody,
             defDens, // density
             defFric,   // friction
             defRest // restitution
         );
         body.setBullet(true); // Importante para colisões de alta velocidade
-        body.setFixedRotation(controllerComponent.isCanRotate());
         body.setUserData(new FixtureType(FixtType.PROJECTILE, this));
 
     }
@@ -183,7 +182,6 @@ public abstract class Projectile implements CustomPool.Poolable {
 
         this.setActive(false);
         this.owner = null;
-        this.setLifeTime(0f);
         controllerComponent.reset();
 
         this.dispose();

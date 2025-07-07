@@ -318,6 +318,7 @@ public class ProjectileControllerComponent implements Component {
 
     public void setCanRotate(boolean canRotate) {
         this.canRotate = canRotate;
+        this.projectile.getBody().setFixedRotation(canRotate);
     }
 
 

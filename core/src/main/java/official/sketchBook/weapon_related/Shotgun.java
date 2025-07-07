@@ -6,14 +6,13 @@ import official.sketchBook.animation_related.ObjectAnimationPlayer;
 import official.sketchBook.animation_related.Sprite;
 import official.sketchBook.animation_related.SpriteSheetDataHandler;
 import official.sketchBook.gameObject_related.base_model.Entity;
-import official.sketchBook.util_related.util.entity.AnchorPoint;
-import official.sketchBook.weapon_related.util.weapon.status.RangeWeaponStatus;
 import official.sketchBook.projectiles_related.Projectile;
 import official.sketchBook.projectiles_related.projectiles.SlugProjectile;
-import official.sketchBook.projectiles_related.projectiles.TestProjectile;
 import official.sketchBook.util_related.enumerators.directions.Direction;
 import official.sketchBook.util_related.info.paths.WeaponsSpritePath;
+import official.sketchBook.util_related.util.entity.AnchorPoint;
 import official.sketchBook.weapon_related.base_model.RangeWeapon;
+import official.sketchBook.weapon_related.util.weapon.status.RangeWeaponStatus;
 
 import java.util.Arrays;
 import java.util.List;
@@ -179,8 +178,6 @@ public class Shotgun extends RangeWeapon<Shotgun> {
     private void updateProjectileIndex(int projectileIndex) {
         if (projectileIndex == 1) {
             configProjectileTypeOnEmitter(SlugProjectile.class);
-        } else if (projectileIndex == 2) {
-            configProjectileTypeOnEmitter(TestProjectile.class);
         }
     }
 }

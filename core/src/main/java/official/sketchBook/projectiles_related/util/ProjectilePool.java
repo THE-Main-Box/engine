@@ -43,7 +43,7 @@ public class ProjectilePool<T extends Projectile> extends CustomPool<T> {
     }
 
     /// Destrói todos os projéteis inativos ainda existente
-    public void destroyAllInactiveProjectiles(){
+    public void destroyAllInactiveProjectiles() {
         super.clear();
     }
 
@@ -53,9 +53,9 @@ public class ProjectilePool<T extends Projectile> extends CustomPool<T> {
 
         /*Percorremos a lista de cima pra baixo com um contador para evitar de iterar mais do que preciso*/
         int count = 0;
-        for(int i = getFreeCount() -1; i >= 0 && count < maxToDestroyPerFrame; i--){
+        for (int i = getFreeCount() - 1; i >= 0 && count < maxToDestroyPerFrame; i--) {
             super.discard(freeObjects.get(i));
-            count ++;
+            count++;
         }
     }
 

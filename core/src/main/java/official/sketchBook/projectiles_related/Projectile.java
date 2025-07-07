@@ -3,7 +3,6 @@ package official.sketchBook.projectiles_related;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
-import com.badlogic.gdx.utils.Pool;
 import official.sketchBook.animation_related.ObjectAnimationPlayer;
 import official.sketchBook.animation_related.SpriteSheetDataHandler;
 import official.sketchBook.components_related.base_component.Component;
@@ -23,30 +22,50 @@ public abstract class Projectile implements CustomPool.Poolable {
 
     //TODO:adicionar compatibilidade para rotação, tanto na renderização quando nos objetos
 
-    private boolean reset;
-    protected boolean active;// flag para se está ativo
-    protected float radius = 0;//raio da area da body do projétil
+    /// Raio do projétil
+    protected float radius;
+
+    /// Posição do projétil em pixels
+    protected float x, y;
+
+    /// Rotação do projétil
+    protected float r;
 
     /// Componente de controle, tem um em cada projétil
     protected ProjectileControllerComponent controllerComponent;
+
     /// Componente de física próprio do projétil
     private final ProjectilePhysicsComponent physicsComponent;
 
-    protected float x, y;
-
-    protected List<Component> components;
-
+    /// Gerenciador de sprites
     protected SpriteSheetDataHandler spriteSheetDatahandler;
+
+    /// Gerenciador de animações
     protected ObjectAnimationPlayer animationPlayer;
 
-    protected Entity owner; //dono do projétil
+    /// Dono do projétil, apenas uma entidade pode usar um projétil
+    protected Entity owner;
+
+    /// Corpo do projétil
     protected Body body;
+
+    /// Mundo físico externo onde o projétil está presente
     protected World world;
 
-    protected boolean facingForward;
+    /// Valores padrão para a criação da body
     protected float defFric, defRest, defDens;
 
+    /// Pool dona do projétil
     protected ProjectilePool<?> ownerPool;
+
+    /// Lista de componentes
+    protected List<Component> components;
+
+    /// Flag de estado de vida
+    private boolean reset, active;
+
+    /// Flag que diz se o projétil está virado para a direita ou não
+    protected boolean facingForward;
 
     public Projectile(World world) {
         this.world = world;
@@ -82,6 +101,7 @@ public abstract class Projectile implements CustomPool.Poolable {
      * @param affectedByGravity           se o projétil é afetado ou não pela constante da gravidade
      * @param collideWithItself           se o projétil pode colidir com outros do mesmo tipo que o dele
      * @param collideWithOtherProjectiles se o projétil pode colidir com outros projéteis que não são do mesmo tipo
+     * @param canRotate                   se o projétil pode rotacionar por conta própria
      * @param bounceX                     constante de restituição do eixo X pra ambiente
      * @param bounceY                     constante de restituição do eixo Y pra ambiente
      */
@@ -93,6 +113,7 @@ public abstract class Projectile implements CustomPool.Poolable {
         boolean affectedByGravity,
         boolean collideWithItself,
         boolean collideWithOtherProjectiles,
+        boolean canRotate,
         float bounceX,
         float bounceY
     ) {
@@ -103,6 +124,7 @@ public abstract class Projectile implements CustomPool.Poolable {
         this.controllerComponent.setAffectedByGravity(affectedByGravity);
         this.controllerComponent.setColideWithSameTypeProjectiles(collideWithItself);
         this.controllerComponent.setColideWithOtherProjectiles(collideWithOtherProjectiles);
+        this.controllerComponent.setCanRotate(canRotate);
 
         this.controllerComponent.setBounceX(bounceX);
         this.controllerComponent.setBounceY(bounceY);
@@ -120,6 +142,7 @@ public abstract class Projectile implements CustomPool.Poolable {
 
     public abstract void onProjectileEndCollision(Contact contact, Object target);
 
+    /// Iniciamos os valores padrão da body, mas cada projétil implementa por conta própria
     protected abstract void setBodyDefValues();
 
     /// Cria uma body padrão para todos os projéteis
@@ -127,6 +150,7 @@ public abstract class Projectile implements CustomPool.Poolable {
         body = BodyCreatorHelper.createCircle(
             world,
             new Vector2(x, y),
+            r,
             radius,
             BodyDef.BodyType.DynamicBody,
             defDens, // density
@@ -134,7 +158,7 @@ public abstract class Projectile implements CustomPool.Poolable {
             defRest // restitution
         );
         body.setBullet(true); // Importante para colisões de alta velocidade
-        body.setFixedRotation(true);
+        body.setFixedRotation(controllerComponent.isCanRotate());
         body.setUserData(new FixtureType(FixtType.PROJECTILE, this));
 
     }
@@ -142,7 +166,6 @@ public abstract class Projectile implements CustomPool.Poolable {
     public void update(float deltaTime) {
         updateComponents(deltaTime);
         controllerComponent.resetCollisionCounters();
-
     }
 
     /// Atualiza todos os componentes existentes dentro do objeto
@@ -156,7 +179,7 @@ public abstract class Projectile implements CustomPool.Poolable {
     /// Reset e desativação do projétil junto da liberação da memória
     @Override
     public void reset() {
-        if(reset) return;
+        if (reset) return;
 
         this.setActive(false);
         this.owner = null;
@@ -189,7 +212,7 @@ public abstract class Projectile implements CustomPool.Poolable {
 
     /// Limpa todas as informações do projétil após ser resetado, para ser destruído
     public void destroy() {
-        if(!reset) return;
+        if (!reset) return;
         destroyPhysics();
         clearComponents();
     }
@@ -273,6 +296,14 @@ public abstract class Projectile implements CustomPool.Poolable {
 
     public void setY(float y) {
         this.y = y;
+    }
+
+    public float getR() {
+        return r;
+    }
+
+    public void setR(float r) {
+        this.r = r;
     }
 
     public Body getBody() {

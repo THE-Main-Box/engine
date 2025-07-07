@@ -10,41 +10,39 @@ import official.sketchBook.util_related.helpers.HelpMethods;
  */
 public class SpriteSheetDataHandler {
 
-    // Posição de renderização da imagem na tela
+    /// Posição de renderização da imagem na tela
     private float x, y;
 
-    // Offset de ajuste para o ponto de renderização
+
+    /// Offset de ajuste para o ponto de renderização
     private float drawOffSetX, drawOffSetY;
 
-    // Dimensões de cada quadro da sprite sheet
-    private int canvasHeight, canvasWidth;
-
-    // Dimensões reais de renderização após aplicação da escala
-    private float renderWidth, renderHeight;
-
-    // Quantidade de sprites por eixo (colunas e linhas)
-    private int spriteQuantityX, spriteQuantityY;
-
-    // Escala da imagem
-    private float scaleX = 1f, scaleY = 1f;
-
-    // Define se a escala é feita por multiplicação (true) ou divisão (false)
-    private boolean scaleMultiplyMode = true;
-
-    // Rotação atual do sprite
-    private float rotation = 0f;
-
-    // Origem da rotação (ponto em torno do qual o sprite será rotacionado)
+    /// Origem da rotação (ponto em torno do qual o sprite será rotacionado)
     private float originX = 0f, originY = 0f;
 
-    // Define se o sprite está virado para frente
-    private boolean facingFoward;
+    /// Rotação atual do sprite
+    private float rotation = 0f;
 
-    // Define se o sprite está de ponta cabeça
+    /// Dimensões de cada quadro da sprite sheet
+    private final int canvasHeight, canvasWidth;
+
+    /// Dimensões reais de renderização após aplicação da escala
+    private float renderWidth, renderHeight;
+
+    /// Escala da imagem
+    private float scaleX = 1f, scaleY = 1f;
+
+    /// Define se a escala é feita por multiplicação (true) ou divisão (false)
+    private boolean scaleMultiplyMode = true;
+
+    /// Define se o sprite está virado para frente
+    private boolean facingForward;
+
+    /// Define se o sprite está de ponta cabeça
     private boolean upsideDown;
 
-    // Textura contendo a sprite sheet
-    private Texture spriteSheet;
+    /// Textura contendo a sprite sheet
+    private final Texture spriteSheet;
 
     /**
      * Construtor da classe responsável por inicializar os dados da sprite sheet.
@@ -55,7 +53,7 @@ public class SpriteSheetDataHandler {
      * @param drawOffSetY       Offset de renderização no eixo Y.
      * @param spriteQuantityX   Quantidade de sprites na horizontal.
      * @param spriteQuantityY   Quantidade de sprites na vertical.
-     * @param facingFoward      Define se o sprite começa virado para frente.
+     * @param facingForward      Define se o sprite começa virado para frente.
      * @param upsideDown        Define se o sprite começa de cabeça para baixo.
      * @param spriteSheet       Textura contendo a sprite sheet.
      */
@@ -66,7 +64,7 @@ public class SpriteSheetDataHandler {
         float drawOffSetY,
         int spriteQuantityX,
         int spriteQuantityY,
-        boolean facingFoward,
+        boolean facingForward,
         boolean upsideDown,
         Texture spriteSheet
     ) {
@@ -75,9 +73,7 @@ public class SpriteSheetDataHandler {
         this.drawOffSetX = drawOffSetX;
         this.drawOffSetY = drawOffSetY;
 
-        this.spriteQuantityX = spriteQuantityX;
-        this.spriteQuantityY = spriteQuantityY;
-        this.facingFoward = facingFoward;
+        this.facingForward = facingForward;
         this.upsideDown = upsideDown;
 
         this.spriteSheet = spriteSheet;
@@ -170,7 +166,7 @@ public class SpriteSheetDataHandler {
                 canvasWidth,
                 canvasHeight,
                 spriteSheet,
-                !facingFoward,
+                !facingForward,
                 upsideDown
             ),
             x,
@@ -206,8 +202,8 @@ public class SpriteSheetDataHandler {
     }
 
     /** Define se o sprite está virado para frente. */
-    public void setFacingFoward(boolean facingFoward) {
-        this.facingFoward = facingFoward;
+    public void setFacingForward(boolean facingForward) {
+        this.facingForward = facingForward;
     }
 
     /** Define se o sprite está de ponta cabeça. */

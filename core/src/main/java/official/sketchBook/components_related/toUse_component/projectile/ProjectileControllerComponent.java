@@ -28,6 +28,8 @@ public class ProjectileControllerComponent implements Component {
     private boolean stickToCeiling = false;
     /// Deve ser afetado pela gravidade
     private boolean affectedByGravity = false;
+    /// Deve ser capaz de alterar a própria rotação
+    private boolean canRotate = false;
 
     private boolean lockX = false;
     private boolean lockY = false;
@@ -265,6 +267,14 @@ public class ProjectileControllerComponent implements Component {
         projectile.getPhysicsComponent().applyTimedTrajectory(displacement, timeSeconds);
     }
 
+    public Projectile getProjectile() {
+        return projectile;
+    }
+
+    public boolean isCanRotate() {
+        return canRotate;
+    }
+
     public boolean isColideWithOtherProjectiles() {
         return colideWithOtherProjectiles;
     }
@@ -306,9 +316,10 @@ public class ProjectileControllerComponent implements Component {
         this.stickToCeiling = stickToCeiling;
     }
 
-    public Projectile getProjectile() {
-        return projectile;
+    public void setCanRotate(boolean canRotate) {
+        this.canRotate = canRotate;
     }
+
 
     public void setBounceX(float bounceX) {
         this.bounceX = bounceX;
@@ -317,6 +328,7 @@ public class ProjectileControllerComponent implements Component {
     public void setBounceY(float bounceY) {
         this.bounceY = bounceY;
     }
+
 
     public void addDownContact() {
         downContact++;

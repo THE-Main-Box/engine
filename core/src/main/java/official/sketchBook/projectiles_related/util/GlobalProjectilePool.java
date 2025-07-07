@@ -9,8 +9,7 @@ import official.sketchBook.room_related.model.PlayableRoom;
 import java.util.HashMap;
 import java.util.Map;
 
-import static official.sketchBook.util_related.info.values.constants.ProjectileManagementConstants.cleanInterval;
-import static official.sketchBook.util_related.info.values.constants.ProjectileManagementConstants.deleteInterval;
+import static official.sketchBook.util_related.info.values.constants.ProjectileManagementConstants.*;
 
 public class GlobalProjectilePool {
 
@@ -65,14 +64,16 @@ public class GlobalProjectilePool {
         }
     }
 
-    /// Limpa todas as pools sem projéteis
+    /// Limpa todas as pools sem projéteis ativos ou inativos
     private void deleteEmptyPools() {
+        //Usa um iterador para percorrer os valores e eliminar os que devem ser eliminados
         var iterator = poolMap.entrySet().iterator();
         while (iterator.hasNext()) {
-            var entry = iterator.next();
-            ProjectilePool<? extends Projectile> pool = entry.getValue();
+            //Obtemos o próximo valor com o iterador
+            ProjectilePool<? extends Projectile> pool = iterator.next().getValue();
 
-            if (pool.getActiveProjectiles().isEmpty() && pool.getToDestroy().isEmpty()) {
+            //Verificamos se todas as listas, de ativos e inativos estão vazias antes de prosseguir
+            if (pool.getActiveProjectiles().size ==0 && pool.getFreeCount() == 0) {
                 iterator.remove();
             }
         }
@@ -96,9 +97,8 @@ public class GlobalProjectilePool {
     }
 
     /// Retorna projétil requisitado, criando pool se necessário
-    @SuppressWarnings("unchecked")
     public <T extends Projectile> Projectile returnProjectileRequested(Class<T> type) {
-        return createPoolIfAbsent(type).getFreeOrNew();
+        return createPoolIfAbsent(type).obtainFreeOrNew();
     }
 
     /// Atualiza lógica de todos os projéteis ativos
@@ -135,16 +135,11 @@ public class GlobalProjectilePool {
         }
     }
 
-    /// Retorna sala que possui a pool
-    public PlayableRoom getRoomOwner() {
-        return roomOwner;
-    }
-
     public int getTotalActiveProjectiles() {
         int value = 0;
 
         for (ProjectilePool<? extends Projectile> pool : poolMap.values()) {
-            value = pool.getActiveProjectiles().size;
+            value += pool.getActiveProjectiles().size;
         }
 
         return value;
@@ -154,7 +149,7 @@ public class GlobalProjectilePool {
         int value = 0;
 
         for (ProjectilePool<? extends Projectile> pool : poolMap.values()) {
-            value = pool.getToDestroy().size;
+            value += pool.getFreeCount();//Para cada pool adicionamos os valores da suas listas ativas aqui dentro
         }
 
         return value;
@@ -162,5 +157,10 @@ public class GlobalProjectilePool {
 
     public int getTotalPools() {
         return poolMap.size();
+    }
+
+    /// Retorna sala que possui a pool
+    public PlayableRoom getRoomOwner() {
+        return roomOwner;
     }
 }

@@ -3,23 +3,21 @@ package official.sketchBook.projectiles_related.util;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Pool;
+import official.sketchBook.customComponents_related.CustomPool;
 import official.sketchBook.projectiles_related.Projectile;
 
 import static official.sketchBook.util_related.info.values.constants.ProjectileManagementConstants.maxToDestroyPerFrame;
 
-public class ProjectilePool<T extends Projectile> extends Pool<T> {
+public class ProjectilePool<T extends Projectile> extends CustomPool<T> {
 
     /// Referência ao mundo físico para criação dos projéteis
     private final World world;
     private final Class<T> type;
-    private final Array<T> toDestroy;
     private final Array<T> activeProjectiles;
 
     public ProjectilePool(Class<T> type, World world) {
         this.type = type;
         this.world = world;
-        this.toDestroy = new Array<>();
         this.activeProjectiles = new Array<>();
     }
 
@@ -41,23 +39,23 @@ public class ProjectilePool<T extends Projectile> extends Pool<T> {
         for (int i = 0; i < activeProjectiles.size; i++) {
             activeProjectiles.get(i).release();
         }
-        destroyInactiveProjectiles();
+        destroyAllInactiveProjectiles();
     }
 
+    /// Destrói todos os projéteis inativos ainda existente
+    public void destroyAllInactiveProjectiles(){
+        super.clear();
+    }
+
+    /// Destruímos os projéteis inativos com um limite de contagem
     public void destroyInactiveProjectiles() {
         if (world.isLocked()) return;//Valida se o world permite destruir
 
+        /*Percorremos a lista de cima pra baixo com um contador para evitar de iterar mais do que preciso*/
         int count = 0;
-        for (int i = toDestroy.size - 1; i >= 0 && count < maxToDestroyPerFrame; i--) {
-
-            toDestroy.get(i).destroy();
-            toDestroy.removeIndex(i);
-            count++;
-        }
-
-        clear(); // limpa objetos reciclados da pool
-        for (T proj : toDestroy) {
-            free(proj); // recoloca só os válidos destruídos
+        for(int i = getFreeCount() -1; i >= 0 && count < maxToDestroyPerFrame; i--){
+            super.discard(freeObjects.get(i));
+            count ++;
         }
     }
 
@@ -67,22 +65,17 @@ public class ProjectilePool<T extends Projectile> extends Pool<T> {
         return ProjectileFactory.createByType(type, world);
     }
 
-    /// Retorna um projétil livre ou cria um se necessário
-    public T getFreeOrNew() {
+    /// Acessamos um valor desejado e iniciar os valores necessários
+    public T obtainFreeOrNew() {
         T proj = obtain();
         proj.setOwnerPool(this);
-        toDestroy.removeValue(proj, true);
         return proj;
     }
 
+    /// Removemos da lista de projéteis ativos e realocamos para dentro da lista de inativos
     @SuppressWarnings("unchecked")
     public void free(Projectile projectile) {
         super.free((T) projectile);
-
-        if (!toDestroy.contains((T) projectile, true)) {
-            toDestroy.add((T) projectile);
-        }
-
         activeProjectiles.removeValue((T) projectile, true);
     }
 
@@ -93,10 +86,6 @@ public class ProjectilePool<T extends Projectile> extends Pool<T> {
 
     public Array<T> getActiveProjectiles() {
         return activeProjectiles;
-    }
-
-    public Array<T> getToDestroy() {
-        return toDestroy;
     }
 
     public Class<T> getType() {

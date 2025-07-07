@@ -9,6 +9,7 @@ import official.sketchBook.animation_related.SpriteSheetDataHandler;
 import official.sketchBook.components_related.base_component.Component;
 import official.sketchBook.components_related.toUse_component.projectile.ProjectileControllerComponent;
 import official.sketchBook.components_related.toUse_component.projectile.ProjectilePhysicsComponent;
+import official.sketchBook.customComponents_related.CustomPool;
 import official.sketchBook.gameObject_related.base_model.Entity;
 import official.sketchBook.projectiles_related.util.ProjectilePool;
 import official.sketchBook.util_related.enumerators.types.FixtType;
@@ -18,7 +19,7 @@ import official.sketchBook.util_related.info.values.FixtureType;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Projectile implements Pool.Poolable {
+public abstract class Projectile implements CustomPool.Poolable {
 
     //TODO:adicionar compatibilidade para rotação, tanto na renderização quando nos objetos
 

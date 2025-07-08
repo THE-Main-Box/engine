@@ -9,6 +9,10 @@ public class SlugProjectile extends Projectile {
     public SlugProjectile(World world) {
         super(world);
 
+        this.setAndUpdateRotation(30);
+
+        this.setLifeTime(100);
+
         this.initBodyBehavior(
             true,
             false,
@@ -16,26 +20,14 @@ public class SlugProjectile extends Projectile {
             false,
             true,
             false,
-            false,
-            false,
-            1f,
-            1f
-
+            0f,
+            0f
         );
     }
 
     @Override
     public void init(Entity owner) {
         super.init(owner);
-        this.setLifeTime(5);
-    }
-
-    @Override
-    protected void setBodyDefValues() {
-        this.radius = 2f;
-        this.defFric = 0.1f;
-        this.defDens = 0.1f;
-        this.defRest = 0f;
     }
 
     @Override
@@ -49,22 +41,31 @@ public class SlugProjectile extends Projectile {
     }
 
     @Override
-    public void onEntityCollision(Contact contact, Object target) {
+    public void onEntityCollision(Contact contact, Entity entity) {
 
     }
 
     @Override
-    public void onEntityEndCollision(Contact contact, Object target) {
+    public void onEntityEndCollision(Contact contact, Entity entity) {
 
     }
 
     @Override
-    public void onProjectileCollision(Contact contact, Object target) {
+    public void onProjectileCollision(Contact contact, Projectile projectile) {
 
     }
 
     @Override
-    public void onProjectileEndCollision(Contact contact, Object target) {
+    public void onProjectileEndCollision(Contact contact, Projectile projectile) {
 
     }
+
+    @Override
+    protected void setBodyDefValues() {
+        this.radius = 2f;
+        this.defFric = 0.1f;
+        this.defDens = 0.1f;
+        this.defRest = 0f;
+    }
+
 }

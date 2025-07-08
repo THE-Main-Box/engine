@@ -99,8 +99,6 @@ public abstract class Projectile implements CustomPool.Poolable {
      * @param stickOnCeiling              trava o eixo Y quando detectamos uma colisão vinda da parte de cima do projétil
      * @param stickOnGround               trava o eixo Y quando detectamos uma colisão vinda da parte de baixo do projétil
      * @param affectedByGravity           se o projétil é afetado ou não pela constante da gravidade
-     * @param collideWithItself           se o projétil pode colidir com outros do mesmo tipo que o dele
-     * @param collideWithOtherProjectiles se o projétil pode colidir com outros projéteis que não são do mesmo tipo
      * @param canRotate                   se o projétil pode rotacionar por conta própria
      * @param bounceX                     constante de restituição do eixo X pra ambiente
      * @param bounceY                     constante de restituição do eixo Y pra ambiente
@@ -111,8 +109,6 @@ public abstract class Projectile implements CustomPool.Poolable {
         boolean stickOnCeiling,
         boolean stickOnGround,
         boolean affectedByGravity,
-        boolean collideWithItself,
-        boolean collideWithOtherProjectiles,
         boolean canRotate,
         float bounceX,
         float bounceY
@@ -122,8 +118,6 @@ public abstract class Projectile implements CustomPool.Poolable {
         this.controllerComponent.setStickToCeiling(stickOnCeiling);
         this.controllerComponent.setStickToGround(stickOnGround);
         this.controllerComponent.setAffectedByGravity(affectedByGravity);
-        this.controllerComponent.setColideWithSameTypeProjectiles(collideWithItself);
-        this.controllerComponent.setColideWithOtherProjectiles(collideWithOtherProjectiles);
         this.controllerComponent.setCanRotate(canRotate);
 
         this.controllerComponent.setBounceX(bounceX);
@@ -134,13 +128,13 @@ public abstract class Projectile implements CustomPool.Poolable {
 
     public abstract void onEnvironmentEndCollision(Contact contact, Object target);
 
-    public abstract void onEntityCollision(Contact contact, Object target);
+    public abstract void onEntityCollision(Contact contact, Entity entity);
 
-    public abstract void onEntityEndCollision(Contact contact, Object target);
+    public abstract void onEntityEndCollision(Contact contact, Entity entity);
 
-    public abstract void onProjectileCollision(Contact contact, Object target);
+    public abstract void onProjectileCollision(Contact contact, Projectile projectile);
 
-    public abstract void onProjectileEndCollision(Contact contact, Object target);
+    public abstract void onProjectileEndCollision(Contact contact, Projectile projectile);
 
     /// Iniciamos os valores padrão da body, mas cada projétil implementa por conta própria
     protected abstract void setBodyDefValues();
@@ -151,7 +145,6 @@ public abstract class Projectile implements CustomPool.Poolable {
             world,
             new Vector2(x, y),
             radius,
-            r,
             BodyDef.BodyType.DynamicBody,
             defDens, // density
             defFric,   // friction
@@ -164,8 +157,8 @@ public abstract class Projectile implements CustomPool.Poolable {
 
     public void update(float deltaTime) {
         updateComponents(deltaTime);
-        controllerComponent.resetCollisionCounters();
     }
+
 
     /// Atualiza todos os componentes existentes dentro do objeto
     private void updateComponents(float delta) {
@@ -296,8 +289,17 @@ public abstract class Projectile implements CustomPool.Poolable {
         this.y = y;
     }
 
-    public float getR() {
-        return r;
+    public float getRotation(){
+        return (float) Math.toRadians(r);
+    }
+
+    public void setAndUpdateRotation(float r){
+        setR(r);
+        updateBodyRotation();
+    }
+
+    public void updateBodyRotation(){
+        this.body.setTransform(this.body.getPosition(), getRotation());
     }
 
     public void setR(float r) {
@@ -315,5 +317,4 @@ public abstract class Projectile implements CustomPool.Poolable {
     public void addComponent(Component comp) {
         components.add(comp);
     }
-
 }

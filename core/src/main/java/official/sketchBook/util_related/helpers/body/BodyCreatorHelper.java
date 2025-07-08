@@ -35,17 +35,15 @@ public class BodyCreatorHelper {
      * @param world mundo físico de onde a body será instanciada
      * @param position posição na qual a body estará presente (será convertida para metros automaticamente)
      * @param radius raio da body
-     * @param angle ângulo de criação
      * @param type tipo do corpo a ser criado
      * @param density densidade do corpo em questão
      * @param friction fricção do corpo com o mundo ao redor
      * @param restitution o quanto que a body poderá saltar após uma colisão, uma restituição de movimento
      */
-    public static Body createCircle(World world, Vector2 position, float radius, float angle, BodyDef.BodyType type, float density, float friction, float restitution) {
+    public static Body createCircle(World world, Vector2 position, float radius, BodyDef.BodyType type, float density, float friction, float restitution) {
         BodyDef bodyDef = new BodyDef(); //Criamos os valores padrão para o corpo
         bodyDef.type = type; //Definimos o tipo do corpo
         bodyDef.position.set(position.x / PPM, position.y / PPM); //Definimos a posição dentro do world
-        bodyDef.angle = (float) (Math.toRadians(angle));
 
         Body body = world.createBody(bodyDef);//Criamos a body
 

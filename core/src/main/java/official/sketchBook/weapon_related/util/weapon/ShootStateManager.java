@@ -37,10 +37,6 @@ public class ShootStateManager extends RangeWeaponBaseManager {
     }
 
     public void update(float delta) {
-        fireCooldownTimer.update(delta);
-        inputBufferTimer.update(delta);
-        stateBufferTimer.update(delta);
-
         updateFireCooldownTimer();
 
         inputBufferTimer.resetByFinished();
@@ -48,6 +44,10 @@ public class ShootStateManager extends RangeWeaponBaseManager {
         fireCooldownTimer.resetByFinished();
 
         updateInputBuffer();
+
+        fireCooldownTimer.update(delta);
+        inputBufferTimer.update(delta);
+        stateBufferTimer.update(delta);
     }
 
     private void updateInputBuffer(){

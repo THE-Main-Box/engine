@@ -41,9 +41,6 @@ public class GlobalProjectilePool {
 
     /// Atualiza projéteis e realiza limpezas periódicas
     public void update(float delta) {
-        poolCleanTimer.update(delta);
-        poolDeleteTimer.update(delta);
-
         if (poolCleanTimer.isFinished()) {
             cleanPools();
             poolCleanTimer.reset();
@@ -53,6 +50,11 @@ public class GlobalProjectilePool {
             deleteEmptyPools();
             poolDeleteTimer.reset();
         }
+
+        //Atualizamos os temporizadores depois de tudo para garantir que não irá haver perda de tempo devido a
+        //  um reset feito no tempo errado
+        poolCleanTimer.update(delta);
+        poolDeleteTimer.update(delta);
 
         updateProjectiles(delta);
     }

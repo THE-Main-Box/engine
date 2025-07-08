@@ -141,7 +141,8 @@ public class Shotgun extends RangeWeapon<Shotgun> {
 
         aniPlayer.addAnimation(shoot, Arrays.asList(
             new Sprite(0, 0, 0.1f),
-            new Sprite(1, 0, 0.05f)
+            new Sprite(1, 0, 0.05f),
+            new Sprite(1, 2, 0.1f)
         ));
 
         aniPlayer.addAnimation(recharge, Arrays.asList(

@@ -65,14 +65,14 @@ public class JumpComponent implements Component {
 
     @Override
     public void update(float delta) {
-        jumpBufferTimer.update(delta);
-        coyoteTimer.update(delta);
-        landBuffer.update(delta);
-
         updateJump();
         applyEnhancedGravity();
 
         updateLandedFlag();
+
+        jumpBufferTimer.update(delta);
+        coyoteTimer.update(delta);
+        landBuffer.update(delta);
     }
 
     private void updateLandedFlag() {

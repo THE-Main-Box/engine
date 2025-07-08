@@ -2,45 +2,46 @@ package official.sketchBook.components_related.toUse_component.projectile;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.WorldManifold;
 import official.sketchBook.components_related.base_component.Component;
 import official.sketchBook.components_related.toUse_component.util.TimerComponent;
 import official.sketchBook.gameObject_related.base_model.Entity;
 import official.sketchBook.projectiles_related.Projectile;
 import official.sketchBook.util_related.enumerators.directions.Direction;
+import official.sketchBook.util_related.helpers.DirectionHelper;
+
+import static official.sketchBook.util_related.helpers.DirectionHelper.getDirection;
 
 public class ProjectileControllerComponent implements Component {
+
     /// Projétil a quem pertence esse controlador
     private final Projectile projectile;
 
     /// Temporizador do tempo de vida do projétil
     private final TimerComponent activeTimeLimit;
 
-    private boolean colideWithSameTypeProjectiles = false;
-    private boolean colideWithOtherProjectiles = false;
-
-    /// Deve travar todos os eixos quando houver uma colisão
+    /// Controle de travamento por colisão
     private boolean stickOnCollision = false;
-    /// Deve travar o eixo X ao colidir com uma parede
     private boolean stickToWall = false;
-    /// Deve travar o eixo Y ao colidir com o chão
     private boolean stickToGround = false;
-    /// Deve travar o eixo Y ao colidir com o teto
     private boolean stickToCeiling = false;
-    /// Deve ser afetado pela gravidade
-    private boolean affectedByGravity = false;
-    /// Deve ser capaz de alterar a própria rotação
-    private boolean canRotate = false;
 
+    /// Propriedades físicas
+    private boolean affectedByGravity = false;
+    private boolean canRotate = false;
     private boolean lockX = false;
     private boolean lockY = false;
 
-    private int downContact = 0;
-    private int leftContact = 0;
-    private int rightContact = 0;
-    private int upContact = 0;
-
+    /// Coeficiente de restituição
     private float bounceX = 0f;
     private float bounceY = 0f;
+
+    /// Direção da última colisão com uma entidade
+    public Direction entityCollisionDirection;
+    /// Direção da última colisão com o ambiente
+    public Direction enviromentCollisionDirection;
+    /// Direção da última colisão com outro projétil
+    public Direction projectileCollisionDirection;
 
     public ProjectileControllerComponent(Projectile projectile) {
         this.projectile = projectile;
@@ -54,133 +55,118 @@ public class ProjectileControllerComponent implements Component {
         updateLifeTime(delta);
         updateAxisMovementByLockState();
 
+        resetCollisionDirections();
     }
 
     /// Atualiza o estado de ativo com base no tempo ativo e incrementa o tempo ativo
     private void updateLifeTime(float delta) {
-
         if (!activeTimeLimit.isRunning()) {
             activeTimeLimit.reset();
             activeTimeLimit.start();
         }
 
-        //Caso tenha acabado
         if (activeTimeLimit.isFinished()) {
-            //paramos e resetamos o componente de tempo de vida
             activeTimeLimit.stop();
             activeTimeLimit.reset();
-
-            projectile.release();//matamos o projétil
+            projectile.release(); // mata o projétil
         }
 
-        //Atualizamos o temporizador
         activeTimeLimit.update(delta);
+
     }
 
-    /// Valida se algum dos eixos estão travados,
-    /// se houver verificamos qual deles está e assim atualizamos o valor deles corretamente
+    private boolean lastLockX = false;
+    private boolean lastLockY = false;
+
+    /// Aplica travamentos de movimento com base nos eixos
     private void updateAxisMovementByLockState() {
+        // Checa se há mudança de estado
+        if (lockX != lastLockX || lockY != lastLockY) {
+            lastLockX = lockX;
+            lastLockY = lockY;
 
-        // verificamos há alguma alteração no lockX e lockY
-        if (lockX || lockY) {
+            Vector2 cachedVelocity = projectile.getBody().getLinearVelocity();
+
             projectile.getBody().setLinearVelocity(
-                lockX ? 0f : projectile.getBody().getLinearVelocity().x,
-                lockY ? 0f : projectile.getBody().getLinearVelocity().y
+                lockX ? 0f : cachedVelocity.x,
+                lockY ? 0f : cachedVelocity.y
             );
-
-            //determinamos se podemos permitir o efeito de gravidade caso sejamos afetados
-            // e não estejamos a travar o eixo vertical
-            projectile.getPhysicsComponent().setAffectedByGravity(affectedByGravity && !lockY);
         }
+
+        // Sempre aplica (confia que a setter interna já tem controle)
+        projectile.getPhysicsComponent().setAffectedByGravity(affectedByGravity && !lockY);
     }
 
-
+    /// Reinicializa projétil para reuso
     public void reset() {
-        if(projectile.isReset()) return;
+        if (projectile.isReset()) return;
 
-        resetCollisionCounters();
+        resetCollisionDirections();
+        unlockAllAxes();
 
-        this.lockX = false;
-        this.lockY = false;
-
-        //paramos e resetamos o tempo de vida caso estejamos desativando o projétil
-        this.activeTimeLimit.stop();
-        this.activeTimeLimit.reset();
+        activeTimeLimit.stop();
+        activeTimeLimit.reset();
 
         projectile.getPhysicsComponent().resetMovement();
-
-        projectile.getBody().setTransform(
-            projectile.getX(),
-            projectile.getY(),
-            0
-        );
-
+        projectile.getBody().setTransform(projectile.getX(), projectile.getY(), projectile.getRotation());
     }
 
-    /// Zeramos o contador de colisões, tornando assim o projétil limpo de colisões
-    public void resetCollisionCounters() {
-        this.downContact = 0;
-        this.upContact = 0;
-        this.leftContact = 0;
-        this.rightContact = 0;
+    protected void resetCollisionDirections(){
+        projectileCollisionDirection =
+            enviromentCollisionDirection =
+                entityCollisionDirection = Direction.STILL;
     }
+
+    // ----- COLISÕES COM O AMBIENTE -----
 
     public void onHitEnvironment(Object target, Contact contact) {
         if (!projectile.isActive()) return;
 
-        Direction direction = resolveCollisionDirection();
-        updateAxisStatesByCollision();
+        updateAxisStatesByCollision(entityCollisionDirection);
+        bounceFromEnvironment(entityCollisionDirection);
 
-        bounceFromEnvironment(direction);
         projectile.onEnvironmentCollision(contact, target);
     }
 
     public void onLeaveEnvironment(Object target, Contact contact) {
         if (!projectile.isActive()) return;
 
-        updateAxisStatesByCollision();
-
+        updateAxisStatesByCollision(enviromentCollisionDirection);
         projectile.onEnvironmentEndCollision(contact, target);
     }
 
+    // ----- COLISÕES COM ENTIDADES -----
 
-    public void onHitEntity(Object target, Contact contact) {
+    public void onHitEntity(Entity entity, Contact contact) {
         if (!projectile.isActive()) return;
 
-        Direction direction = resolveCollisionDirection();
+        bounceFromEntity(entityCollisionDirection, entity.getBody().getLinearVelocity());
+        projectile.onEntityCollision(contact, entity);
+    }
 
-        if (target instanceof Entity entity) {
-            bounceFromEntity(direction, entity.getBody().getLinearVelocity());
-            projectile.onEntityCollision(contact, entity);
-        }
+    public void onLeaveEntity(Entity entity, Contact contact) {
+        if (!projectile.isActive()) return;
+
+        projectile.onEntityEndCollision(contact, entity);
+    }
+
+    // ----- COLISÕES COM OUTROS PROJÉTEIS -----
+
+    public void onHitProjectile(Projectile other, Contact contact) {
+        if (!projectile.isActive()) return;
+
+        bounceFromProjectile(getCollisionDirection(contact), other.getBody().getLinearVelocity());
+        projectile.onProjectileCollision(contact, other);
 
     }
 
-    public void onLeaveEntity(Object target, Contact contact) {
+    public void onLeaveProjectile(Projectile other, Contact contact) {
         if (!projectile.isActive()) return;
 
-        projectile.onEntityEndCollision(contact, target);
+        projectile.onProjectileEndCollision(contact, other);
     }
 
-
-    public void onHitProjectile(Object target, Contact contact) {
-        if (!projectile.isActive()) return;
-
-        Direction direction = resolveCollisionDirection();
-
-        if (target instanceof Projectile targetProjectile) {
-            Vector2 targetVelocity = targetProjectile.getBody().getLinearVelocity();
-
-            bounceFromProjectile(direction, targetVelocity);
-            projectile.onProjectileCollision(contact, target);
-        }
-    }
-
-    public void onLeaveProjectile(Object target, Contact contact) {
-        if (!projectile.isActive()) return;
-
-        projectile.onProjectileEndCollision(contact, target);
-    }
+    // ----- BOUNCE -----
 
     public void bounceFromEnvironment(Direction direction) {
         applyBounceStatic(direction, bounceX, bounceY);
@@ -190,59 +176,61 @@ public class ProjectileControllerComponent implements Component {
         applyBounceDynamic(direction, entityVelocity, bounceX, bounceY);
     }
 
-    public void bounceFromProjectile(Direction direction, Vector2 otherProjectileVelocity) {
-        applyBounceDynamic(direction, otherProjectileVelocity, bounceX, bounceY);
+    public void bounceFromProjectile(Direction direction, Vector2 otherVelocity) {
+        applyBounceDynamic(direction, otherVelocity, bounceX, bounceY);
     }
 
-    //TODO:impedir o efeito de colisão caso não possamos nos mover no eixo a ser afetado
-
-    private void applyBounceStatic(Direction direction, float bounceX, float bounceY) {
+    // 🔁 SUGESTÃO: mover para um utilitário físico (e.g., BounceHandler)
+    private void applyBounceStatic(Direction direction, float bx, float by) {
         Vector2 v = projectile.getBody().getLinearVelocity().cpy();
 
-        if ((direction.isLeft() || direction.isRight()) && !lockX && bounceX != 0f) {
-            v.x = -v.x * bounceX;
+        if ((direction.isLeft() || direction.isRight()) && !lockX && bx != 0f) {
+            v.x = -v.x * bx;
         }
-        if ((direction.isUp() || direction.isDown()) && !lockY && bounceY != 0f) {
-            v.y = -v.y * bounceY;
+        if ((direction.isUp() || direction.isDown()) && !lockY && by != 0f) {
+            v.y = -v.y * by;
         }
-
 
         projectile.getBody().setLinearVelocity(v);
     }
 
-    private void applyBounceDynamic(Direction direction, Vector2 targetVelocity, float bounceX, float bounceY) {
+    // 🔁 SUGESTÃO: mover para um utilitário físico (e.g., BounceHandler)
+    private void applyBounceDynamic(Direction direction, Vector2 otherVel, float bx, float by) {
         Vector2 selfVel = projectile.getBody().getLinearVelocity();
-        Vector2 rel = selfVel.cpy().sub(targetVelocity);
+        Vector2 rel = selfVel.cpy().sub(otherVel);
 
-        // idem: só inverte e multiplica se coeficiente não for zero
-        if ((direction.isLeft() || direction.isRight()) && !lockX && bounceX > 0f) {
-            rel.x = -rel.x * bounceX;
+        if ((direction.isLeft() || direction.isRight()) && !lockX && bx > 0f) {
+            rel.x = -rel.x * bx;
         }
-        if ((direction.isUp() || direction.isDown()) && !lockY && bounceY > 0f) {
-            rel.y = -rel.y * bounceY;
+        if ((direction.isUp() || direction.isDown()) && !lockY && by > 0f) {
+            rel.y = -rel.y * by;
         }
 
-        // volta para o referencial do alvo
-        Vector2 finalVel = rel.add(targetVelocity);
-        projectile.getBody().setLinearVelocity(finalVel);
+        projectile.getBody().setLinearVelocity(rel.add(otherVel));
     }
 
-    private Direction resolveCollisionDirection() {
-        if (downContact > 0) return Direction.DOWN;
-        if (upContact > 0) return Direction.UP;
-        if (leftContact > 0) return Direction.LEFT;
-        if (rightContact > 0) return Direction.RIGHT;
-        return Direction.STILL;
+    /// Obtemos a direção da colisão
+    public Direction getCollisionDirection(Contact contact) {
+        //Pegamos a quantidade de pontos de contato a serem considerados
+        final Vector2[] points = contact.getWorldManifold().getPoints();
+        if (points == null || points.length == 0) return Direction.STILL;
+
+        return getDirection(projectile.getBody().getPosition(), points[0], projectile.getRadius() * 0.1f);
     }
 
-    private void updateAxisStatesByCollision() {
+
+    /// Atualiza os eixos que devem ser travados com base na direção de colisão
+    private void updateAxisStatesByCollision(Direction direction) {
         if (stickOnCollision) {
-            setLockState(collidingAny());
-        } else {
-            lockX = stickToWall && (leftContact > 0 || rightContact > 0);
-            lockY = (stickToGround && downContact > 0) || (stickToCeiling && upContact > 0);
+            lockAllAxes();
+            return;
         }
+
+        lockX = stickToWall && (direction == Direction.LEFT || direction == Direction.RIGHT);
+        lockY = (stickToGround && direction == Direction.DOWN) || (stickToCeiling && direction == Direction.UP);
     }
+
+    // ----- LOCK CONTROLS -----
 
     public void lockAllAxes() {
         this.lockX = true;
@@ -254,18 +242,24 @@ public class ProjectileControllerComponent implements Component {
         this.lockY = false;
     }
 
-    /// Atualiza a posição do projétil e o lança para atingir um deslocamento no tempo desejado
+    private void setLockState(boolean state) {
+        if (state) lockAllAxes();
+        else unlockAllAxes();
+    }
+
+    // ----- DISPARO -----
+
     public void launch(Vector2 displacement, float timeSeconds) {
         projectile.setActive(true);
         projectile.getOwnerPool().addToActive(projectile);
 
-        // Posiciona o projétil corretamente
-        projectile.getPhysicsComponent().getBody().setTransform(projectile.getX(), projectile.getY(), 0f);
-        projectile.getPhysicsComponent().getBody().setLinearVelocity(0, 0); // reseta a velocidade
+        projectile.getPhysicsComponent().getBody().setTransform(projectile.getX(), projectile.getY(), projectile.getRotation());
+        projectile.getPhysicsComponent().getBody().setLinearVelocity(0, 0);
 
-        // Aplica o impulso calculado para atingir o deslocamento no tempo desejado
         projectile.getPhysicsComponent().applyTimedTrajectory(displacement, timeSeconds);
     }
+
+    // ----- GETTERS/SETTERS -----
 
     public Projectile getProjectile() {
         return projectile;
@@ -275,105 +269,42 @@ public class ProjectileControllerComponent implements Component {
         return canRotate;
     }
 
-    public boolean isColideWithOtherProjectiles() {
-        return colideWithOtherProjectiles;
+    public void setTimeAliveLimit(float seconds) {
+        this.activeTimeLimit.setTargetTime(seconds);
     }
 
-    public void setColideWithOtherProjectiles(boolean colideWithOtherProjectiles) {
-        this.colideWithOtherProjectiles = colideWithOtherProjectiles;
-    }
-
-    public boolean isColideWithSameTypeProjectiles() {
-        return colideWithSameTypeProjectiles;
-    }
-
-    public void setColideWithSameTypeProjectiles(boolean colideWithSameTypeProjectiles) {
-        this.colideWithSameTypeProjectiles = colideWithSameTypeProjectiles;
-    }
-
-    public void setTimeAliveLimit(float targetTime) {
-        this.activeTimeLimit.setTargetTime(targetTime);
-    }
-
-    public void setAffectedByGravity(boolean affectedByGravity) {
-        this.affectedByGravity = affectedByGravity;
-        this.projectile.getPhysicsComponent().setAffectedByGravity(affectedByGravity);
-    }
-
-    public void setStickOnCollision(boolean stickOnCollision) {
-        this.stickOnCollision = stickOnCollision;
-    }
-
-    public void setStickToWall(boolean stickToWall) {
-        this.stickToWall = stickToWall;
-    }
-
-    public void setStickToGround(boolean stickToGround) {
-        this.stickToGround = stickToGround;
-    }
-
-    public void setStickToCeiling(boolean stickToCeiling) {
-        this.stickToCeiling = stickToCeiling;
+    public void setAffectedByGravity(boolean affected) {
+        this.affectedByGravity = affected;
+        this.projectile.getPhysicsComponent().setAffectedByGravity(affected);
     }
 
     public void setCanRotate(boolean canRotate) {
         this.canRotate = canRotate;
-        this.projectile.getBody().setFixedRotation(canRotate);
+        this.projectile.getBody().setFixedRotation(!canRotate);
     }
 
-
-    public void setBounceX(float bounceX) {
-        this.bounceX = bounceX;
+    public void setStickOnCollision(boolean b) {
+        this.stickOnCollision = b;
     }
 
-    public void setBounceY(float bounceY) {
-        this.bounceY = bounceY;
+    public void setStickToWall(boolean b) {
+        this.stickToWall = b;
     }
 
-
-    public void addDownContact() {
-        downContact++;
+    public void setStickToGround(boolean b) {
+        this.stickToGround = b;
     }
 
-    public void addUpContact() {
-        upContact++;
+    public void setStickToCeiling(boolean b) {
+        this.stickToCeiling = b;
     }
 
-    public void addLeftContact() {
-        leftContact++;
+    public void setBounceX(float x) {
+        this.bounceX = x;
     }
 
-    public void addRightContact() {
-        rightContact++;
+    public void setBounceY(float y) {
+        this.bounceY = y;
     }
 
-
-    public void removeDownContact() {
-        downContact = Math.max(0, downContact - 1);
-    }
-
-    public void removeUpContact() {
-        upContact = Math.max(0, upContact - 1);
-    }
-
-    public void removeLeftContact() {
-        leftContact = Math.max(0, leftContact - 1);
-    }
-
-    public void removeRightContact() {
-        rightContact = Math.max(0, rightContact - 1);
-    }
-
-
-    private boolean collidingAny() {
-        return downContact > 0 || upContact > 0 || leftContact > 0 || rightContact > 0;
-    }
-
-    private void setLockState(boolean state) {
-        if (state) {
-            lockAllAxes();
-        } else {
-            unlockAllAxes();
-        }
-    }
 }

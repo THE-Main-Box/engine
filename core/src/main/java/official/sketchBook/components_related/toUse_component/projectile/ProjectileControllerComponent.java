@@ -2,15 +2,17 @@ package official.sketchBook.components_related.toUse_component.projectile;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Contact;
-import com.badlogic.gdx.physics.box2d.WorldManifold;
 import official.sketchBook.components_related.base_component.Component;
 import official.sketchBook.components_related.toUse_component.util.TimerComponent;
 import official.sketchBook.gameObject_related.base_model.Entity;
 import official.sketchBook.projectiles_related.Projectile;
 import official.sketchBook.util_related.enumerators.directions.Direction;
-import official.sketchBook.util_related.helpers.DirectionHelper;
+
+import javax.print.attribute.standard.PagesPerMinute;
 
 import static official.sketchBook.util_related.helpers.DirectionHelper.getDirection;
+import static official.sketchBook.util_related.info.values.constants.GameConstants.Physics.PPM;
+
 
 public class ProjectileControllerComponent implements Component {
 
@@ -111,7 +113,7 @@ public class ProjectileControllerComponent implements Component {
         projectile.getBody().setTransform(projectile.getX(), projectile.getY(), projectile.getRotation());
     }
 
-    protected void resetCollisionDirections(){
+    protected void resetCollisionDirections() {
         projectileCollisionDirection =
             enviromentCollisionDirection =
                 entityCollisionDirection = Direction.STILL;
@@ -155,7 +157,7 @@ public class ProjectileControllerComponent implements Component {
     public void onHitProjectile(Projectile other, Contact contact) {
         if (!projectile.isActive()) return;
 
-        bounceFromProjectile(getCollisionDirection(contact), other.getBody().getLinearVelocity());
+        bounceFromProjectile(projectileCollisionDirection, other.getBody().getLinearVelocity());
         projectile.onProjectileCollision(contact, other);
 
     }
@@ -215,7 +217,13 @@ public class ProjectileControllerComponent implements Component {
         final Vector2[] points = contact.getWorldManifold().getPoints();
         if (points == null || points.length == 0) return Direction.STILL;
 
-        return getDirection(projectile.getBody().getPosition(), points[0], projectile.getRadius() * 0.1f);
+        return getDirection(
+            ((projectile.getX() + projectile.getRadius()) / PPM),
+            ((projectile.getY() + projectile.getRadius()) / PPM),
+            points[0].x,
+            points[0].y,
+            (projectile.getRadius() * 0.1f)
+        );
     }
 
 

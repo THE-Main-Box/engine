@@ -38,7 +38,7 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
             }
         }
 
-        holdingUse = pressed;
+//        holdingUse = pressed;
 
     }
 

@@ -3,6 +3,7 @@ package official.sketchBook.util_related.contactListeners;
 import com.badlogic.gdx.physics.box2d.*;
 import official.sketchBook.gameObject_related.base_model.Entity;
 import official.sketchBook.projectiles_related.Projectile;
+import official.sketchBook.util_related.enumerators.directions.Direction;
 import official.sketchBook.util_related.enumerators.types.FixtType;
 import official.sketchBook.util_related.info.values.FixtureType;
 
@@ -41,25 +42,39 @@ public class ProjectileContactListener implements ContactListener {
     private void handleBegin(Projectile projectile, FixtureType other, Contact contact) {
         if (!projectile.isActive()) return;
 
-        //Chama os métodos desejados relativamente ao contato executado
+        //Chama os métodos desejados relativamente ao contato executado após lidar com a direção da colisão em si
         switch (other.type) {
             case ENVIRONMENT -> {
-                projectile.getControllerComponent().onHitEnvironment(other.owner, contact);
-
                 projectile.getControllerComponent().enviromentCollisionDirection
                     = projectile.getControllerComponent().getCollisionDirection(contact);
+
+                projectile.getControllerComponent().updateAxisStatesByCollision(
+                    projectile.getControllerComponent().enviromentCollisionDirection
+                );
+
+                projectile.getControllerComponent().onHitEnvironment(other.owner, contact);
             }
             case ENTITY -> {
-                projectile.getControllerComponent().onHitEntity((Entity) other.owner, contact);
 
                 projectile.getControllerComponent().entityCollisionDirection
                     = projectile.getControllerComponent().getCollisionDirection(contact);
+
+                projectile.getControllerComponent().updateAxisStatesByCollision(
+                    projectile.getControllerComponent().entityCollisionDirection
+                );
+
+                projectile.getControllerComponent().onHitEntity((Entity) other.owner, contact);
             }
             case PROJECTILE -> {
-                projectile.getControllerComponent().onHitProjectile((Projectile) other.owner, contact);
 
                 projectile.getControllerComponent().projectileCollisionDirection
                     = projectile.getControllerComponent().getCollisionDirection(contact);
+
+                projectile.getControllerComponent().updateAxisStatesByCollision(
+                    projectile.getControllerComponent().projectileCollisionDirection
+                );
+
+                projectile.getControllerComponent().onHitProjectile((Projectile) other.owner, contact);
             }
         }
 
@@ -69,9 +84,18 @@ public class ProjectileContactListener implements ContactListener {
         if (!projectile.isActive()) return;
 
         switch (other.type) {
-            case ENVIRONMENT -> projectile.getControllerComponent().onLeaveEnvironment(other.owner, contact);
-            case ENTITY -> projectile.getControllerComponent().onLeaveEntity((Entity) other.owner, contact);
-            case PROJECTILE -> projectile.getControllerComponent().onLeaveProjectile((Projectile) other.owner, contact);
+            case ENVIRONMENT -> {
+                projectile.getControllerComponent().onLeaveEnvironment(other.owner, contact);
+                projectile.getControllerComponent().enviromentCollisionDirection = Direction.STILL;
+            }
+            case ENTITY -> {
+                projectile.getControllerComponent().onLeaveEntity((Entity) other.owner, contact);
+                projectile.getControllerComponent().entityCollisionDirection = Direction.STILL;
+            }
+            case PROJECTILE -> {
+                projectile.getControllerComponent().onLeaveProjectile((Projectile) other.owner, contact);
+                projectile.getControllerComponent().projectileCollisionDirection = Direction.STILL;
+            }
         }
     }
 

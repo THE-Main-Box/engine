@@ -34,6 +34,10 @@ public class ProjectileControllerComponent implements Component {
     private boolean lockX = false;
     private boolean lockY = false;
 
+    private boolean lastLockX = false;
+    private boolean lastLockY = false;
+
+
     /// Coeficiente de restituição
     private float bounceX = 0f;
     private float bounceY = 0f;
@@ -58,6 +62,8 @@ public class ProjectileControllerComponent implements Component {
         updateAxisMovementByLockState();
 
         resetCollisionDirections();
+
+        System.out.println(lockX + " | " + lockY);
     }
 
     /// Atualiza o estado de ativo com base no tempo ativo e incrementa o tempo ativo
@@ -76,9 +82,6 @@ public class ProjectileControllerComponent implements Component {
         activeTimeLimit.update(delta);
 
     }
-
-    private boolean lastLockX = false;
-    private boolean lastLockY = false;
 
     /// Aplica travamentos de movimento com base nos eixos
     private void updateAxisMovementByLockState() {
@@ -122,40 +125,28 @@ public class ProjectileControllerComponent implements Component {
     // ----- COLISÕES COM O AMBIENTE -----
 
     public void onHitEnvironment(Object target, Contact contact) {
-        if (!projectile.isActive()) return;
-
-        updateAxisStatesByCollision(entityCollisionDirection);
-        bounceFromEnvironment(entityCollisionDirection);
 
         projectile.onEnvironmentCollision(contact, target);
     }
 
     public void onLeaveEnvironment(Object target, Contact contact) {
-        if (!projectile.isActive()) return;
 
-        updateAxisStatesByCollision(enviromentCollisionDirection);
         projectile.onEnvironmentEndCollision(contact, target);
     }
 
     // ----- COLISÕES COM ENTIDADES -----
 
     public void onHitEntity(Entity entity, Contact contact) {
-        if (!projectile.isActive()) return;
-
-        bounceFromEntity(entityCollisionDirection, entity.getBody().getLinearVelocity());
         projectile.onEntityCollision(contact, entity);
     }
 
     public void onLeaveEntity(Entity entity, Contact contact) {
-        if (!projectile.isActive()) return;
-
         projectile.onEntityEndCollision(contact, entity);
     }
 
     // ----- COLISÕES COM OUTROS PROJÉTEIS -----
 
     public void onHitProjectile(Projectile other, Contact contact) {
-        if (!projectile.isActive()) return;
 
         bounceFromProjectile(projectileCollisionDirection, other.getBody().getLinearVelocity());
         projectile.onProjectileCollision(contact, other);
@@ -163,7 +154,6 @@ public class ProjectileControllerComponent implements Component {
     }
 
     public void onLeaveProjectile(Projectile other, Contact contact) {
-        if (!projectile.isActive()) return;
 
         projectile.onProjectileEndCollision(contact, other);
     }
@@ -228,7 +218,7 @@ public class ProjectileControllerComponent implements Component {
 
 
     /// Atualiza os eixos que devem ser travados com base na direção de colisão
-    private void updateAxisStatesByCollision(Direction direction) {
+    public void updateAxisStatesByCollision(Direction direction) {
         if (stickOnCollision) {
             lockAllAxes();
             return;

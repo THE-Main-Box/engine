@@ -7,8 +7,7 @@ import official.sketchBook.components_related.toUse_component.util.TimerComponen
 import official.sketchBook.gameObject_related.base_model.Entity;
 import official.sketchBook.projectiles_related.Projectile;
 import official.sketchBook.util_related.enumerators.directions.Direction;
-
-import javax.print.attribute.standard.PagesPerMinute;
+import official.sketchBook.util_related.info.values.FixtureType;
 
 import static official.sketchBook.util_related.helpers.DirectionHelper.getDirection;
 import static official.sketchBook.util_related.info.values.constants.GameConstants.Physics.PPM;
@@ -42,16 +41,28 @@ public class ProjectileControllerComponent implements Component {
     private float bounceX = 0f;
     private float bounceY = 0f;
 
-    /// Direção da última colisão com uma entidade
-    public Direction entityCollisionDirection;
-    /// Direção da última colisão com o ambiente
-    public Direction enviromentCollisionDirection;
-    /// Direção da última colisão com outro projétil
-    public Direction projectileCollisionDirection;
+    /// Última direção da colisão
+    public Direction lastCollisionDirection;
+
+    /// Último objeto que colidimos junto de seu tipo de objeto
+    public FixtureType lastCollisionWith;
+
+    /// Estamos a acertar alguma coisa
+    public boolean colliding;
+    public boolean processedCollision;
+
+    public Contact lastCollisionContact;
 
     public ProjectileControllerComponent(Projectile projectile) {
         this.projectile = projectile;
         this.activeTimeLimit = new TimerComponent();
+    }
+
+    public void init() {
+        this.lastCollisionDirection = Direction.STILL;
+        this.lastCollisionWith = null;
+        this.colliding = false;
+        this.processedCollision = false;
     }
 
     @Override
@@ -61,9 +72,32 @@ public class ProjectileControllerComponent implements Component {
         updateLifeTime(delta);
         updateAxisMovementByLockState();
 
-        resetCollisionDirections();
+        if (colliding && !processedCollision) {
+            handleBufferedCollision();
+            processedCollision = true;
+        } else if(!colliding && processedCollision){
+            handleEndCollision();
+        }
 
-        System.out.println(lockX + " | " + lockY);
+    }
+
+    private void handleEndCollision(){
+        switch (lastCollisionWith.type) {
+            case PROJECTILE -> onLeaveProjectile((Projectile) lastCollisionWith.owner, lastCollisionContact);
+            case ENTITY -> onLeaveEntity((Entity) lastCollisionWith.owner, lastCollisionContact);
+            case ENVIRONMENT -> onLeaveEnvironment(lastCollisionWith.owner, lastCollisionContact);
+        }
+    }
+
+    private void handleBufferedCollision() {
+        if(lastCollisionWith == null) return;
+        System.out.println("col");
+
+        switch (lastCollisionWith.type) {
+            case PROJECTILE -> onHitProjectile((Projectile) lastCollisionWith.owner, lastCollisionContact);
+            case ENTITY -> onHitEntity((Entity) lastCollisionWith.owner, lastCollisionContact);
+            case ENVIRONMENT -> onHitEnvironment(lastCollisionWith.owner, lastCollisionContact);
+        }
     }
 
     /// Atualiza o estado de ativo com base no tempo ativo e incrementa o tempo ativo
@@ -117,20 +151,19 @@ public class ProjectileControllerComponent implements Component {
     }
 
     protected void resetCollisionDirections() {
-        projectileCollisionDirection =
-            enviromentCollisionDirection =
-                entityCollisionDirection = Direction.STILL;
+        lastCollisionDirection = Direction.STILL;
+        lastCollisionWith = null;
+        colliding = false;
+        processedCollision = false;
     }
 
     // ----- COLISÕES COM O AMBIENTE -----
 
     public void onHitEnvironment(Object target, Contact contact) {
-
         projectile.onEnvironmentCollision(contact, target);
     }
 
     public void onLeaveEnvironment(Object target, Contact contact) {
-
         projectile.onEnvironmentEndCollision(contact, target);
     }
 
@@ -147,29 +180,11 @@ public class ProjectileControllerComponent implements Component {
     // ----- COLISÕES COM OUTROS PROJÉTEIS -----
 
     public void onHitProjectile(Projectile other, Contact contact) {
-
-        bounceFromProjectile(projectileCollisionDirection, other.getBody().getLinearVelocity());
         projectile.onProjectileCollision(contact, other);
-
     }
 
     public void onLeaveProjectile(Projectile other, Contact contact) {
-
         projectile.onProjectileEndCollision(contact, other);
-    }
-
-    // ----- BOUNCE -----
-
-    public void bounceFromEnvironment(Direction direction) {
-        applyBounceStatic(direction, bounceX, bounceY);
-    }
-
-    public void bounceFromEntity(Direction direction, Vector2 entityVelocity) {
-        applyBounceDynamic(direction, entityVelocity, bounceX, bounceY);
-    }
-
-    public void bounceFromProjectile(Direction direction, Vector2 otherVelocity) {
-        applyBounceDynamic(direction, otherVelocity, bounceX, bounceY);
     }
 
     // 🔁 SUGESTÃO: mover para um utilitário físico (e.g., BounceHandler)

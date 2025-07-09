@@ -5,8 +5,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.World;
-import official.sketchBook.screen_related.PlayScreen;
-import official.sketchBook.util_related.enumerators.types.FixtType;
+import official.sketchBook.util_related.enumerators.types.ObjectType;
 import official.sketchBook.util_related.enumerators.types.TileType;
 import official.sketchBook.util_related.info.values.FixtureType;
 
@@ -110,7 +109,7 @@ public class RoomBodyDataConversor {
                     Body body = createBoxBodyForTiles(world, currentType, x, y, width, height, rows);
 
                     for(Fixture fix : body.getFixtureList()){
-                        fix.setUserData(new FixtureType(FixtType.ENVIRONMENT, currentType));
+                        fix.setUserData(new FixtureType(ObjectType.ENVIRONMENT, currentType));
                     }
 
                     bodies.add(body);

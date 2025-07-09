@@ -1,8 +1,9 @@
 package official.sketchBook.util_related.enumerators.types;
 
-public enum FixtType {
+public enum ObjectType {
     PROJECTILE,
     ENTITY,
     ENVIRONMENT,
+    NONE,
     // etc...
 }

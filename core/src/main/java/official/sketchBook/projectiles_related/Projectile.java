@@ -11,7 +11,7 @@ import official.sketchBook.components_related.toUse_component.projectile.Project
 import official.sketchBook.customComponents_related.CustomPool;
 import official.sketchBook.gameObject_related.base_model.Entity;
 import official.sketchBook.projectiles_related.util.ProjectilePool;
-import official.sketchBook.util_related.enumerators.types.FixtType;
+import official.sketchBook.util_related.enumerators.types.ObjectType;
 import official.sketchBook.util_related.helpers.body.BodyCreatorHelper;
 import official.sketchBook.util_related.info.values.FixtureType;
 
@@ -89,6 +89,8 @@ public abstract class Projectile implements CustomPool.Poolable {
     public void init(Entity owner) {
         this.owner = owner;
         this.reset = false;
+
+        this.controllerComponent.init();
     }
 
     /**
@@ -151,7 +153,7 @@ public abstract class Projectile implements CustomPool.Poolable {
             defRest // restitution
         );
         body.setBullet(true); // Importante para colisões de alta velocidade
-        body.setUserData(new FixtureType(FixtType.PROJECTILE, this));
+        body.setUserData(new FixtureType(ObjectType.PROJECTILE, this));
 
     }
 

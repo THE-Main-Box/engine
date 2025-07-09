@@ -91,7 +91,6 @@ public class ProjectileControllerComponent implements Component {
 
     private void handleBufferedCollision() {
         if(lastCollisionWith == null) return;
-        System.out.println("col");
 
         switch (lastCollisionWith.type) {
             case PROJECTILE -> onHitProjectile((Projectile) lastCollisionWith.owner, lastCollisionContact);
@@ -160,6 +159,7 @@ public class ProjectileControllerComponent implements Component {
     // ----- COLISÕES COM O AMBIENTE -----
 
     public void onHitEnvironment(Object target, Contact contact) {
+
         projectile.onEnvironmentCollision(contact, target);
     }
 

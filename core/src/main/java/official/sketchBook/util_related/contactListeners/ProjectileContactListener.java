@@ -32,7 +32,6 @@ public class ProjectileContactListener implements ContactListener {
         if(tagA.type == ObjectType.PROJECTILE && tagA.owner instanceof Projectile projectile) {
             if (begin) handleBegin(projectile, tagB, contact);
             else handleEnd(projectile, tagB, contact);
-            return;
         }
 
         if(tagB.type == ObjectType.PROJECTILE && tagB.owner instanceof Projectile projectile) {

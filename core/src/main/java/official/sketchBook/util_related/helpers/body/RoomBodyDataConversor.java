@@ -107,10 +107,7 @@ public class RoomBodyDataConversor {
 
                     // Cria o corpo físico somente para tiles do mesmo tipo
                     Body body = createBoxBodyForTiles(world, currentType, x, y, width, height, rows);
-
-                    for(Fixture fix : body.getFixtureList()){
-                        fix.setUserData(new FixtureType(ObjectType.ENVIRONMENT, currentType));
-                    }
+                    body.setUserData(new FixtureType(ObjectType.ENVIRONMENT, currentType));
 
                     bodies.add(body);
                 }

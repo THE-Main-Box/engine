@@ -12,6 +12,7 @@ import official.sketchBook.components_related.toUse_component.entity.PlayerAnima
 import official.sketchBook.components_related.toUse_component.entity.PlayerControllerComponent;
 import official.sketchBook.components_related.toUse_component.object.JumpComponent;
 import official.sketchBook.gameObject_related.base_model.ArmedEntity;
+import official.sketchBook.gameObject_related.base_model.Entity;
 import official.sketchBook.projectiles_related.emitters.Emitter;
 import official.sketchBook.room_related.model.PlayableRoom;
 import official.sketchBook.util_related.enumerators.types.ObjectType;

@@ -26,6 +26,8 @@ public class ProjectileControllerComponent implements Component {
     private boolean stickToWall = false;
     private boolean stickToGround = false;
     private boolean stickToCeiling = false;
+    private boolean continuousCollisionDetection = false;
+    private boolean manageExitCollision = false;
 
     /// Propriedades físicas
     private boolean affectedByGravity = false;
@@ -43,15 +45,19 @@ public class ProjectileControllerComponent implements Component {
 
     /// Última direção da colisão
     public Direction lastCollisionDirection;
-
     /// Último objeto que colidimos junto de seu tipo de objeto
     public FixtureType lastCollisionWith;
-
     /// Estamos a acertar alguma coisa
     public boolean colliding;
-    public boolean processedCollision;
-
+    /// Último contato de colisão
     public Contact lastCollisionContact;
+
+    /// Última direção da colisão que acabamos de sair
+    public Direction lastExitCollisionDirection;
+    /// Último tipo objeto do qual saímos da sua colisão junto de seu tipo de objeto
+    public FixtureType lastExitCollisionWith;
+    /// Última contato de saída
+    public Contact lastExitCollisionContact;
 
     public ProjectileControllerComponent(Projectile projectile) {
         this.projectile = projectile;
@@ -60,9 +66,14 @@ public class ProjectileControllerComponent implements Component {
 
     public void init() {
         this.lastCollisionDirection = Direction.STILL;
+        this.lastCollisionContact = null;
         this.lastCollisionWith = null;
         this.colliding = false;
-        this.processedCollision = false;
+
+        this.lastExitCollisionDirection = Direction.STILL;
+        this.lastExitCollisionContact = null;
+        this.lastExitCollisionWith = null;
+
     }
 
     @Override
@@ -72,24 +83,19 @@ public class ProjectileControllerComponent implements Component {
         updateLifeTime(delta);
         updateAxisMovementByLockState();
 
-        if (colliding && !processedCollision) {
-            handleBufferedCollision();
-            processedCollision = true;
-        } else if(!colliding && processedCollision){
-            handleEndCollision();
-        }
-
     }
 
-    private void handleEndCollision(){
-        switch (lastCollisionWith.type) {
-            case PROJECTILE -> onLeaveProjectile((Projectile) lastCollisionWith.owner, lastCollisionContact);
-            case ENTITY -> onLeaveEntity((Entity) lastCollisionWith.owner, lastCollisionContact);
-            case ENVIRONMENT -> onLeaveEnvironment(lastCollisionWith.owner, lastCollisionContact);
+    public void handleBufferedEndCollision(){
+        if(lastExitCollisionWith == null) return;
+
+        switch (lastExitCollisionWith.type) {
+            case PROJECTILE -> onLeaveProjectile((Projectile) lastExitCollisionWith.owner, lastExitCollisionContact);
+            case ENTITY -> onLeaveEntity((Entity) lastExitCollisionWith.owner, lastExitCollisionContact);
+            case ENVIRONMENT -> onLeaveEnvironment(lastExitCollisionWith.owner, lastExitCollisionContact);
         }
     }
 
-    private void handleBufferedCollision() {
+    public void handleBufferedCollision() {
         if(lastCollisionWith == null) return;
 
         switch (lastCollisionWith.type) {
@@ -153,13 +159,11 @@ public class ProjectileControllerComponent implements Component {
         lastCollisionDirection = Direction.STILL;
         lastCollisionWith = null;
         colliding = false;
-        processedCollision = false;
     }
 
     // ----- COLISÕES COM O AMBIENTE -----
 
     public void onHitEnvironment(Object target, Contact contact) {
-
         projectile.onEnvironmentCollision(contact, target);
     }
 
@@ -320,4 +324,19 @@ public class ProjectileControllerComponent implements Component {
         this.bounceY = y;
     }
 
+    public boolean isContinuousCollisionDetection() {
+        return continuousCollisionDetection;
+    }
+
+    public void setContinuousCollisionDetection(boolean continuousCollisionDetection) {
+        this.continuousCollisionDetection = continuousCollisionDetection;
+    }
+
+    public boolean isManageExitCollision() {
+        return manageExitCollision;
+    }
+
+    public void setManageExitCollision(boolean manageExitCollision) {
+        this.manageExitCollision = manageExitCollision;
+    }
 }

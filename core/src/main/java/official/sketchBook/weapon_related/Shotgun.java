@@ -87,11 +87,6 @@ public class Shotgun extends RangeWeapon<Shotgun> {
 
     @Override
     public void performShoot() {
-        aniPlayer.playAnimation(shoot);
-        aniPlayer.setAutoUpdateAni(true);
-        aniPlayer.setAnimationLooping(false);
-        aniPlayer.setAniTick(0);
-
         if (weaponStatus.ammo <= 0) {
             dealEmptyAmmoOnShoot();
             return;
@@ -101,6 +96,11 @@ public class Shotgun extends RangeWeapon<Shotgun> {
         if (projectileType.equals(SlugProjectile.class)) {
             slugShot();
         }
+
+        aniPlayer.playAnimation(shoot);
+        aniPlayer.setAutoUpdateAni(true);
+        aniPlayer.setAnimationLooping(false);
+        aniPlayer.setAniTick(0);
     }
 
     @Override
@@ -110,7 +110,7 @@ public class Shotgun extends RangeWeapon<Shotgun> {
 
     /// Tiro único
     private void slugShot() {
-        if (!canShoot()) return;
+        if (!shootStateManager.canShoot()) return;
 
         Projectile p = projectileEmitter.obtain(
             getProjectileSpawnPosition(owner.isFacingForward() ? Direction.RIGHT : Direction.LEFT)

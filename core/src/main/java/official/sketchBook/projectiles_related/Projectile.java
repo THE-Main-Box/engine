@@ -112,14 +112,18 @@ public abstract class Projectile implements CustomPool.Poolable {
         boolean stickOnGround,
         boolean affectedByGravity,
         boolean canRotate,
+        boolean manageExit,
+        boolean continuousCollisionCheck,
         float bounceX,
         float bounceY
     ) {
+        this.controllerComponent.setContinuousCollisionDetection(continuousCollisionCheck);
+        this.controllerComponent.setManageExitCollision(manageExit);
+        this.controllerComponent.setAffectedByGravity(affectedByGravity);
         this.controllerComponent.setStickOnCollision(stickOnCollision);
-        this.controllerComponent.setStickToWall(stickOnWall);
         this.controllerComponent.setStickToCeiling(stickOnCeiling);
         this.controllerComponent.setStickToGround(stickOnGround);
-        this.controllerComponent.setAffectedByGravity(affectedByGravity);
+        this.controllerComponent.setStickToWall(stickOnWall);
         this.controllerComponent.setCanRotate(canRotate);
 
         this.controllerComponent.setBounceX(bounceX);

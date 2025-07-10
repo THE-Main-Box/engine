@@ -93,7 +93,7 @@ public class ShootStateManager extends RangeWeaponBaseManager {
         weaponStatus.ammo -= weaponStatus.ammoCost;
     }
 
-    private boolean canShoot() {
+    public boolean canShoot() {
         return rangeCapableWeapon.canShoot() && !isCoolingDown() && weaponStatus.ammo > 0;
     }
 

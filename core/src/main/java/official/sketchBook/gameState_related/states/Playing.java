@@ -14,6 +14,7 @@ import official.sketchBook.util_related.contactListeners.ProjectileContactListen
 import official.sketchBook.util_related.enumerators.states.GameState;
 import official.sketchBook.util_related.helpers.HelpMethods;
 import official.sketchBook.util_related.helpers.MultiContactListener;
+import official.sketchBook.util_related.registers.ProjectileCollisionRegister;
 
 import static official.sketchBook.screen_related.PlayScreen.*;
 import static official.sketchBook.util_related.helpers.HelpMethods.handleContactListener;
@@ -63,6 +64,7 @@ public class Playing extends State implements StateMethods {
         }
 
         objectManager.syncObjectsBodies();
+        ProjectileCollisionRegister.update();
 
         HelpMethods.updateCameraMovementParams(gameCameraManager, worldWidth, worldHeight);
         gameCameraManager.setEase(0.1f, 0.5f, 1f);

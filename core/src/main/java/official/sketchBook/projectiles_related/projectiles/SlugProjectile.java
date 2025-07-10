@@ -9,7 +9,7 @@ public class SlugProjectile extends Projectile {
     public SlugProjectile(World world) {
         super(world);
 
-        this.setLifeTime(7);
+        this.setLifeTime(70);
 
         this.initBodyBehavior(
             true,
@@ -20,6 +20,7 @@ public class SlugProjectile extends Projectile {
             false,
             true,
             true,
+            false,
             0f,
             0f
         );
@@ -61,9 +62,9 @@ public class SlugProjectile extends Projectile {
     @Override
     protected void setBodyDefValues() {
         this.radius = 2f;
-        this.defFric = 0.1f;
+        this.defFric = 0f;
+        this.defRest = 0f;
         this.defDens = 0.1f;
-        this.defRest = 1f;
     }
 
 }

@@ -114,13 +114,15 @@ public abstract class Projectile implements CustomPool.Poolable {
         boolean canRotate,
         boolean manageExit,
         boolean continuousCollisionCheck,
+        boolean sensorProjectile,
         float bounceX,
         float bounceY
     ) {
         this.controllerComponent.setContinuousCollisionDetection(continuousCollisionCheck);
-        this.controllerComponent.setManageExitCollision(manageExit);
         this.controllerComponent.setAffectedByGravity(affectedByGravity);
         this.controllerComponent.setStickOnCollision(stickOnCollision);
+        this.controllerComponent.setSensorProjectile(sensorProjectile);
+        this.controllerComponent.setManageExitCollision(manageExit);
         this.controllerComponent.setStickToCeiling(stickOnCeiling);
         this.controllerComponent.setStickToGround(stickOnGround);
         this.controllerComponent.setStickToWall(stickOnWall);
@@ -157,6 +159,7 @@ public abstract class Projectile implements CustomPool.Poolable {
             defRest // restitution
         );
         body.setBullet(true); // Importante para colisões de alta velocidade
+        body.setSleepingAllowed(true);
         body.setUserData(new FixtureType(ObjectType.PROJECTILE, this));
 
     }

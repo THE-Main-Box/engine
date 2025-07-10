@@ -2,6 +2,7 @@ package official.sketchBook.components_related.toUse_component.projectile;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import official.sketchBook.components_related.base_component.Component;
 import official.sketchBook.components_related.toUse_component.util.TimerComponent;
 import official.sketchBook.gameObject_related.base_model.Entity;
@@ -28,6 +29,7 @@ public class ProjectileControllerComponent implements Component {
     private boolean stickToCeiling = false;
     private boolean continuousCollisionDetection = false;
     private boolean manageExitCollision = false;
+    private boolean sensorProjectile = false;
 
     /// Propriedades físicas
     private boolean affectedByGravity = false;
@@ -334,6 +336,17 @@ public class ProjectileControllerComponent implements Component {
 
     public boolean isManageExitCollision() {
         return manageExitCollision;
+    }
+
+    public boolean isSensorProjectile() {
+        return sensorProjectile;
+    }
+
+    public void setSensorProjectile(boolean sensorProjectile) {
+        this.sensorProjectile = sensorProjectile;
+        for(Fixture fix : projectile.getBody().getFixtureList()){
+            fix.setSensor(sensorProjectile);
+        }
     }
 
     public void setManageExitCollision(boolean manageExitCollision) {

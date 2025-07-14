@@ -3,9 +3,11 @@ package official.sketchBook.projectiles_related;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.utils.Array;
 import official.sketchBook.animation_related.ObjectAnimationPlayer;
 import official.sketchBook.animation_related.SpriteSheetDataHandler;
 import official.sketchBook.components_related.base_component.Component;
+import official.sketchBook.components_related.collisionBehaviorComponents.StickToSurfaceBehavior;
 import official.sketchBook.components_related.toUse_component.projectile.ProjectileControllerComponent;
 import official.sketchBook.components_related.toUse_component.projectile.ProjectilePhysicsComponent;
 import official.sketchBook.customComponents_related.CustomPool;
@@ -14,9 +16,6 @@ import official.sketchBook.projectiles_related.util.ProjectilePool;
 import official.sketchBook.util_related.enumerators.types.ObjectType;
 import official.sketchBook.util_related.helpers.body.BodyCreatorHelper;
 import official.sketchBook.util_related.info.values.FixtureType;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class Projectile implements CustomPool.Poolable {
 
@@ -35,7 +34,7 @@ public abstract class Projectile implements CustomPool.Poolable {
     protected ProjectileControllerComponent controllerComponent;
 
     /// Componente de física próprio do projétil
-    private final ProjectilePhysicsComponent physicsComponent;
+    private ProjectilePhysicsComponent physicsComponent;
 
     /// Gerenciador de sprites
     protected SpriteSheetDataHandler spriteSheetDatahandler;
@@ -59,7 +58,7 @@ public abstract class Projectile implements CustomPool.Poolable {
     protected ProjectilePool<?> ownerPool;
 
     /// Lista de componentes
-    protected List<Component> components;
+    protected Array<Component> components;
 
     /// Flag de estado de vida
     private boolean reset, active;
@@ -70,16 +69,25 @@ public abstract class Projectile implements CustomPool.Poolable {
     public Projectile(World world) {
         this.world = world;
         this.active = false;
-        this.components = new ArrayList<>();
+        this.components = new Array<>();
 
         this.setBodyDefValues();
         this.createBody();
+        initDefaultComponents();
 
+    }
+
+    private void initDefaultComponents() {
         this.controllerComponent = new ProjectileControllerComponent(this);
         this.addComponent(controllerComponent);
 
         this.physicsComponent = new ProjectilePhysicsComponent(this);
         this.addComponent(physicsComponent);
+
+        StickToSurfaceBehavior stickBC = new StickToSurfaceBehavior();
+        controllerComponent.getEnterCollisionEnvBehaviors().add(stickBC);
+        controllerComponent.getEnterCollisionEnttBehaviors().add(stickBC);
+
     }
 
     /**
@@ -96,14 +104,16 @@ public abstract class Projectile implements CustomPool.Poolable {
     /**
      * Inicia o comportamento padrão do projétil(chamado no construtor)
      *
-     * @param stickOnCollision            trava todos os eixos quando detectamos uma colisão
-     * @param stickOnWall                 trava o eixo X quando detectamos uma colisão na horizontal
-     * @param stickOnCeiling              trava o eixo Y quando detectamos uma colisão vinda da parte de cima do projétil
-     * @param stickOnGround               trava o eixo Y quando detectamos uma colisão vinda da parte de baixo do projétil
-     * @param affectedByGravity           se o projétil é afetado ou não pela constante da gravidade
-     * @param canRotate                   se o projétil pode rotacionar por conta própria
-     * @param bounceX                     constante de restituição do eixo X pra ambiente
-     * @param bounceY                     constante de restituição do eixo Y pra ambiente
+     * @param stickOnCollision         trava todos os eixos quando detectamos uma colisão
+     * @param stickOnWall              trava o eixo X quando detectamos uma colisão na horizontal
+     * @param stickOnCeiling           trava o eixo Y quando detectamos uma colisão vinda da parte de cima do projétil
+     * @param stickOnGround            trava o eixo Y quando detectamos uma colisão vinda da parte de baixo do projétil
+     * @param affectedByGravity        se o projétil é afetado ou não pela constante da gravidade
+     * @param continuousCollisionCheck se devemos continuar a lidar com as colisões sem parar enquanto houver
+     * @param manageExit               se temos métodos para serem chamados ao sair de uma colisão
+     * @param sensorProjectile         se o projétil possui um corpo físico que respeita as leis da física
+     *                                 ou se ele é apenas um sensor
+     * @param canRotate                se o projétil pode rotacionar por conta própria
      */
     protected void initBodyBehavior(
         boolean stickOnCollision,
@@ -115,10 +125,10 @@ public abstract class Projectile implements CustomPool.Poolable {
         boolean manageExit,
         boolean continuousCollisionCheck,
         boolean sensorProjectile,
-        float bounceX,
-        float bounceY
+        boolean applyToEntities
     ) {
         this.controllerComponent.setContinuousCollisionDetection(continuousCollisionCheck);
+        this.controllerComponent.setApplyLockLogicToEntities(applyToEntities);
         this.controllerComponent.setAffectedByGravity(affectedByGravity);
         this.controllerComponent.setStickOnCollision(stickOnCollision);
         this.controllerComponent.setSensorProjectile(sensorProjectile);
@@ -128,21 +138,7 @@ public abstract class Projectile implements CustomPool.Poolable {
         this.controllerComponent.setStickToWall(stickOnWall);
         this.controllerComponent.setCanRotate(canRotate);
 
-        this.controllerComponent.setBounceX(bounceX);
-        this.controllerComponent.setBounceY(bounceY);
     }
-
-    public abstract void onEnvironmentCollision(Contact contact, Object target);
-
-    public abstract void onEnvironmentEndCollision(Contact contact, Object target);
-
-    public abstract void onEntityCollision(Contact contact, Entity entity);
-
-    public abstract void onEntityEndCollision(Contact contact, Entity entity);
-
-    public abstract void onProjectileCollision(Contact contact, Projectile projectile);
-
-    public abstract void onProjectileEndCollision(Contact contact, Projectile projectile);
 
     /// Iniciamos os valores padrão da body, mas cada projétil implementa por conta própria
     protected abstract void setBodyDefValues();
@@ -206,7 +202,6 @@ public abstract class Projectile implements CustomPool.Poolable {
 
     /// Destrói todos os componentes antes de limpar a lista
     private void clearComponents() {
-        components.replaceAll(ignored -> null);
         components.clear();
     }
 
@@ -298,16 +293,16 @@ public abstract class Projectile implements CustomPool.Poolable {
         this.y = y;
     }
 
-    public float getRotation(){
+    public float getRotation() {
         return (float) Math.toRadians(r);
     }
 
-    public void setAndUpdateRotation(float r){
+    public void setAndUpdateRotation(float r) {
         setR(r);
         updateBodyRotation();
     }
 
-    public void updateBodyRotation(){
+    public void updateBodyRotation() {
         this.body.setTransform(this.body.getPosition(), getRotation());
     }
 

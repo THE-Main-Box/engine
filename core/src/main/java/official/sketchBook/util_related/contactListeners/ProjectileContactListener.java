@@ -28,12 +28,12 @@ public class ProjectileContactListener implements ContactListener {
 
         if (tagA == null || tagB == null) return;
 
-        if (tagA.type == ObjectType.PROJECTILE && tagA.owner instanceof Projectile projectile) {
+        if (tagA.type() == ObjectType.PROJECTILE && tagA.owner() instanceof Projectile projectile) {
             if (begin) handleBegin(projectile, tagB, contact);
             else handleEnd(projectile, tagB, contact);
         }
 
-        if (tagB.type == ObjectType.PROJECTILE && tagB.owner instanceof Projectile projectile) {
+        if (tagB.type() == ObjectType.PROJECTILE && tagB.owner() instanceof Projectile projectile) {
             if (begin) handleBegin(projectile, tagA, contact);
             else handleEnd(projectile, tagA, contact);
         }
@@ -44,9 +44,11 @@ public class ProjectileContactListener implements ContactListener {
         if (!projectile.isActive()) return;
         ProjectileControllerComponent controller = projectile.getControllerComponent();
 
-        controller.lastCollisionWith = other;
-        controller.lastCollisionContact = contact;
-        controller.lastCollisionDirection = controller.getCollisionDirection(contact);
+        controller.lastContactBeginData.buff(
+            controller.getCollisionDirection(contact),
+            other,
+            contact
+        );
         controller.colliding = true;
 
         ProjectileCollisionRegister.registerCollision(controller);
@@ -58,9 +60,12 @@ public class ProjectileContactListener implements ContactListener {
 
         ProjectileControllerComponent controller = projectile.getControllerComponent();
 
-        controller.lastExitCollisionWith = other;
-        controller.lastExitCollisionContact = contact;
-        controller.lastExitCollisionDirection = controller.getCollisionDirection(contact);
+        controller.lastContactEndData.buff(
+            controller.getCollisionDirection(contact),
+            other,
+            contact
+        );
+
         controller.colliding = false;
 
         if (controller.isManageExitCollision()) {

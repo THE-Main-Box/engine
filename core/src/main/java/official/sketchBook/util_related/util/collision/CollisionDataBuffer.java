@@ -1,5 +1,6 @@
 package official.sketchBook.util_related.util.collision;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Contact;
 import official.sketchBook.util_related.enumerators.directions.Direction;
 import official.sketchBook.util_related.info.values.FixtureType;
@@ -11,6 +12,9 @@ public class CollisionDataBuffer {
     private FixtureType lastCollisionWith;
     /// Último contato iterado
     private Contact lastContact;
+    /// Ponto de contato da colisão
+    private Vector2 objectCollisionPos = new Vector2(); // novo campo
+
 
     private boolean isReset;
 
@@ -23,10 +27,13 @@ public class CollisionDataBuffer {
         this.isReset = false;
     }
 
-    public void buff(Direction dir, FixtureType fixtureType, Contact contact) {
+    public void buff(Direction dir, Vector2 objectCollisionPos, FixtureType fixtureType, Contact contact) {
         this.lastDirection = dir;
         this.lastCollisionWith = fixtureType;
         this.lastContact = contact;
+        this.objectCollisionPos = objectCollisionPos != null ? objectCollisionPos.cpy() : null;
+
+
         this.isReset = false;
     }
 
@@ -51,5 +58,9 @@ public class CollisionDataBuffer {
 
     public boolean isReset() {
         return isReset;
+    }
+
+    public Vector2 getObjectCollisionPos() {
+        return objectCollisionPos;
     }
 }

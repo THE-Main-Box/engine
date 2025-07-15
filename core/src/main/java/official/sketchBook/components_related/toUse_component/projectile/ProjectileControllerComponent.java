@@ -295,6 +295,10 @@ public class ProjectileControllerComponent implements Component {
         this.applyLockLogicToEntities = applyLockLogicToEntities;
     }
 
+    public boolean isAffectedByGravity() {
+        return affectedByGravity;
+    }
+
     public void setAffectedByGravity(boolean affected) {
         this.affectedByGravity = affected;
         this.projectile.getPhysicsComponent().setAffectedByGravity(affected);

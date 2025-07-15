@@ -46,6 +46,7 @@ public class ProjectileContactListener implements ContactListener {
 
         controller.lastContactBeginData.buff(
             controller.getCollisionDirection(contact),
+            projectile.getBody().getPosition(),
             other,
             contact
         );
@@ -62,6 +63,7 @@ public class ProjectileContactListener implements ContactListener {
 
         controller.lastContactEndData.buff(
             controller.getCollisionDirection(contact),
+            controller.getProjectile().getBody().getPosition(),
             other,
             contact
         );

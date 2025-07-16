@@ -77,6 +77,16 @@ public class HelpMethods {
         );
     }
 
+    public static Vector2 estimateContactPoint(Projectile projectile, float fixedTimeStep) {
+        Vector2 currentPos = projectile.getBody().getPosition();
+        Vector2 velocity = projectile.getBody().getLinearVelocity();
+
+        // Retrocede posição com base no tempo fixo
+        return new Vector2(currentPos).add(
+            new Vector2(velocity).scl(-fixedTimeStep)
+        );
+    }
+
     public static GameObjectTag getTag(Fixture fixture) {
         if (fixture == null || !(fixture.getBody().getUserData() instanceof GameObjectTag tag)) return null;
         return tag;

@@ -1,5 +1,6 @@
 package official.sketchBook.util_related.contactListeners;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import official.sketchBook.components_related.toUse_component.projectile.ProjectileControllerComponent;
 import official.sketchBook.projectiles_related.Projectile;
@@ -7,8 +8,8 @@ import official.sketchBook.util_related.enumerators.types.ObjectType;
 import official.sketchBook.util_related.info.values.GameObjectTag;
 import official.sketchBook.util_related.registers.ProjectileCollisionRegister;
 
-import static official.sketchBook.util_related.helpers.HelpMethods.getCollisionDirection;
-import static official.sketchBook.util_related.helpers.HelpMethods.getTag;
+import static official.sketchBook.util_related.helpers.HelpMethods.*;
+import static official.sketchBook.util_related.info.values.constants.GameConstants.Physics.FIXED_TIMESTAMP;
 
 public class ProjectileContactListener implements ContactListener {
 
@@ -49,7 +50,7 @@ public class ProjectileContactListener implements ContactListener {
 
         controller.lastContactBeginData.buff(
             getCollisionDirection(projectile, contact),
-            projectile.getBody().getPosition(),
+            estimateContactPoint(projectile, FIXED_TIMESTAMP),
             other,
             contact
         );
@@ -64,9 +65,9 @@ public class ProjectileContactListener implements ContactListener {
 
         ProjectileControllerComponent controller = projectile.getControllerComponent();
 
-        controller.lastContactEndData.buff(
+        controller.lastContactBeginData.buff(
             getCollisionDirection(projectile, contact),
-            controller.getProjectile().getBody().getPosition(),
+            estimateContactPoint(projectile, FIXED_TIMESTAMP),
             other,
             contact
         );
@@ -85,4 +86,5 @@ public class ProjectileContactListener implements ContactListener {
     @Override
     public void postSolve(Contact contact, ContactImpulse contactImpulse) {
     }
+
 }

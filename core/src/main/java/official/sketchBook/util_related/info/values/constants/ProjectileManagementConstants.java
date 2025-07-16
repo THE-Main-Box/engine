@@ -2,7 +2,7 @@ package official.sketchBook.util_related.info.values.constants;
 
 public class ProjectileManagementConstants {
 
-    public static int maxProjectilePerPool = 300;
+    public static int maxProjectilePerPool = 600;
 
     public static int maxToDestroyPerFrame = 32;
 

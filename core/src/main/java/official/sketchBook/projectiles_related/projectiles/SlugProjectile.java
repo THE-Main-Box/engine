@@ -22,6 +22,7 @@ public class SlugProjectile extends Projectile {
             false,
             false
         );
+
     }
 
     @Override
@@ -31,7 +32,7 @@ public class SlugProjectile extends Projectile {
 
     @Override
     protected void setBodyDefValues() {
-        this.radius = 2f;
+        this.radius = 3.4f;
         this.defFric = 0f;
         this.defRest = 0f;
         this.defDens = 0.1f;

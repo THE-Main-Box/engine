@@ -13,38 +13,33 @@ import static official.sketchBook.util_related.info.values.constants.GameConstan
 
 public class StickToSurfaceBehavior implements IEnterCollisionBehavior {
 
-    /// Vetor temporário para evitar alocação (thread-safe se usados localmente apenas)
     private static final Vector2 tmpCorrection = new Vector2();
-    /// Vetor temporário para evitar alocação (thread-safe se usados localmente apenas)
     private static final Vector2 tmpFinalPos = new Vector2();
 
     @Override
     public void onCollisionEnter(ProjectileControllerComponent controller, Contact contact, Object target) {
-        //Ignora entidades se o comportamento não estiver habilitado
         if (target instanceof Entity && !controller.isApplyLockLogicToEntities()) return;
-        handleCollision(controller, target);
+        tryStickToSurface(controller);
     }
 
-    private static void handleCollision(ProjectileControllerComponent controller, Object target) {
+    private static void tryStickToSurface(ProjectileControllerComponent controller) {
         Direction dir = controller.lastContactBeginData.getLastDirection();
 
-        if (controller.isStickOnCollision() ||
-            (dir.isUp() && controller.isStickToCeiling()) ||
-            (dir.isDown() && controller.isStickToGround()) ||
-            (dir.isLeft() && controller.isStickToLeftWall()) ||
-            (dir.isRight() && controller.isStickToRightWall())
-        ) {
+        boolean shouldStick =
+            controller.isStickOnCollision() ||
+                (dir.isUp() && controller.isStickToCeiling()) ||
+                (dir.isDown() && controller.isStickToGround()) ||
+                (dir.isLeft() && controller.isStickToLeftWall()) ||
+                (dir.isRight() && controller.isStickToRightWall());
 
-            stick(controller, dir);
-        }
+        if (shouldStick) stick(controller, dir);
     }
 
     private static void stick(ProjectileControllerComponent controller, Direction dir) {
-        // Evita múltiplas chamadas encadeadas
         Projectile projectile = controller.getProjectile();
         Body body = projectile.getBody();
-        float radius = projectile.getRadius();
 
+        float radiusMeters = projectile.getRadius() / PPM;
         Vector2 contactPos = controller.lastContactBeginData.getObjectCollisionPos();
         Vector2 velocity = body.getLinearVelocity();
 
@@ -52,39 +47,28 @@ public class StickToSurfaceBehavior implements IEnterCollisionBehavior {
             body.setActive(false);
         }
 
-        // Calcula correção com base no tempo fixo
-        tmpCorrection.set(velocity).scl(-FIXED_TIMESTAMP);
-        // Posição corrigida para retroceder um pouco
-        tmpFinalPos.set(contactPos).add(tmpCorrection);
+        tmpFinalPos.set(contactPos).add(tmpCorrection.set(velocity).scl(FIXED_TIMESTAMP));
 
-        // Ajusta conforme a direção da colisão
         switch (dir) {
-            case LEFT -> tmpFinalPos.x += radius / PPM;
-            case RIGHT -> tmpFinalPos.x -= radius / PPM;
-            case UP -> tmpFinalPos.y -= radius / PPM;
-            case DOWN -> tmpFinalPos.y += radius / PPM;
+            case LEFT -> tmpFinalPos.x += radiusMeters;
+            case RIGHT -> tmpFinalPos.x -= radiusMeters;
+            case UP -> tmpFinalPos.y -= radiusMeters;
+            case DOWN -> tmpFinalPos.y += radiusMeters;
         }
 
-        // Imobiliza o corpo e garante que a gravidade seja desativada
+        body.setTransform(tmpFinalPos, body.getAngle());
         body.setLinearVelocity(0, 0);
         body.setAngularVelocity(0);
         body.setGravityScale(0);
-
-        body.setTransform(tmpFinalPos, body.getAngle());
-
-        // Futuro: considerar usar body.setType(BodyDef.BodyType.KinematicBody)
     }
 
-    /// Resetamos o movimento de um projétil, pelo menos permitimos que ele seja livre...
     public static void resetProjectileState(ProjectileControllerComponent controller) {
         Body body = controller.getProjectile().getBody();
 
         if (!controller.isSensorProjectile()) {
             body.setActive(true);
         }
-        if (controller.isAffectedByGravity()) {
-            body.setGravityScale(1);
-        }
-    }
 
+        body.setGravityScale(controller.isAffectedByGravity() ? 1f : 0f);
+    }
 }

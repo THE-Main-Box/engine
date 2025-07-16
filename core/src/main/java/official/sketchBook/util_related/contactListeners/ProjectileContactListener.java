@@ -4,8 +4,11 @@ import com.badlogic.gdx.physics.box2d.*;
 import official.sketchBook.components_related.toUse_component.projectile.ProjectileControllerComponent;
 import official.sketchBook.projectiles_related.Projectile;
 import official.sketchBook.util_related.enumerators.types.ObjectType;
-import official.sketchBook.util_related.info.values.FixtureType;
+import official.sketchBook.util_related.info.values.GameObjectTag;
 import official.sketchBook.util_related.registers.ProjectileCollisionRegister;
+
+import static official.sketchBook.util_related.helpers.HelpMethods.getCollisionDirection;
+import static official.sketchBook.util_related.helpers.HelpMethods.getTag;
 
 public class ProjectileContactListener implements ContactListener {
 
@@ -23,8 +26,8 @@ public class ProjectileContactListener implements ContactListener {
         Fixture a = contact.getFixtureA();
         Fixture b = contact.getFixtureB();
 
-        FixtureType tagA = getTag(a);
-        FixtureType tagB = getTag(b);
+        GameObjectTag tagA = getTag(a);
+        GameObjectTag tagB = getTag(b);
 
         if (tagA == null || tagB == null) return;
 
@@ -40,12 +43,12 @@ public class ProjectileContactListener implements ContactListener {
     }
 
 
-    private void handleBegin(Projectile projectile, FixtureType other, Contact contact) {
+    private void handleBegin(Projectile projectile, GameObjectTag other, Contact contact) {
         if (!projectile.isActive()) return;
         ProjectileControllerComponent controller = projectile.getControllerComponent();
 
         controller.lastContactBeginData.buff(
-            controller.getCollisionDirection(contact),
+            getCollisionDirection(projectile, contact),
             projectile.getBody().getPosition(),
             other,
             contact
@@ -56,13 +59,13 @@ public class ProjectileContactListener implements ContactListener {
 
     }
 
-    private void handleEnd(Projectile projectile, FixtureType other, Contact contact) {
+    private void handleEnd(Projectile projectile, GameObjectTag other, Contact contact) {
         if (!projectile.isActive()) return;
 
         ProjectileControllerComponent controller = projectile.getControllerComponent();
 
         controller.lastContactEndData.buff(
-            controller.getCollisionDirection(contact),
+            getCollisionDirection(projectile, contact),
             controller.getProjectile().getBody().getPosition(),
             other,
             contact
@@ -81,10 +84,5 @@ public class ProjectileContactListener implements ContactListener {
 
     @Override
     public void postSolve(Contact contact, ContactImpulse contactImpulse) {
-    }
-
-    private FixtureType getTag(Fixture fixture) {
-        if (fixture == null || !(fixture.getBody().getUserData() instanceof FixtureType tag)) return null;
-        return tag;
     }
 }

@@ -9,13 +9,13 @@ import static official.sketchBook.util_related.info.values.constants.GameConstan
 
 
 public class ProjectilePhysicsComponent implements Component {
-    protected Projectile object;
-    protected Body body;
+    protected final Projectile proj;
+    protected final Body body;
     private boolean affectedByGravity = false;
 
-    public ProjectilePhysicsComponent(Projectile object) {
-        this.object = object;
-        this.body = object.getBody();
+    public ProjectilePhysicsComponent(Projectile proj) {
+        this.proj = proj;
+        this.body = proj.getBody();
     }
 
     public void update(float delta) {
@@ -28,15 +28,21 @@ public class ProjectilePhysicsComponent implements Component {
         }
     }
 
+    /// Sincroniza o objeto ao corpo físico
     public void syncBodyObjectPos() {
         if (body == null) return;
+        Vector2 pos = body.getPosition();
 
-        object.setX((body.getPosition().x * PPM) - object.getRadius());
-        object.setY((body.getPosition().y * PPM) - object.getRadius());
+        proj.setX((pos.x * PPM) - proj.getRadius());
+        proj.setY((pos.y * PPM) - proj.getRadius());
     }
 
+    /**
+     * Aplica um impulso baseado em um deslocamento ao longo do tempo,
+     * levando em consideração a gravidade (ou não).
+     */
     public void applyTimedTrajectory(Vector2 displacement, float time) {
-        if (body == null || time <= 0f) return;
+        if (time <= 0f) return;
 
         float gravity = Math.abs(body.getWorld().getGravity().y);
         float gravityScale = body.getGravityScale();
@@ -59,18 +65,17 @@ public class ProjectilePhysicsComponent implements Component {
         float height = (vy * vy) / (2 * gravity * gravityScale); // altura do arco
         float distance = vx * time;                              // distância total
 
-        applyTrajectoryImpulse(height, distance);
+        applyBallisticImpulse(height, distance);
     }
 
-
-    public void applyTrajectoryImpulse(float height, float distance) {
-        if (body == null) return;
-
+    /// Aplica impulso simulando uma trajetória balística com base em altura e distância
+    public void applyBallisticImpulse(float height, float distance) {
         float gravity = Math.abs(body.getWorld().getGravity().y);
         float mass = body.getMass();
 
-        float initialVelocityY = (float) Math.copySign(Math.sqrt(2 * gravity * Math.abs(height)), height);
-        Vector2 impulse = new Vector2(distance * mass, initialVelocityY * mass);
+        float vy = (float) Math.copySign(Math.sqrt(2 * gravity * Math.abs(height)), height);
+        Vector2 impulse = new Vector2(distance * mass, vy * mass);
+
         applyImpulse(impulse);
     }
 
@@ -78,13 +83,11 @@ public class ProjectilePhysicsComponent implements Component {
     public void resetMovement() {
         body.setLinearVelocity(0, 0);
         body.setAngularVelocity(0);
-        body.setActive(false); // Desativa o corpo no mundo físico
     }
 
+    /// zera ou reseta a escala de gravidade do corpo
     public void setAffectedByGravity(boolean affected) {
-        if (body != null) {
-            body.setGravityScale(affected ? 1f : 0f);
-        }
+        body.setGravityScale(affected ? 1f : 0f);
         this.affectedByGravity = affected;
     }
 
@@ -92,8 +95,8 @@ public class ProjectilePhysicsComponent implements Component {
         return affectedByGravity;
     }
 
-    public Projectile getObject() {
-        return object;
+    public Projectile getProj() {
+        return proj;
     }
 
     public Body getBody() {

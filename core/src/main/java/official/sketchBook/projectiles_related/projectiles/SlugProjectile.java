@@ -16,10 +16,10 @@ public class SlugProjectile extends Projectile {
             false,
             false,
             false,
+            true,
             false,
             false,
-            true,
-            true,
+            false,
             false
         );
     }

@@ -3,13 +3,13 @@ package official.sketchBook.util_related.util.collision;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Contact;
 import official.sketchBook.util_related.enumerators.directions.Direction;
-import official.sketchBook.util_related.info.values.FixtureType;
+import official.sketchBook.util_related.info.values.GameObjectTag;
 
 public class CollisionDataBuffer {
     /// Última direção da última iteração
     private Direction lastDirection;
     /// Última fixture com que tivemos uma interação
-    private FixtureType lastCollisionWith;
+    private GameObjectTag lastCollisionWith;
     /// Último contato iterado
     private Contact lastContact;
     /// Ponto de contato da colisão
@@ -27,9 +27,9 @@ public class CollisionDataBuffer {
         this.isReset = false;
     }
 
-    public void buff(Direction dir, Vector2 objectCollisionPos, FixtureType fixtureType, Contact contact) {
+    public void buff(Direction dir, Vector2 objectCollisionPos, GameObjectTag gameObjectTag, Contact contact) {
         this.lastDirection = dir;
-        this.lastCollisionWith = fixtureType;
+        this.lastCollisionWith = gameObjectTag;
         this.lastContact = contact;
         this.objectCollisionPos = objectCollisionPos != null ? objectCollisionPos.cpy() : null;
 
@@ -48,7 +48,7 @@ public class CollisionDataBuffer {
         return lastDirection;
     }
 
-    public FixtureType getLastCollisionWith() {
+    public GameObjectTag getLastCollisionWith() {
         return lastCollisionWith;
     }
 

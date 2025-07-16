@@ -27,7 +27,8 @@ public class ProjectileControllerComponent implements Component {
 
     /// Controle de travamento por colisão
     private boolean stickOnCollision = false;
-    private boolean stickToWall = false;
+    private boolean stickToLeftWall = false;
+    private boolean stickToRightWall = false;
     private boolean stickToGround = false;
     private boolean stickToCeiling = false;
     private boolean continuousCollisionDetection = false;
@@ -147,7 +148,7 @@ public class ProjectileControllerComponent implements Component {
         activeTimeLimit.reset();
 
         projectile.getPhysicsComponent().resetMovement();
-        projectile.getBody().setTransform(projectile.getX(), projectile.getY(), projectile.getRotation());
+        projectile.getBody().setTransform(projectile.getX(), projectile.getY(), 0);
     }
 
     protected void resetCollisionDirections() {
@@ -198,29 +199,20 @@ public class ProjectileControllerComponent implements Component {
         }
     }
 
-    /// Obtemos a direção da colisão
-    public Direction getCollisionDirection(Contact contact) {
-        //Pegamos a quantidade de pontos de contato a serem considerados
-        final Vector2[] points = contact.getWorldManifold().getPoints();
-        if (points == null || points.length == 0) return Direction.STILL;
-
-        return getDirection(
-            ((projectile.getX() + projectile.getRadius()) / PPM),
-            ((projectile.getY() + projectile.getRadius()) / PPM),
-            points[0].x,
-            points[0].y,
-            (projectile.getRadius() * 0.1f)
-        );
-    }
-
     // ----- DISPARO -----
 
     public void launch(Vector2 displacement, float timeSeconds) {
         projectile.setActive(true);
         projectile.getOwnerPool().addToActive(projectile);
 
-        projectile.getPhysicsComponent().getBody().setTransform(projectile.getX(), projectile.getY(), projectile.getRotation());
+        projectile.getPhysicsComponent().getBody().setTransform(
+            projectile.getX(),
+            projectile.getY(),
+            projectile.getRotation()
+        );
+
         projectile.getPhysicsComponent().getBody().setLinearVelocity(0, 0);
+        projectile.getPhysicsComponent().getBody().setAngularVelocity(0);
 
         projectile.getPhysicsComponent().applyTimedTrajectory(displacement, timeSeconds);
     }
@@ -271,8 +263,8 @@ public class ProjectileControllerComponent implements Component {
         return stickOnCollision;
     }
 
-    public boolean isStickToWall() {
-        return stickToWall;
+    public boolean isStickToLeftWall() {
+        return stickToLeftWall;
     }
 
     public boolean isStickToGround() {
@@ -281,6 +273,10 @@ public class ProjectileControllerComponent implements Component {
 
     public boolean isStickToCeiling() {
         return stickToCeiling;
+    }
+
+    public boolean isStickToRightWall() {
+        return stickToRightWall;
     }
 
     public void setTimeAliveLimit(float seconds) {
@@ -313,8 +309,8 @@ public class ProjectileControllerComponent implements Component {
         this.stickOnCollision = b;
     }
 
-    public void setStickToWall(boolean b) {
-        this.stickToWall = b;
+    public void setStickToLeftWall(boolean b) {
+        this.stickToLeftWall = b;
     }
 
     public void setStickToGround(boolean b) {
@@ -323,6 +319,10 @@ public class ProjectileControllerComponent implements Component {
 
     public void setStickToCeiling(boolean b) {
         this.stickToCeiling = b;
+    }
+
+    public void setStickToRightWall(boolean stickToRightWall) {
+        this.stickToRightWall = stickToRightWall;
     }
 
     public boolean isContinuousCollisionDetection() {

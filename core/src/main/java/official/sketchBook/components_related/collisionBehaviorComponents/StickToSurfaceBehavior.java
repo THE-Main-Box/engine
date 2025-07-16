@@ -13,12 +13,14 @@ import static official.sketchBook.util_related.info.values.constants.GameConstan
 
 public class StickToSurfaceBehavior implements IEnterCollisionBehavior {
 
-    // Vetores temporários para evitar alocação (thread-safe se usados localmente apenas)
+    /// Vetor temporário para evitar alocação (thread-safe se usados localmente apenas)
     private static final Vector2 tmpCorrection = new Vector2();
+    /// Vetor temporário para evitar alocação (thread-safe se usados localmente apenas)
     private static final Vector2 tmpFinalPos = new Vector2();
 
     @Override
     public void onCollisionEnter(ProjectileControllerComponent controller, Contact contact, Object target) {
+        //Ignora entidades se o comportamento não estiver habilitado
         if (target instanceof Entity && !controller.isApplyLockLogicToEntities()) return;
         handleCollision(controller, target);
     }
@@ -29,7 +31,9 @@ public class StickToSurfaceBehavior implements IEnterCollisionBehavior {
         if (controller.isStickOnCollision() ||
             (dir.isUp() && controller.isStickToCeiling()) ||
             (dir.isDown() && controller.isStickToGround()) ||
-            ((dir.isLeft() || dir.isRight()) && controller.isStickToWall())) {
+            (dir.isLeft() && controller.isStickToLeftWall()) ||
+            (dir.isRight() && controller.isStickToRightWall())
+        ) {
 
             stick(controller, dir);
         }
@@ -37,19 +41,19 @@ public class StickToSurfaceBehavior implements IEnterCollisionBehavior {
 
     private static void stick(ProjectileControllerComponent controller, Direction dir) {
         // Evita múltiplas chamadas encadeadas
-        var projectile = controller.getProjectile();
-        var body = projectile.getBody();
-        var radius = projectile.getRadius();
+        Projectile projectile = controller.getProjectile();
+        Body body = projectile.getBody();
+        float radius = projectile.getRadius();
 
         Vector2 contactPos = controller.lastContactBeginData.getObjectCollisionPos();
         Vector2 velocity = body.getLinearVelocity();
 
-        if (!controller.isSensorProjectile())
+        if (!controller.isSensorProjectile()) {
             body.setActive(false);
+        }
 
         // Calcula correção com base no tempo fixo
         tmpCorrection.set(velocity).scl(-FIXED_TIMESTAMP);
-
         // Posição corrigida para retroceder um pouco
         tmpFinalPos.set(contactPos).add(tmpCorrection);
 
@@ -71,13 +75,14 @@ public class StickToSurfaceBehavior implements IEnterCollisionBehavior {
         // Futuro: considerar usar body.setType(BodyDef.BodyType.KinematicBody)
     }
 
-    public static void resetProjectileState(ProjectileControllerComponent controller){
+    /// Resetamos o movimento de um projétil, pelo menos permitimos que ele seja livre...
+    public static void resetProjectileState(ProjectileControllerComponent controller) {
         Body body = controller.getProjectile().getBody();
 
-        if(!controller.isSensorProjectile()){
+        if (!controller.isSensorProjectile()) {
             body.setActive(true);
         }
-        if(controller.isAffectedByGravity()){
+        if (controller.isAffectedByGravity()) {
             body.setGravityScale(1);
         }
     }

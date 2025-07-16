@@ -15,7 +15,7 @@ import official.sketchBook.gameObject_related.base_model.Entity;
 import official.sketchBook.projectiles_related.util.ProjectilePool;
 import official.sketchBook.util_related.enumerators.types.ObjectType;
 import official.sketchBook.util_related.helpers.body.BodyCreatorHelper;
-import official.sketchBook.util_related.info.values.FixtureType;
+import official.sketchBook.util_related.info.values.GameObjectTag;
 
 public abstract class Projectile implements CustomPool.Poolable {
 
@@ -73,16 +73,19 @@ public abstract class Projectile implements CustomPool.Poolable {
 
         this.setBodyDefValues();
         this.createBody();
-        initDefaultComponents();
 
-    }
-
-    private void initDefaultComponents() {
         this.controllerComponent = new ProjectileControllerComponent(this);
         this.addComponent(controllerComponent);
 
         this.physicsComponent = new ProjectilePhysicsComponent(this);
         this.addComponent(physicsComponent);
+
+        initContactBehaviorComponents();
+
+    }
+
+    /// Inicia e aloca os objetos de classe de comportamento de colisão
+    private void initContactBehaviorComponents() {
 
         StickToSurfaceBehavior stickBC = new StickToSurfaceBehavior();
         controllerComponent.getEnterCollisionEnvBehaviors().add(stickBC);
@@ -105,37 +108,47 @@ public abstract class Projectile implements CustomPool.Poolable {
      * Inicia o comportamento padrão do projétil(chamado no construtor)
      *
      * @param stickOnCollision         trava todos os eixos quando detectamos uma colisão
-     * @param stickOnWall              trava o eixo X quando detectamos uma colisão na horizontal
+     * @param stickOnLeftWall              trava o eixo X quando detectamos uma colisão na horizontal
      * @param stickOnCeiling           trava o eixo Y quando detectamos uma colisão vinda da parte de cima do projétil
      * @param stickOnGround            trava o eixo Y quando detectamos uma colisão vinda da parte de baixo do projétil
      * @param affectedByGravity        se o projétil é afetado ou não pela constante da gravidade
      * @param continuousCollisionCheck se devemos continuar a lidar com as colisões sem parar enquanto houver
      * @param manageExit               se temos métodos para serem chamados ao sair de uma colisão
-     * @param sensorProjectile         se o projétil possui um corpo físico que respeita as leis da física
-     *                                 ou se ele é apenas um sensor
      * @param canRotate                se o projétil pode rotacionar por conta própria
      */
     protected void initBodyBehavior(
         boolean stickOnCollision,
-        boolean stickOnWall,
+        boolean stickOnLeftWall,
+        boolean stickOnRightWall,
         boolean stickOnCeiling,
         boolean stickOnGround,
         boolean affectedByGravity,
         boolean canRotate,
         boolean manageExit,
         boolean continuousCollisionCheck,
-        boolean sensorProjectile,
         boolean applyToEntities
     ) {
+        //Validar colisão de forma contínua
         this.controllerComponent.setContinuousCollisionDetection(continuousCollisionCheck);
+        //Aplicar lógica de colisão a entidades
         this.controllerComponent.setApplyLockLogicToEntities(applyToEntities);
+        //é afetado por gravidade
         this.controllerComponent.setAffectedByGravity(affectedByGravity);
+        //Deve parar de se mover ao colidir
         this.controllerComponent.setStickOnCollision(stickOnCollision);
-        this.controllerComponent.setSensorProjectile(sensorProjectile);
+        //É sensor por padrão
+        this.controllerComponent.setSensorProjectile(true);
+        //Deve lidar com a saída da colisão
         this.controllerComponent.setManageExitCollision(manageExit);
+        //deve parar de mover ao acertar o teto
         this.controllerComponent.setStickToCeiling(stickOnCeiling);
+        //Deve parar de se mover ao acertar o chão
         this.controllerComponent.setStickToGround(stickOnGround);
-        this.controllerComponent.setStickToWall(stickOnWall);
+        //Deve parar de se mover ao acertar a parede da esquerda
+        this.controllerComponent.setStickToLeftWall(stickOnLeftWall);
+        //Deve parar de se mover ao acertar a parede da direita
+        this.controllerComponent.setStickToRightWall(stickOnRightWall);
+        //Se pode girar em volta do próprio eixo
         this.controllerComponent.setCanRotate(canRotate);
 
     }
@@ -156,7 +169,7 @@ public abstract class Projectile implements CustomPool.Poolable {
         );
         body.setBullet(true); // Importante para colisões de alta velocidade
         body.setSleepingAllowed(true);
-        body.setUserData(new FixtureType(ObjectType.PROJECTILE, this));
+        body.setUserData(new GameObjectTag(ObjectType.PROJECTILE, this));
 
     }
 

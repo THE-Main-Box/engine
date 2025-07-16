@@ -12,13 +12,12 @@ import official.sketchBook.components_related.toUse_component.entity.PlayerAnima
 import official.sketchBook.components_related.toUse_component.entity.PlayerControllerComponent;
 import official.sketchBook.components_related.toUse_component.object.JumpComponent;
 import official.sketchBook.gameObject_related.base_model.ArmedEntity;
-import official.sketchBook.gameObject_related.base_model.Entity;
 import official.sketchBook.projectiles_related.emitters.Emitter;
 import official.sketchBook.room_related.model.PlayableRoom;
 import official.sketchBook.util_related.enumerators.types.ObjectType;
 import official.sketchBook.util_related.helpers.body.BodyCreatorHelper;
 import official.sketchBook.util_related.info.paths.EntitiesSpritePath;
-import official.sketchBook.util_related.info.values.FixtureType;
+import official.sketchBook.util_related.info.values.GameObjectTag;
 import official.sketchBook.util_related.registers.EmitterRegister;
 import official.sketchBook.weapon_related.Shotgun;
 
@@ -150,7 +149,7 @@ public class Player extends ArmedEntity {
             defRest
         );
 
-        this.body.setUserData(new FixtureType(ObjectType.ENTITY, this));
+        this.body.setUserData(new GameObjectTag(ObjectType.ENTITY, this));
         this.body.setFixedRotation(true);
         this.body.setBullet(true);
     }

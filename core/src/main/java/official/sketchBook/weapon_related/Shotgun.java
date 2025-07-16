@@ -6,14 +6,13 @@ import official.sketchBook.animation_related.ObjectAnimationPlayer;
 import official.sketchBook.animation_related.Sprite;
 import official.sketchBook.animation_related.SpriteSheetDataHandler;
 import official.sketchBook.gameObject_related.base_model.Entity;
-import official.sketchBook.util_related.util.entity.AnchorPoint;
-import official.sketchBook.weapon_related.util.weapon.status.RangeWeaponStatus;
 import official.sketchBook.projectiles_related.Projectile;
 import official.sketchBook.projectiles_related.projectiles.SlugProjectile;
-import official.sketchBook.projectiles_related.projectiles.TestProjectile;
 import official.sketchBook.util_related.enumerators.directions.Direction;
 import official.sketchBook.util_related.info.paths.WeaponsSpritePath;
+import official.sketchBook.util_related.util.entity.AnchorPoint;
 import official.sketchBook.weapon_related.base_model.RangeWeapon;
+import official.sketchBook.weapon_related.util.weapon.status.RangeWeaponStatus;
 
 import java.util.Arrays;
 import java.util.List;
@@ -88,11 +87,6 @@ public class Shotgun extends RangeWeapon<Shotgun> {
 
     @Override
     public void performShoot() {
-        aniPlayer.playAnimation(shoot);
-        aniPlayer.setAutoUpdateAni(true);
-        aniPlayer.setAnimationLooping(false);
-        aniPlayer.setAniTick(0);
-
         if (weaponStatus.ammo <= 0) {
             dealEmptyAmmoOnShoot();
             return;
@@ -102,6 +96,11 @@ public class Shotgun extends RangeWeapon<Shotgun> {
         if (projectileType.equals(SlugProjectile.class)) {
             slugShot();
         }
+
+        aniPlayer.playAnimation(shoot);
+        aniPlayer.setAutoUpdateAni(true);
+        aniPlayer.setAnimationLooping(false);
+        aniPlayer.setAniTick(0);
     }
 
     @Override
@@ -111,7 +110,7 @@ public class Shotgun extends RangeWeapon<Shotgun> {
 
     /// Tiro único
     private void slugShot() {
-        if (!canShoot()) return;
+        if (!shootStateManager.canShoot()) return;
 
         Projectile p = projectileEmitter.obtain(
             getProjectileSpawnPosition(owner.isFacingForward() ? Direction.RIGHT : Direction.LEFT)
@@ -142,7 +141,8 @@ public class Shotgun extends RangeWeapon<Shotgun> {
 
         aniPlayer.addAnimation(shoot, Arrays.asList(
             new Sprite(0, 0, 0.1f),
-            new Sprite(1, 0, 0.05f)
+            new Sprite(1, 0, 0.05f),
+            new Sprite(1, 2, 0.1f)
         ));
 
         aniPlayer.addAnimation(recharge, Arrays.asList(
@@ -179,8 +179,6 @@ public class Shotgun extends RangeWeapon<Shotgun> {
     private void updateProjectileIndex(int projectileIndex) {
         if (projectileIndex == 1) {
             configProjectileTypeOnEmitter(SlugProjectile.class);
-        } else if (projectileIndex == 2) {
-            configProjectileTypeOnEmitter(TestProjectile.class);
         }
     }
 }

@@ -1,10 +1,12 @@
 package official.sketchBook.gameObject_related.base_model;
 
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
+import official.sketchBook.util_related.enumerators.types.ObjectType;
 import official.sketchBook.util_related.helpers.RayCastHelper;
+import official.sketchBook.util_related.info.values.GameObjectTag;
 
+import static official.sketchBook.util_related.helpers.HelpMethods.getTag;
 import static official.sketchBook.util_related.info.values.constants.GameConstants.Physics.PPM;
 
 
@@ -12,6 +14,7 @@ public abstract class Entity extends MovableGameObject {
 
     protected boolean onGround;
     protected RayCastHelper rayCastHelper;
+    protected GameObjectTag groundTag;
 
     public Entity(float x, float y, float width, float height, boolean facingForward, World world) {
         super(x, y, width, height, facingForward, world);
@@ -22,6 +25,7 @@ public abstract class Entity extends MovableGameObject {
     public void updateRayCast(){
         updateOnGroundValue();
     }
+
 
     protected final void updateOnGroundValue() {
         if (world == null || body == null) return;
@@ -47,10 +51,12 @@ public abstract class Entity extends MovableGameObject {
             Vector2 end = new Vector2(start.x, start.y - rayLength);
 
             rayCastHelper.castRay(start, end, data -> {
-                if (data.fixture() != null && data.fixture().getBody().getType() != BodyDef.BodyType.DynamicBody) {
+                groundTag = getTag(data.fixture());
+                if (groundTag != null && groundTag.type() == ObjectType.ENVIRONMENT) {
                     onGround = true;
                 }
             });
+
         }
     }
 

@@ -35,9 +35,6 @@ public class RechargeManager extends RangeWeaponBaseManager {
     }
 
     public void updateRechargeState(float delta) {
-        rechargingTimeLimit.update(delta);
-        rechargeInputBufferTimer.update(delta);
-
         syncAnimationWithRechargeState();
 
         // Finalização da recarga
@@ -63,6 +60,9 @@ public class RechargeManager extends RangeWeaponBaseManager {
                 recharge();
             }
         }
+
+        rechargingTimeLimit.update(delta);
+        rechargeInputBufferTimer.update(delta);
     }
 
     private void autoRecharge() {

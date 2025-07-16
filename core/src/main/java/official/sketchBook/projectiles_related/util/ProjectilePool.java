@@ -6,6 +6,7 @@ import com.badlogic.gdx.utils.Array;
 import official.sketchBook.customComponents_related.CustomPool;
 import official.sketchBook.projectiles_related.Projectile;
 
+import static official.sketchBook.util_related.info.values.constants.ProjectileManagementConstants.maxProjectilePerPool;
 import static official.sketchBook.util_related.info.values.constants.ProjectileManagementConstants.maxToDestroyPerFrame;
 
 public class ProjectilePool<T extends Projectile> extends CustomPool<T> {
@@ -16,6 +17,7 @@ public class ProjectilePool<T extends Projectile> extends CustomPool<T> {
     private final Array<T> activeProjectiles;
 
     public ProjectilePool(Class<T> type, World world) {
+        super(16, maxProjectilePerPool);
         this.type = type;
         this.world = world;
         this.activeProjectiles = new Array<>();
@@ -43,7 +45,7 @@ public class ProjectilePool<T extends Projectile> extends CustomPool<T> {
     }
 
     /// Destrói todos os projéteis inativos ainda existente
-    public void destroyAllInactiveProjectiles(){
+    public void destroyAllInactiveProjectiles() {
         super.clear();
     }
 
@@ -53,9 +55,9 @@ public class ProjectilePool<T extends Projectile> extends CustomPool<T> {
 
         /*Percorremos a lista de cima pra baixo com um contador para evitar de iterar mais do que preciso*/
         int count = 0;
-        for(int i = getFreeCount() -1; i >= 0 && count < maxToDestroyPerFrame; i--){
+        for (int i = getFreeCount() - 1; i >= 0 && count < maxToDestroyPerFrame; i--) {
             super.discard(freeObjects.get(i));
-            count ++;
+            count++;
         }
     }
 
@@ -77,6 +79,10 @@ public class ProjectilePool<T extends Projectile> extends CustomPool<T> {
     public void free(Projectile projectile) {
         super.free((T) projectile);
         activeProjectiles.removeValue((T) projectile, true);
+    }
+
+    public boolean canSpawnNewProjectile() {
+        return activeProjectiles.size < max;
     }
 
     @SuppressWarnings("unchecked")

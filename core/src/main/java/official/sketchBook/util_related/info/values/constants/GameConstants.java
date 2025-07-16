@@ -7,9 +7,9 @@ public class GameConstants {
     /// Valores de controle de renderização e física
     public static class Physics {
         /// Iterações de velocidade para o box2d
-        public static int VELOCITY_ITERATIONS = 8;
+        public static int VELOCITY_ITERATIONS;
         /// Iterações de posição para o box2d
-        public static int POSITION_ITERATIONS = 3;
+        public static int POSITION_ITERATIONS;
         /// Taxa de fps
         public static int FPS_TARGET;
         /// Taxa de ups
@@ -21,6 +21,8 @@ public class GameConstants {
         public final static float PPM = 100;
 
         static{
+            VELOCITY_ITERATIONS = 6;
+            POSITION_ITERATIONS = 2;
             FPS_TARGET = 60;
             UPS_TARGET = 60;
             FIXED_TIMESTAMP = 1f / UPS_TARGET;

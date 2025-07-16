@@ -81,6 +81,7 @@ public class GameObjectManager {
                 canCreate.add(y == 0); //teto
                 canCreate.add(x == 0);//parede esquerda
                 canCreate.add(x == TILES_IN_WIDTH - 1); // parede direita
+                canCreate.add(x == TILES_IN_WIDTH - 10 && y >= TILES_IN_HEIGHT-4);//parede de testes
 
 
                 for (boolean value : canCreate) {

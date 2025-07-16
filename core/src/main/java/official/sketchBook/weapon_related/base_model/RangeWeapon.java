@@ -2,6 +2,7 @@ package official.sketchBook.weapon_related.base_model;
 
 import com.badlogic.gdx.math.Vector2;
 import official.sketchBook.gameObject_related.base_model.Entity;
+import official.sketchBook.projectiles_related.util.ProjectilePool;
 import official.sketchBook.util_related.util.entity.AnchorPoint;
 import official.sketchBook.weapon_related.util.weapon.ShootStateManager;
 import official.sketchBook.weapon_related.util.weapon.status.RangeWeaponStatus;
@@ -101,7 +102,11 @@ public abstract class RangeWeapon<T extends RangeWeapon<T>> extends BaseWeapon<T
 
     /// Valida para saber se podemos atirar
     public boolean canShoot() {
-        return isConfigured() && !rechargeManager.isRecharging();
+        ProjectilePool<?> pool = projectileEmitter.getPool().getPoolOf(projectileType);
+
+        return isConfigured()
+            && !rechargeManager.isRecharging()
+            && (pool == null || pool.canSpawnNewProjectile());
     }
 
     /// Valida se estamos configurados

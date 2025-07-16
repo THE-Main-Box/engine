@@ -54,7 +54,7 @@ public abstract class BaseWeapon<T extends BaseWeapon<T>> {
         spriteDataHandler.updatePosition(x, y);
         spriteDataHandler.setDrawOffSetX(xOffset);
         spriteDataHandler.setDrawOffSetY(yOffset);
-        spriteDataHandler.setFacingFoward(owner.isFacingForward());
+        spriteDataHandler.setFacingForward(owner.isFacingForward());
         spriteDataHandler.renderSprite(batch, aniPlayer.getCurrentSprite());
     }
 

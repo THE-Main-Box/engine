@@ -30,17 +30,27 @@ public class BodyCreatorHelper {
         return body;
     }
 
+    /**
+     * Criamos um body com uma fixture circular
+     * @param world mundo físico de onde a body será instanciada
+     * @param position posição na qual a body estará presente (será convertida para metros automaticamente)
+     * @param radius raio da body
+     * @param type tipo do corpo a ser criado
+     * @param density densidade do corpo em questão
+     * @param friction fricção do corpo com o mundo ao redor
+     * @param restitution o quanto que a body poderá saltar após uma colisão, uma restituição de movimento
+     */
     public static Body createCircle(World world, Vector2 position, float radius, BodyDef.BodyType type, float density, float friction, float restitution) {
-        BodyDef bodyDef = new BodyDef();
-        bodyDef.type = type;
-        bodyDef.position.set(position.x / PPM, position.y / PPM); // ← Conversão
+        BodyDef bodyDef = new BodyDef(); //Criamos os valores padrão para o corpo
+        bodyDef.type = type; //Definimos o tipo do corpo
+        bodyDef.position.set(position.x / PPM, position.y / PPM); //Definimos a posição dentro do world
 
-        Body body = world.createBody(bodyDef);
+        Body body = world.createBody(bodyDef);//Criamos a body
 
-        CircleShape shape = new CircleShape();
-        shape.setRadius(radius / PPM); // ← Conversão
+        CircleShape shape = new CircleShape();//definimos o seu formato
+        shape.setRadius(radius / PPM); //definimos a sua dimensão com base no raio
 
-        FixtureDef fixtureDef = new FixtureDef();
+        FixtureDef fixtureDef = new FixtureDef(); //Criamos uma fixture circular com os valores desejados
         fixtureDef.shape = shape;
         fixtureDef.density = density;
         fixtureDef.friction = friction;

@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import official.sketchBook.gameObject_related.base_model.Entity;
 import official.sketchBook.projectiles_related.Projectile;
 import official.sketchBook.projectiles_related.util.GlobalProjectilePool;
+import official.sketchBook.projectiles_related.util.ProjectilePool;
 import official.sketchBook.util_related.registers.ProjectilePoolRegister;
 
 public class Emitter {
@@ -11,6 +12,7 @@ public class Emitter {
     private Class<? extends Projectile> type;
     private final Entity owner;
     private boolean configured = false;
+    private ProjectilePool<?> poolOfType;
 
     public Emitter(Entity owner) {
         this.owner = owner;
@@ -38,11 +40,17 @@ public class Emitter {
             return null;
         }
 
+        poolOfType = pool.getPoolOf(type);
+        if (poolOfType != null && !poolOfType.canSpawnNewProjectile()) {
+            return null;
+        }
+
         Projectile p = pool.returnProjectileRequested(type);
         p.init(owner);
         p.setX(originPosition.x);
         p.setY(originPosition.y);
-        p.getBody().setTransform(originPosition, 0f);
+        p.getBody().setTransform(originPosition, 0);
+
         return p;
     }
 
@@ -64,6 +72,7 @@ public class Emitter {
      *                    ele irá ser tratado como a altura que o projétil deverá alcançar, quer seja positiva ou negativa
      */
     public void fire(Projectile p, float x, float y, float timeToReach) {
+        if(p == null) return;
         p.getControllerComponent().launch(new Vector2(x, y), timeToReach);
     }
 

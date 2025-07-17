@@ -128,9 +128,7 @@ public class HelpMethods {
             if (rayData.fixture() != null && rayData.fixture().getBody().isActive()) {
                 impactPoint.set(rayData.point());
                 hit[0] = true;
-                return; // para o raycast no primeiro hit para otimizar
             }
-            return;
         });
 
         return hit[0] ? impactPoint : new Vector2(currentPos);

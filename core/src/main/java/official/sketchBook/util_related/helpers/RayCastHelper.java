@@ -58,6 +58,7 @@ public class RayCastHelper {
 
     /**
      * desenhar o raio para debugging, apenas desenha a linha entre start e end.
+     *
      * @param projectionMatrix armazena a matriz como deve ser desenhada(precisa ser escalada conforme o PPM)
      */
     public void render(Matrix4 projectionMatrix) {
@@ -85,8 +86,13 @@ public class RayCastHelper {
      * Finaliza o ShapeRenderer após o uso.
      * Deve ser chamado quando você não precisar mais desenhar raios.
      */
+    private boolean disposed = false;
+
     public void dispose() {
-        shapeRenderer.dispose(); // Libera os recursos
+        if (disposed) return;
+        disposed = true;
+
+        shapeRenderer.dispose(); // Só será chamado uma vez
     }
 
     /**

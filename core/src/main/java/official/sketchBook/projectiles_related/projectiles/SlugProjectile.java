@@ -8,7 +8,7 @@ public class SlugProjectile extends Projectile {
     public SlugProjectile(World world) {
         super(world);
 
-        this.setLifeTime(70);
+        this.setLifeTime(5);
 
         this.initBodyBehavior(
             true,
@@ -16,14 +16,13 @@ public class SlugProjectile extends Projectile {
             false,
             false,
             false,
-            true,
+            false,
             false,
             false,
             false,
             false
         );
 
-//        controllerComponent.setSensorProjectile(false);
 
     }
 

@@ -110,7 +110,7 @@ public class Shotgun extends RangeWeapon<Shotgun> {
 
     /// Tiro único
     private void slugShot() {
-        if (!shootStateManager.canShoot()) return;
+        if (!canShoot()) return;
 
         Projectile p = projectileEmitter.obtain(
             getProjectileSpawnPosition(owner.isFacingForward() ? Direction.RIGHT : Direction.LEFT)

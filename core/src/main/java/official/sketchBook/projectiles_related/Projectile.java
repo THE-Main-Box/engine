@@ -170,7 +170,6 @@ public abstract class Projectile implements CustomPool.Poolable {
         body.setBullet(true); // Importante para colisões de alta velocidade
         body.setSleepingAllowed(true);
         body.setUserData(new GameObjectTag(ObjectType.PROJECTILE, this));
-
     }
 
     public void update(float deltaTime) {
@@ -229,6 +228,10 @@ public abstract class Projectile implements CustomPool.Poolable {
     public void dispose() {
         if (spriteSheetDatahandler != null) {
             spriteSheetDatahandler.dispose();
+        }
+
+        if(controllerComponent != null && controllerComponent.getRayCastHelper() != null){
+            controllerComponent.getRayCastHelper().dispose();
         }
     }
 

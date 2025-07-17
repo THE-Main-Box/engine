@@ -23,6 +23,8 @@ public class SlugProjectile extends Projectile {
             false
         );
 
+//        controllerComponent.setSensorProjectile(false);
+
     }
 
     @Override

@@ -64,6 +64,8 @@ public class Playing extends State implements StateMethods {
         }
 
         objectManager.syncObjectsBodies();
+        objectManager.updateEntityRayCast();
+
         ProjectileCollisionRegister.update();
 
         HelpMethods.updateCameraMovementParams(gameCameraManager, worldWidth, worldHeight);

@@ -17,7 +17,7 @@ import static official.sketchBook.util_related.info.values.constants.GameConstan
 
 public class RayCastHelper {
     private final World world;
-    private ShapeRenderer shapeRenderer;
+    private final ShapeRenderer shapeRenderer;
 
     // Lista para armazenar raios ativos
     private final List<Ray<Vector2>> activeRays;

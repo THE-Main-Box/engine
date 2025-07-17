@@ -1,10 +1,10 @@
 package official.sketchBook.util_related.contactListeners;
 
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import official.sketchBook.components_related.toUse_component.projectile.ProjectileControllerComponent;
 import official.sketchBook.projectiles_related.Projectile;
 import official.sketchBook.util_related.enumerators.types.ObjectType;
+import official.sketchBook.util_related.helpers.RayCastHelper;
 import official.sketchBook.util_related.info.values.GameObjectTag;
 import official.sketchBook.util_related.registers.ProjectileCollisionRegister;
 
@@ -47,10 +47,11 @@ public class ProjectileContactListener implements ContactListener {
     private void handleBegin(Projectile projectile, GameObjectTag other, Contact contact) {
         if (!projectile.isActive()) return;
         ProjectileControllerComponent controller = projectile.getControllerComponent();
+        RayCastHelper rayCastHelper = controller.getRayCastHelper();
 
         controller.lastContactBeginData.buff(
             getCollisionDirection(projectile, contact),
-            estimateContactPoint(projectile, FIXED_TIMESTAMP),
+            estimateProjectileContactPointWithRayCast(projectile, FIXED_TIMESTAMP, rayCastHelper),
             other,
             contact
         );
@@ -64,10 +65,11 @@ public class ProjectileContactListener implements ContactListener {
         if (!projectile.isActive()) return;
 
         ProjectileControllerComponent controller = projectile.getControllerComponent();
+        RayCastHelper rayCastHelper = controller.getRayCastHelper();
 
         controller.lastContactBeginData.buff(
             getCollisionDirection(projectile, contact),
-            estimateContactPoint(projectile, FIXED_TIMESTAMP),
+            estimateProjectileContactPointWithRayCast(projectile, FIXED_TIMESTAMP, rayCastHelper),
             other,
             contact
         );

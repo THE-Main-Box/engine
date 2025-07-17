@@ -10,11 +10,8 @@ import official.sketchBook.gameObject_related.base_model.Entity;
 import official.sketchBook.components_related.collisionBehaviorComponents.IEnterCollisionBehavior;
 import official.sketchBook.components_related.collisionBehaviorComponents.IExitCollisionBehavior;
 import official.sketchBook.projectiles_related.Projectile;
-import official.sketchBook.util_related.enumerators.directions.Direction;
+import official.sketchBook.util_related.helpers.RayCastHelper;
 import official.sketchBook.util_related.util.collision.CollisionDataBuffer;
-
-import static official.sketchBook.util_related.helpers.DirectionHelper.getDirection;
-import static official.sketchBook.util_related.info.values.constants.GameConstants.Physics.PPM;
 
 
 public class ProjectileControllerComponent implements Component {
@@ -35,6 +32,13 @@ public class ProjectileControllerComponent implements Component {
     private boolean manageExitCollision = false;
     private boolean sensorProjectile = false;
 
+    /// Flag para determinar se o projétil está preso numa colisão
+    private boolean stuckToWall = false;
+
+    /**
+     * Se devemos aplicar a lógica de comportamento a uma entidade
+     * (cada comportamento de colisão irá dizer se deve ou não com base nisso)
+     */
     private boolean applyLockLogicToEntities = false;
 
     /// Propriedades físicas
@@ -62,12 +66,17 @@ public class ProjectileControllerComponent implements Component {
     /// Armazenamento de métodos de saída de colisão
     private final Array<IExitCollisionBehavior> exitCollisionProjBehaviors = new Array<>(false, 2);
 
+
+    private RayCastHelper rayCastHelper;
+
     public ProjectileControllerComponent(Projectile projectile) {
         this.projectile = projectile;
         this.activeTimeLimit = new TimerComponent();
 
         lastContactEndData = new CollisionDataBuffer();
         lastContactBeginData = new CollisionDataBuffer();
+
+        rayCastHelper = new RayCastHelper(projectile.getWorld());
 
     }
 
@@ -343,12 +352,28 @@ public class ProjectileControllerComponent implements Component {
 
     public void setSensorProjectile(boolean sensorProjectile) {
         this.sensorProjectile = sensorProjectile;
+        setSensorFixtureProperty(sensorProjectile);
+    }
+
+    public void setSensorFixtureProperty(boolean isSensor) {
         for (Fixture fix : projectile.getBody().getFixtureList()) {
-            fix.setSensor(sensorProjectile);
+            fix.setSensor(isSensor);
         }
     }
 
     public void setManageExitCollision(boolean manageExitCollision) {
         this.manageExitCollision = manageExitCollision;
+    }
+
+    public boolean isStuckToWall() {
+        return stuckToWall;
+    }
+
+    public void setStuckToWall(boolean stuckToWall) {
+        this.stuckToWall = stuckToWall;
+    }
+
+    public RayCastHelper getRayCastHelper() {
+        return rayCastHelper;
     }
 }

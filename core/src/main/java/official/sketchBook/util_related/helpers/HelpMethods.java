@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
@@ -77,15 +78,63 @@ public class HelpMethods {
         );
     }
 
-    public static Vector2 estimateContactPoint(Projectile projectile, float fixedTimeStep) {
-        Vector2 currentPos = projectile.getBody().getPosition();
-        Vector2 velocity = projectile.getBody().getLinearVelocity();
+    public static Vector2 estimateProjectileContactPointWithRayCast(
+        Projectile projectile,
+        float fixedTimeStep,
+        RayCastHelper rayCastHelper
+    ) {
+        if (projectile == null) return null;
 
-        // Retrocede posição com base no tempo fixo
-        return new Vector2(currentPos).add(
-            new Vector2(velocity).scl(-fixedTimeStep)
-        );
+        Body body = projectile.getBody();
+        if (body == null || rayCastHelper == null) return null;
+
+        Vector2 currentPos = body.getPosition();
+        Vector2 velocity = body.getLinearVelocity();
+
+        // Evita cálculo se quase parado
+        if (velocity.isZero(0.0001f)) return new Vector2(currentPos);
+
+        float gravityScale = body.getGravityScale();
+        Vector2 gravity = body.getWorld().getGravity();
+
+        // Calcular deslocamento com MRUV: s = v*t + 1/2 * a * t^2
+        float halfStepSquared = 0.5f * fixedTimeStep * fixedTimeStep;
+
+        // Reuso vetor para evitar gc
+        Vector2 displacement = new Vector2(velocity).scl(fixedTimeStep);
+        displacement.add(new Vector2(gravity).scl(gravityScale * halfStepSquared));
+
+        Vector2 previousPos = new Vector2(currentPos).sub(displacement);
+
+        // Calcular direção do movimento, fallback para velocity se direção for zero
+        Vector2 rawDir = new Vector2(currentPos).sub(previousPos);
+        Vector2 direction;
+        if (rawDir.len2() > 1e-6f) {
+            direction = rawDir.nor();
+        } else {
+            direction = new Vector2(velocity).nor();
+            if (direction.isZero()) direction.set(1, 0); // fallback padrão
+        }
+
+        float radiusMeters = projectile.getRadius() / PPM;
+
+        Vector2 rayStart = new Vector2(previousPos).sub(direction.scl(radiusMeters));
+        Vector2 rayEnd = new Vector2(currentPos).add(new Vector2(direction).scl(radiusMeters));
+
+        final Vector2 impactPoint = new Vector2();
+        final boolean[] hit = {false};
+
+        rayCastHelper.castRay(rayStart, rayEnd, rayData -> {
+            if (rayData.fixture() != null && rayData.fixture().getBody().isActive()) {
+                impactPoint.set(rayData.point());
+                hit[0] = true;
+            }
+        });
+
+        return hit[0] ? impactPoint : new Vector2(currentPos);
     }
+
+
 
     public static GameObjectTag getTag(Fixture fixture) {
         if (fixture == null || !(fixture.getBody().getUserData() instanceof GameObjectTag tag)) return null;

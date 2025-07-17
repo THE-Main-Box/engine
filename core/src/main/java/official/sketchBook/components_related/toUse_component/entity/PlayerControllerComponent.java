@@ -38,7 +38,7 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
             }
         }
 
-//        holdingUse = pressed;
+        holdingUse = pressed;
 
     }
 
@@ -59,15 +59,6 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
         updateMovement();
         updateHMovementValues();
 
-        continueToUseWeapon();
-    }
-
-    private void continueToUseWeapon(){
-        if(holdingUse){
-            if(player.getWeapon(BaseWeapon.class) != null){
-                player.useWeapon();
-            }
-        }
     }
 
     //atualiza as variaveis de movimentação em cada estado, se estivermos no ar

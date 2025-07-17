@@ -99,6 +99,9 @@ public class GameObjectManager {
 
     public void syncObjectsBodies() {
         currentRoom.syncObjectsBodies();
+    }
+
+    public void updateEntityRayCast(){
         currentRoom.updateEntitiesRayCasts();
     }
 

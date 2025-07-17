@@ -22,7 +22,7 @@ public abstract class Entity extends MovableGameObject {
         this.rayCastHelper = new RayCastHelper(world);
     }
 
-    public void updateRayCast(){
+    public void updateRayCast() {
         updateOnGroundValue();
     }
 
@@ -35,7 +35,7 @@ public abstract class Entity extends MovableGameObject {
 
         float halfWidth = (width / 2f) / PPM;
         float halfHeight = (height / 2f) / PPM;
-        float footY = center.y - halfHeight + 2/PPM; // Origem no "pé"
+        float footY = center.y - halfHeight + 2 / PPM; // Origem no "pé"
 
         float rayLength = 3f / PPM; // Alcance pequeno pra detectar chão
 
@@ -65,6 +65,14 @@ public abstract class Entity extends MovableGameObject {
         super.update(deltaTime);
     }
 
+    @Override
+    public void dispose() {
+        super.dispose();
+        if (rayCastHelper != null) {
+            rayCastHelper.dispose();
+        }
+    }
+
     public RayCastHelper getRayCastHelper() {
         return rayCastHelper;
     }
@@ -76,13 +84,14 @@ public abstract class Entity extends MovableGameObject {
     public void setOnGround(boolean onGround) {
         this.onGround = onGround;
     }
+
     public abstract boolean canJump();
 
-    public boolean isRunning(){
+    public boolean isRunning() {
         return onGround && moveC.isMoving();
     }
 
-    public boolean isIdle(){
+    public boolean isIdle() {
         return onGround && !moveC.isMoving();
     }
 }

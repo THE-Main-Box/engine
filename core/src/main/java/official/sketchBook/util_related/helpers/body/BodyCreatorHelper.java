@@ -78,37 +78,97 @@ public class BodyCreatorHelper {
         return shape;
     }
 
+    /**
+     * Cria um corpo em forma de cápsula (capsule body), que pode ser vertical ou horizontal
+     * dependendo da relação entre largura e altura fornecida.
+     *
+     * A cápsula é formada por dois círculos e dois segmentos de borda conectando-os.
+     * - Se largura > altura: a cápsula é horizontal (círculos laterais)
+     * - Se altura >= largura: a cápsula é vertical (círculos superior/inferior)
+     *
+     * @param world        Mundo físico Box2D
+     * @param position     Posição central do corpo em pixels
+     * @param width        Largura total do corpo em pixels
+     * @param height       Altura total do corpo em pixels
+     * @param type         Tipo de corpo (estático, dinâmico, cinemático)
+     * @param density      Densidade física da fixture
+     * @param friction     Fricção da fixture
+     * @param restitution  Restituição (elasticidade) da fixture
+     * @return             Um corpo cápsula configurado e pronto para uso
+     */
     public static Body createCapsule(World world, Vector2 position, float width, float height, BodyDef.BodyType type, float density, float friction, float restitution) {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = type;
         bodyDef.position.set(position.x / PPM, position.y / PPM);
 
         Body body = world.createBody(bodyDef);
-        body.setFixedRotation(true);
+        body.setFixedRotation(true); // Impede a rotação do corpo (útil para personagens)
 
-        float radius = width / 2f;
-        float halfHeight = height / 2f;
+        // Determinar tipo de cápsula com base nas proporções
+        boolean isHorizontal = width > height;
 
-        // 1. Bottom circle
-        CircleShape bottomCircle = createCircleShape(radius, 0, -halfHeight + radius);
-        body.createFixture(createFixture(bottomCircle, density, friction, restitution));
-        bottomCircle.dispose();
+        if (isHorizontal) {
+            // === CAPSULA HORIZONTAL ===
+            float radius = height / 2f;
+            float halfWidth = width / 2f;
 
-        // 2. Top circle
-        CircleShape topCircle = createCircleShape(radius, 0, halfHeight - radius);
-        body.createFixture(createFixture(topCircle, density, friction, restitution));
-        topCircle.dispose();
+            // Círculo esquerdo
+            createCircleFixture(body, radius, -halfWidth + radius, 0, density, friction, restitution);
 
-        // 3. Vertical edges (laterais)
-        Vector2 leftStart = new Vector2(-radius / PPM, (-halfHeight + radius) / PPM);
-        Vector2 leftEnd   = new Vector2(-radius / PPM, (halfHeight - radius) / PPM);
-        Vector2 rightStart = new Vector2(radius / PPM, (-halfHeight + radius) / PPM);
-        Vector2 rightEnd   = new Vector2(radius / PPM, (halfHeight - radius) / PPM);
+            // Círculo direito
+            createCircleFixture(body, radius, halfWidth - radius, 0, density, friction, restitution);
 
-        createEdge(body, leftStart, leftEnd, density, friction, restitution);
-        createEdge(body, rightStart, rightEnd, density, friction, restitution);
+            // Segmentos horizontais (topo e base)
+            createEdge(body,
+                new Vector2((-halfWidth + radius) / PPM, radius / PPM),
+                new Vector2((halfWidth - radius) / PPM, radius / PPM),
+                density, friction, restitution
+            );
+            createEdge(body,
+                new Vector2((-halfWidth + radius) / PPM, -radius / PPM),
+                new Vector2((halfWidth - radius) / PPM, -radius / PPM),
+                density, friction, restitution
+            );
+
+        } else {
+            // === CAPSULA VERTICAL ===
+            float radius = width / 2f;
+            float halfHeight = height / 2f;
+
+            // Círculo inferior
+            createCircleFixture(body, radius, 0, -halfHeight + radius, density, friction, restitution);
+
+            // Círculo superior
+            createCircleFixture(body, radius, 0, halfHeight - radius, density, friction, restitution);
+
+            // Segmentos verticais (laterais)
+            createEdge(body,
+                new Vector2(-radius / PPM, (-halfHeight + radius) / PPM),
+                new Vector2(-radius / PPM, (halfHeight - radius) / PPM),
+                density, friction, restitution
+            );
+            createEdge(body,
+                new Vector2(radius / PPM, (-halfHeight + radius) / PPM),
+                new Vector2(radius / PPM, (halfHeight - radius) / PPM),
+                density, friction, restitution
+            );
+        }
 
         return body;
+    }
+
+    /**
+     * Cria e anexa uma fixture circular a uma body com offset.
+     *
+     * @param body         Body de destino
+     * @param radius       Raio da shape (em pixels)
+     * @param offsetX      Offset relativo no eixo X (em pixels)
+     * @param offsetY      Offset relativo no eixo Y (em pixels)
+     */
+    private static void createCircleFixture(Body body, float radius, float offsetX, float offsetY, float density, float friction, float restitution) {
+        CircleShape shape = createCircleShape(radius, offsetX, offsetY);
+        body.createFixture(createFixture(shape, density, friction, restitution));
+        shape.dispose();
     }
 
 

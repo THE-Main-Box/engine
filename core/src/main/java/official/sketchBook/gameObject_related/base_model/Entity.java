@@ -37,7 +37,7 @@ public abstract class Entity extends MovableGameObject {
         float halfHeight = (height / 2f) / PPM;
         float footY = center.y - halfHeight + 2 / PPM; // Origem no "pé"
 
-        float rayLength = 3f / PPM; // Alcance pequeno pra detectar chão
+        float rayLength = 4f / PPM; // Alcance pequeno pra detectar chão
 
         float margin = 1f / PPM; // pequeno recuo lateral
 

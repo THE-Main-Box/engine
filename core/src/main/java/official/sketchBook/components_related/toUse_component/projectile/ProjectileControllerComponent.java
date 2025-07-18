@@ -5,6 +5,7 @@ import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.utils.Array;
 import official.sketchBook.components_related.base_component.Component;
+import official.sketchBook.components_related.collisionBehaviorComponents.StickToSurfaceBehavior;
 import official.sketchBook.components_related.toUse_component.util.TimerComponent;
 import official.sketchBook.gameObject_related.base_model.Entity;
 import official.sketchBook.components_related.collisionBehaviorComponents.IEnterCollisionBehavior;
@@ -150,6 +151,7 @@ public class ProjectileControllerComponent implements Component {
     /// Reinicializa projétil para reuso
     public void reset() {
         if (projectile.isReset()) return;
+        StickToSurfaceBehavior.resetProjectileState(this);
 
         resetCollisionDirections();
 

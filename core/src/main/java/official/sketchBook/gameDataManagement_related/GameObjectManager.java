@@ -35,7 +35,7 @@ public class GameObjectManager {
 
         this.initRoom();
 
-        this.player = new Player(10, 100, 16, 16, true, world, currentRoom);
+        this.player = new Player(60, 100, 16, 16, true, world, currentRoom);
         currentRoom.addObject(player);
     }
 

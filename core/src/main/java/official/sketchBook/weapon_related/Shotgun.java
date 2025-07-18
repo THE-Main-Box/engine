@@ -117,7 +117,7 @@ public class Shotgun extends RangeWeapon<Shotgun> {
         );
 
         // Supondo que você queira disparar a 300 pixels/seg
-        float xSpeed = 300f / PPM;
+        float xSpeed = 400f / PPM;
         projectileEmitter.fire(p, owner.isFacingForward() ? xSpeed : -xSpeed, 0, 1f);
     }
 

@@ -10,15 +10,28 @@ public class BodyCreatorHelper {
 
     /**
      * Criação de uma body Quadrangular
-     * @param world mundo físico a ser instanciado
-     * @param width largura do corpo
-     * @param height altura do corpo
-     * @param type tipo do corpo a ser criado
+     *
+     * @param world       mundo físico a ser instanciado
+     * @param width       largura do corpo
+     * @param height      altura do corpo
+     * @param type        tipo do corpo a ser criado
      * @param restitution restituição de movimento ao colidir
-     * @param density densidade do corpo
-     * @param friction fricção do corpo com outros corpos
-     * @param position posição do corpo*/
-    public static Body createBox(World world, Vector2 position, float width, float height, BodyDef.BodyType type, float density, float friction, float restitution) {
+     * @param density     densidade do corpo
+     * @param friction    fricção do corpo com outros corpos
+     * @param position    posição do corpo
+     */
+    public static Body createBox(
+        World world,
+        Vector2 position,
+        float width,
+        float height,
+        BodyDef.BodyType type,
+        float density,
+        float friction,
+        float restitution,
+        short category,
+        short mask
+    ) {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = type;
         bodyDef.position.set(position.x / PPM, position.y / PPM); // ← Conversão
@@ -27,7 +40,7 @@ public class BodyCreatorHelper {
 
         PolygonShape shape = createBoxShape(width, height, 0, 0);
 
-        body.createFixture(createFixture(shape, density, friction, restitution));
+        body.createFixture(createFixture(shape, density, friction, restitution, category, mask));
 
         shape.dispose();
 
@@ -46,7 +59,17 @@ public class BodyCreatorHelper {
      * @param friction    fricção do corpo com o mundo ao redor
      * @param restitution o quanto que a body poderá saltar após uma colisão, uma restituição de movimento
      */
-    public static Body createCircle(World world, Vector2 position, float radius, BodyDef.BodyType type, float density, float friction, float restitution) {
+    public static Body createCircle(
+        World world,
+        Vector2 position,
+        float radius,
+        BodyDef.BodyType type,
+        float density,
+        float friction,
+        float restitution,
+        short category,
+        short mask
+    ) {
         BodyDef bodyDef = new BodyDef(); //Criamos os valores padrão para o corpo
         bodyDef.type = type; //Definimos o tipo do corpo
         bodyDef.position.set(position.x / PPM, position.y / PPM); //Definimos a posição dentro do world
@@ -55,7 +78,7 @@ public class BodyCreatorHelper {
 
         CircleShape shape = createCircleShape(radius, 0, 0);
 
-        body.createFixture(createFixture(shape, density, friction, restitution));
+        body.createFixture(createFixture(shape, density, friction, restitution, category, mask));
 
         shape.dispose();
 
@@ -81,102 +104,118 @@ public class BodyCreatorHelper {
     /**
      * Cria um corpo em forma de cápsula (capsule body), que pode ser vertical ou horizontal
      * dependendo da relação entre largura e altura fornecida.
-     *
+     * <p>
      * A cápsula é formada por dois círculos e dois segmentos de borda conectando-os.
      * - Se largura > altura: a cápsula é horizontal (círculos laterais)
      * - Se altura >= largura: a cápsula é vertical (círculos superior/inferior)
      *
-     * @param world        Mundo físico Box2D
-     * @param position     Posição central do corpo em pixels
-     * @param width        Largura total do corpo em pixels
-     * @param height       Altura total do corpo em pixels
-     * @param type         Tipo de corpo (estático, dinâmico, cinemático)
-     * @param density      Densidade física da fixture
-     * @param friction     Fricção da fixture
-     * @param restitution  Restituição (elasticidade) da fixture
-     * @return             Um corpo cápsula configurado e pronto para uso
+     * @param world       Mundo físico Box2D
+     * @param position    Posição central do corpo em pixels
+     * @param width       Largura total do corpo em pixels
+     * @param height      Altura total do corpo em pixels
+     * @param type        Tipo de corpo (estático, dinâmico, cinemático)
+     * @param density     Densidade física da fixture
+     * @param friction    Fricção da fixture
+     * @param restitution Restituição (elasticidade) da fixture
+     * @return Um corpo cápsula configurado e pronto para uso
      */
-    public static Body createCapsule(World world, Vector2 position, float width, float height, BodyDef.BodyType type, float density, float friction, float restitution) {
+    public static Body createCapsule(
+        World world,
+        Vector2 position,
+        float width,
+        float height,
+        BodyDef.BodyType type,
+        float density,
+        float friction,
+        float restitution,
+        short category,
+        short mask
+    ) {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = type;
         bodyDef.position.set(position.x / PPM, position.y / PPM);
 
         Body body = world.createBody(bodyDef);
-        body.setFixedRotation(true); // Impede a rotação do corpo (útil para personagens)
+        body.setFixedRotation(true);
 
-        // Determinar tipo de cápsula com base nas proporções
         boolean isHorizontal = width > height;
 
-        if (isHorizontal) {
-            // === CAPSULA HORIZONTAL ===
-            float radius = height / 2f;
-            float halfWidth = width / 2f;
+        float radius = isHorizontal ? height / 2f : width / 2f;
+        float halfLength = isHorizontal ? width / 2f : height / 2f;
 
-            // Círculo esquerdo
-            createCircleFixture(body, radius, -halfWidth + radius, 0, density, friction, restitution);
+        // Offsets para os círculos e linhas
+        Vector2 circleOffset1 = isHorizontal
+            ? new Vector2(-halfLength + radius, 0)
+            : new Vector2(0, -halfLength + radius);
+        Vector2 circleOffset2 = isHorizontal
+            ? new Vector2(halfLength - radius, 0)
+            : new Vector2(0, halfLength - radius);
 
-            // Círculo direito
-            createCircleFixture(body, radius, halfWidth - radius, 0, density, friction, restitution);
+        Vector2 edgeStart1 = isHorizontal
+            ? new Vector2((-halfLength + radius) / PPM, radius / PPM)
+            : new Vector2(-radius / PPM, (-halfLength + radius) / PPM);
+        Vector2 edgeEnd1 = isHorizontal
+            ? new Vector2((halfLength - radius) / PPM, radius / PPM)
+            : new Vector2(-radius / PPM, (halfLength - radius) / PPM);
 
-            // Segmentos horizontais (topo e base)
-            createEdge(body,
-                new Vector2((-halfWidth + radius) / PPM, radius / PPM),
-                new Vector2((halfWidth - radius) / PPM, radius / PPM),
-                density, friction, restitution
-            );
-            createEdge(body,
-                new Vector2((-halfWidth + radius) / PPM, -radius / PPM),
-                new Vector2((halfWidth - radius) / PPM, -radius / PPM),
-                density, friction, restitution
-            );
+        Vector2 edgeStart2 = isHorizontal
+            ? new Vector2((-halfLength + radius) / PPM, -radius / PPM)
+            : new Vector2(radius / PPM, (-halfLength + radius) / PPM);
+        Vector2 edgeEnd2 = isHorizontal
+            ? new Vector2((halfLength - radius) / PPM, -radius / PPM)
+            : new Vector2(radius / PPM, (halfLength - radius) / PPM);
 
-        } else {
-            // === CAPSULA VERTICAL ===
-            float radius = width / 2f;
-            float halfHeight = height / 2f;
+        // Círculos
+        createCircleFixture(body, radius, circleOffset1.x, circleOffset1.y, density, friction, restitution, category, mask);
+        createCircleFixture(body, radius, circleOffset2.x, circleOffset2.y, density, friction, restitution, category, mask);
 
-            // Círculo inferior
-            createCircleFixture(body, radius, 0, -halfHeight + radius, density, friction, restitution);
-
-            // Círculo superior
-            createCircleFixture(body, radius, 0, halfHeight - radius, density, friction, restitution);
-
-            // Segmentos verticais (laterais)
-            createEdge(body,
-                new Vector2(-radius / PPM, (-halfHeight + radius) / PPM),
-                new Vector2(-radius / PPM, (halfHeight - radius) / PPM),
-                density, friction, restitution
-            );
-            createEdge(body,
-                new Vector2(radius / PPM, (-halfHeight + radius) / PPM),
-                new Vector2(radius / PPM, (halfHeight - radius) / PPM),
-                density, friction, restitution
-            );
-        }
+        // Retas
+        createEdge(body, edgeStart1, edgeEnd1, density, friction, restitution, category, mask);
+        createEdge(body, edgeStart2, edgeEnd2, density, friction, restitution, category, mask);
 
         return body;
     }
 
+
     /**
      * Cria e anexa uma fixture circular a uma body com offset.
      *
-     * @param body         Body de destino
-     * @param radius       Raio da shape (em pixels)
-     * @param offsetX      Offset relativo no eixo X (em pixels)
-     * @param offsetY      Offset relativo no eixo Y (em pixels)
+     * @param body    Body de destino
+     * @param radius  Raio da shape (em pixels)
+     * @param offsetX Offset relativo no eixo X (em pixels)
+     * @param offsetY Offset relativo no eixo Y (em pixels)
      */
-    private static void createCircleFixture(Body body, float radius, float offsetX, float offsetY, float density, float friction, float restitution) {
+    private static void createCircleFixture(
+        Body body,
+        float radius,
+        float offsetX,
+        float offsetY,
+        float density,
+        float friction,
+        float restitution,
+        short category,
+        short mask
+    ) {
         CircleShape shape = createCircleShape(radius, offsetX, offsetY);
-        body.createFixture(createFixture(shape, density, friction, restitution));
+        body.createFixture(createFixture(shape, density, friction, restitution, category, mask));
         shape.dispose();
     }
 
 
-    private static void createEdge(Body body, Vector2 start, Vector2 end, float density, float friction, float restitution) {
+    private static void createEdge(
+        Body body,
+        Vector2 start,
+        Vector2 end,
+        float density,
+        float friction,
+        float restitution,
+        short category,
+        short mask
+    ) {
         EdgeShape edge = new EdgeShape();
         edge.set(start, end);
 
-        body.createFixture(createFixture(edge, density, friction, restitution));
+        body.createFixture(createFixture(edge, density, friction, restitution, category, mask));
         edge.dispose();
     }
 
@@ -204,17 +243,22 @@ public class BodyCreatorHelper {
     /**
      * Encapsulamento da criação de uma fixture
      *
-     * @param friction    Fricção da fixture
-     * @param density     Densidade da fixture
-     * @param restitution Restituição da fixture
-     * @param shape       Formato do corpo da fixture
+     * @param friction     Fricção da fixture
+     * @param density      Densidade da fixture
+     * @param restitution  Restituição da fixture
+     * @param shape        Formato do corpo da fixture
+     * @param categoryBits O que a fixture é dentro do sistema de colisão
+     * @param maskBits     Com o que a fixture pode colidir dentro do sistema de colisão
      */
-    public static FixtureDef createFixture(Shape shape, float density, float friction, float restitution) {
+    public static FixtureDef createFixture(Shape shape, float density, float friction, float restitution, short categoryBits, short maskBits) {
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
         fixtureDef.density = density;
         fixtureDef.friction = friction;
         fixtureDef.restitution = restitution;
+
+        fixtureDef.filter.categoryBits = categoryBits;
+        fixtureDef.filter.maskBits = maskBits;
 
         return fixtureDef;
     }

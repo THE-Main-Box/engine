@@ -34,6 +34,9 @@ public abstract class GameObject {
 
     protected PlayableRoom ownerRoom;
 
+    protected short maskBit;
+    protected short categoryBit;
+
     public GameObject(float x, float y, float width, float height, boolean facingForward, World world) {
         this.x = x;
         this.y = y;
@@ -220,5 +223,21 @@ public abstract class GameObject {
 
     public List<ObjectAnimationPlayer> getObjectAnimationPlayerList() {
         return objectAnimationPlayerList;
+    }
+
+    public short getCategoryBit() {
+        return categoryBit;
+    }
+
+    public void setCategoryBit(short categoryBit) {
+        this.categoryBit = categoryBit;
+    }
+
+    public short getMaskBit() {
+        return maskBit;
+    }
+
+    public void setMaskBit(short maskBit) {
+        this.maskBit = maskBit;
     }
 }

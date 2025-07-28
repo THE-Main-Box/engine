@@ -12,14 +12,18 @@ import official.sketchBook.components_related.toUse_component.projectile.Project
 import official.sketchBook.components_related.toUse_component.projectile.ProjectilePhysicsComponent;
 import official.sketchBook.customComponents_related.CustomPool;
 import official.sketchBook.gameObject_related.base_model.Entity;
+import official.sketchBook.gameObject_related.entities.Player;
 import official.sketchBook.projectiles_related.util.ProjectilePool;
+import official.sketchBook.util_related.enumerators.types.FactionTypes;
 import official.sketchBook.util_related.enumerators.types.ObjectType;
+import official.sketchBook.util_related.helpers.HelpMethods;
 import official.sketchBook.util_related.helpers.body.BodyCreatorHelper;
 import official.sketchBook.util_related.info.values.GameObjectTag;
 
-public abstract class Projectile implements CustomPool.Poolable {
+import static official.sketchBook.util_related.enumerators.layers.CollisionLayers.*;
+import static official.sketchBook.util_related.helpers.HelpMethods.updateCollisionFilters;
 
-    //TODO:adicionar compatibilidade para rotação, tanto na renderização quando nos objetos
+public abstract class Projectile implements CustomPool.Poolable {
 
     /// Raio do projétil
     protected float radius;
@@ -34,7 +38,7 @@ public abstract class Projectile implements CustomPool.Poolable {
     protected ProjectileControllerComponent controllerComponent;
 
     /// Componente de física próprio do projétil
-    private ProjectilePhysicsComponent physicsComponent;
+    private final ProjectilePhysicsComponent physicsComponent;
 
     /// Gerenciador de sprites
     protected SpriteSheetDataHandler spriteSheetDatahandler;
@@ -63,8 +67,16 @@ public abstract class Projectile implements CustomPool.Poolable {
     /// Flag de estado de vida
     private boolean reset, active;
 
+    /// O que o projétil é
+    protected short category;
+
+    /// Com quem pode interagir
+    protected short mask;
+
     /// Flag que diz se o projétil está virado para a direita ou não
     protected boolean facingForward;
+
+    protected boolean enemyProjectile;
 
     public Projectile(World world) {
         this.world = world;
@@ -102,13 +114,18 @@ public abstract class Projectile implements CustomPool.Poolable {
         this.reset = false;
 
         this.controllerComponent.init();
+
+        updateAllyEnemyMark(owner.getFaction());
+        this.setMask((short) (SENSOR.bit() | ENVIRONMENT.bit()));
+
+        updateCollisionFilters(body, category, mask);
     }
 
     /**
      * Inicia o comportamento padrão do projétil(chamado no construtor)
      *
      * @param stickOnCollision         trava todos os eixos quando detectamos uma colisão
-     * @param stickOnLeftWall              trava o eixo X quando detectamos uma colisão na horizontal
+     * @param stickOnLeftWall          trava o eixo X quando detectamos uma colisão na horizontal
      * @param stickOnCeiling           trava o eixo Y quando detectamos uma colisão vinda da parte de cima do projétil
      * @param stickOnGround            trava o eixo Y quando detectamos uma colisão vinda da parte de baixo do projétil
      * @param affectedByGravity        se o projétil é afetado ou não pela constante da gravidade
@@ -165,7 +182,9 @@ public abstract class Projectile implements CustomPool.Poolable {
             BodyDef.BodyType.DynamicBody,
             defDens, // density
             defFric,   // friction
-            defRest // restitution
+            defRest, // restitution
+            category,
+            mask
         );
         body.setBullet(true); // Importante para colisões de alta velocidade
         body.setSleepingAllowed(true);
@@ -182,6 +201,14 @@ public abstract class Projectile implements CustomPool.Poolable {
         if (!active) return;        // Nenhum componente precisa rodar se está inativo
         for (Component c : components) {
             c.update(delta);
+        }
+    }
+
+    private void updateAllyEnemyMark(FactionTypes faction) {
+        if (faction.equals(FactionTypes.ENEMY)) {
+            this.setCategory(ENEMY_PROJECTILE.bit());
+        } else {
+            this.setCategory(ALLY_PROJECTILE.bit());
         }
     }
 
@@ -230,7 +257,7 @@ public abstract class Projectile implements CustomPool.Poolable {
             spriteSheetDatahandler.dispose();
         }
 
-        if(controllerComponent != null && controllerComponent.getRayCastHelper() != null){
+        if (controllerComponent != null && controllerComponent.getRayCastHelper() != null) {
             controllerComponent.getRayCastHelper().dispose();
         }
     }
@@ -252,6 +279,10 @@ public abstract class Projectile implements CustomPool.Poolable {
 
     public Entity getOwner() {
         return owner;
+    }
+
+    public void setOwner(Entity owner) {
+        this.owner = owner;
     }
 
     public void setLifeTime(float lifeTime) {
@@ -336,5 +367,21 @@ public abstract class Projectile implements CustomPool.Poolable {
 
     public void addComponent(Component comp) {
         components.add(comp);
+    }
+
+    public short getCategory() {
+        return category;
+    }
+
+    public void setCategory(short category) {
+        this.category = category;
+    }
+
+    public short getMask() {
+        return mask;
+    }
+
+    public void setMask(short mask) {
+        this.mask = mask;
     }
 }

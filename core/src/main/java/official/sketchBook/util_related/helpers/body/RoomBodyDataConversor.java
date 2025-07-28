@@ -11,6 +11,7 @@ import official.sketchBook.util_related.info.values.GameObjectTag;
 import java.util.ArrayList;
 import java.util.List;
 
+import static official.sketchBook.util_related.enumerators.layers.CollisionLayers.*;
 import static official.sketchBook.util_related.info.values.constants.GameConstants.Screen.TILES_DEFAULT_SIZE;
 
 public class RoomBodyDataConversor {
@@ -56,7 +57,9 @@ public class RoomBodyDataConversor {
             BodyDef.BodyType.StaticBody,
             type.getDensity(),
             type.getFriction(),
-            type.getRestituition()
+            type.getRestituition(),
+            ENVIRONMENT.bit(),
+            ALL.bit()
         );
     }
 

@@ -49,7 +49,7 @@ public class Emitter {
         p.init(owner);
         p.setX(originPosition.x);
         p.setY(originPosition.y);
-        p.getBody().setTransform(originPosition, 0);
+        p.getBody().setTransform(originPosition, p.getRotation());
 
         return p;
     }

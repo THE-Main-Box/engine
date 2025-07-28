@@ -4,10 +4,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.Contact;
-import com.badlogic.gdx.physics.box2d.ContactListener;
-import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.*;
 import official.sketchBook.animation_related.Sprite;
 import official.sketchBook.camera_related.CameraManager;
 import official.sketchBook.gameState_related.states.Playing;
@@ -78,6 +75,7 @@ public class HelpMethods {
         );
     }
 
+    /// Usa matemática para estipular onde que o projétil estava quando colidiu
     public static Vector2 estimateProjectileContactPointWithRayCast(
         Projectile projectile,
         float fixedTimeStep,
@@ -134,8 +132,17 @@ public class HelpMethods {
         return hit[0] ? impactPoint : new Vector2(currentPos);
     }
 
+    /// Atualiza os filtros de mascara e categoria de colisão logo após a criação da body
+    public static void updateCollisionFilters(Body body, short categoryBits, short maskBits) {
+        for (Fixture f : body.getFixtureList()) {
+            Filter filter = f.getFilterData();
+            filter.categoryBits = categoryBits;
+            filter.maskBits     = maskBits;
+            f.setFilterData(filter);
+        }
+    }
 
-
+    /// Obtém a tag presente em uma body dentro de uma fixture
     public static GameObjectTag getTag(Fixture fixture) {
         if (fixture == null || !(fixture.getBody().getUserData() instanceof GameObjectTag tag)) return null;
         return tag;

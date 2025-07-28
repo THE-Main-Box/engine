@@ -2,6 +2,8 @@ package official.sketchBook.gameObject_related.base_model;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
+import official.sketchBook.components_related.toUse_component.entity.FactionManagementComponent;
+import official.sketchBook.util_related.enumerators.types.FactionTypes;
 import official.sketchBook.util_related.enumerators.types.ObjectType;
 import official.sketchBook.util_related.helpers.RayCastHelper;
 import official.sketchBook.util_related.info.values.GameObjectTag;
@@ -12,6 +14,7 @@ import static official.sketchBook.util_related.info.values.constants.GameConstan
 
 public abstract class Entity extends MovableGameObject {
 
+    protected FactionTypes faction;
     protected boolean onGround;
     protected RayCastHelper rayCastHelper;
     protected GameObjectTag groundTag;
@@ -93,5 +96,13 @@ public abstract class Entity extends MovableGameObject {
 
     public boolean isIdle() {
         return onGround && !moveC.isMoving();
+    }
+
+    public GameObjectTag getGroundTag() {
+        return groundTag;
+    }
+
+    public FactionTypes getFaction() {
+        return faction;
     }
 }

@@ -230,10 +230,6 @@ public class ProjectileControllerComponent implements Component {
 
     // ----- GETTERS/SETTERS -----
 
-    public void addBeginCollisionBehavior(IEnterCollisionBehavior behavior, Array<IEnterCollisionBehavior> behaviorArray) {
-        behaviorArray.add(behavior);
-    }
-
     public void addEndCollisionBehavior(IExitCollisionBehavior behavior, Array<IExitCollisionBehavior> behaviorArray) {
         behaviorArray.add(behavior);
     }

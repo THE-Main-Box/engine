@@ -14,6 +14,7 @@ import official.sketchBook.components_related.toUse_component.object.JumpCompone
 import official.sketchBook.gameObject_related.base_model.ArmedEntity;
 import official.sketchBook.projectiles_related.emitters.Emitter;
 import official.sketchBook.room_related.model.PlayableRoom;
+import official.sketchBook.util_related.enumerators.types.FactionTypes;
 import official.sketchBook.util_related.enumerators.types.ObjectType;
 import official.sketchBook.util_related.helpers.body.BodyCreatorHelper;
 import official.sketchBook.util_related.info.paths.EntitiesSpritePath;
@@ -24,6 +25,7 @@ import official.sketchBook.weapon_related.Shotgun;
 import java.util.Arrays;
 import java.util.List;
 
+import static official.sketchBook.util_related.enumerators.layers.CollisionLayers.*;
 import static official.sketchBook.util_related.info.values.AnimationTitles.Entity.*;
 
 public class Player extends ArmedEntity {
@@ -48,6 +50,7 @@ public class Player extends ArmedEntity {
     }
 
     private void initComponents() {
+        this.faction = FactionTypes.ALLY;
 
         ObjectAnimationPlayer aniPlayer = this.objectAnimationPlayerList.get(0);
 
@@ -133,6 +136,9 @@ public class Player extends ArmedEntity {
         this.defDens = 0.1f;
         this.defFric = 1f;
         this.defRest = 0;
+
+        this.setCategoryBit(ALLY_ENTITY.bit());
+        this.setMaskBit((short) (SENSOR.bit() | ENVIRONMENT.bit()));
     }
 
     @Override
@@ -146,7 +152,9 @@ public class Player extends ArmedEntity {
             BodyDef.BodyType.DynamicBody,
             defDens,
             defFric,
-            defRest
+            defRest,
+            categoryBit,
+            maskBit
         );
 
         this.body.setUserData(new GameObjectTag(ObjectType.ENTITY, this));

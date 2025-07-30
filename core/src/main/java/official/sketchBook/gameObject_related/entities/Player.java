@@ -47,11 +47,11 @@ public class Player extends ArmedEntity {
         this.yAP = width / 2;
 
         initComponents();
+
+        this.faction = FactionTypes.ALLY;
     }
 
     private void initComponents() {
-        this.faction = FactionTypes.ALLY;
-
         ObjectAnimationPlayer aniPlayer = this.objectAnimationPlayerList.get(0);
 
         animationController = new PlayerAnimationManagerComponent(this);
@@ -134,7 +134,7 @@ public class Player extends ArmedEntity {
     @Override
     protected void setBodyDefValues() {
         this.defDens = 0.1f;
-        this.defFric = 1f;
+        this.defFric = 1.5f;
         this.defRest = 0;
 
         this.setCategoryBit(ALLY_ENTITY.bit());

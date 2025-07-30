@@ -12,7 +12,7 @@ import official.sketchBook.util_related.enumerators.directions.Direction;
 import official.sketchBook.util_related.info.paths.WeaponsSpritePath;
 import official.sketchBook.util_related.util.entity.AnchorPoint;
 import official.sketchBook.weapon_related.base_model.RangeWeapon;
-import official.sketchBook.weapon_related.util.weapon.status.RangeWeaponStatus;
+import official.sketchBook.weapon_related.util.status.RangeWeaponStatus;
 
 import java.util.Arrays;
 import java.util.List;
@@ -37,7 +37,9 @@ public class Shotgun extends RangeWeapon<Shotgun> {
             ammoCost,
             fireCooldown,
             rechargeSpeedMulti,
-            fireCooldownSpeedMulti
+            fireCooldownSpeedMulti,
+            fireRecoilForce,
+            fireRecoilForceMulti
         );
     }
 

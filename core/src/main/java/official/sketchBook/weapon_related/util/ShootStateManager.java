@@ -1,7 +1,7 @@
-package official.sketchBook.weapon_related.util.weapon;
+package official.sketchBook.weapon_related.util;
 
 import official.sketchBook.components_related.toUse_component.util.TimerComponent;
-import official.sketchBook.weapon_related.util.weapon.status.RangeWeaponStatus;
+import official.sketchBook.weapon_related.util.status.RangeWeaponStatus;
 import official.sketchBook.weapon_related.base_model.BaseWeapon;
 
 public class ShootStateManager extends RangeWeaponBaseManager {

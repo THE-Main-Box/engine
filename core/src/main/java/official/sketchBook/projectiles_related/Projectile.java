@@ -205,6 +205,14 @@ public abstract class Projectile implements CustomPool.Poolable {
     }
 
     private void updateAllyEnemyMark(FactionTypes faction) {
+        if (faction == null) {
+            throw new NullPointerException(
+                "Valor de facção da entidade [" +
+                    owner.getClass().getSimpleName() +
+                    "] não pode ser nulo"
+            );
+        }
+
         if (faction.equals(FactionTypes.ENEMY)) {
             this.setCategory(ENEMY_PROJECTILE.bit());
         } else {

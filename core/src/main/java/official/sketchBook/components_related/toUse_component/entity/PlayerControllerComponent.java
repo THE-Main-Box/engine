@@ -24,16 +24,39 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
         this.player = (Player) gameObject;
 
         // Vinculando teclas ao movimento
-        bindKey(ControlKeys.move_left, this::moveLeft);
-        bindKey(ControlKeys.move_right, this::moveRight);
+        bindKey(ControlKeys.dir_left, this::moveLeft);
+        bindKey(ControlKeys.dir_right, this::moveRight);
+
+        bindKey(ControlKeys.dir_up, this::dirUp);
+        bindKey(ControlKeys.dir_down, this::dirDown);
+
         bindKey(ControlKeys.jump, this::jump);
+
         bindKey(ControlKeys.recharge, this::rechargeWeapon);
-        bindKey(ControlKeys.use, this::use);
+
+        bindKey(ControlKeys.use, this::normalUse);
+        bindKey(ControlKeys.secondaryUse, this::secondaryItemUse);
     }
 
-    private void use(boolean pressed) {
+    private void dirUp(boolean pressed) {
+        player.setAimingUp(pressed);
+    }
+
+    private void dirDown(boolean pressed) {
+        player.setAimingDown(pressed);
+    }
+
+    private void secondaryItemUse(boolean pressed) {
         if (pressed) {
-            if(player.getWeapon(BaseWeapon.class) != null){
+            if (player.getWeapon(BaseWeapon.class) != null) {
+                player.useWeaponSecondary();
+            }
+        }
+    }
+
+    private void normalUse(boolean pressed) {
+        if (pressed) {
+            if (player.getWeapon(BaseWeapon.class) != null) {
                 player.useWeapon();
             }
         }
@@ -86,7 +109,7 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
     }
 
     /// Obtém um valor de influência de aceleração
-    private float getAccelBoost(){
+    private float getAccelBoost() {
         if (player.hasRangeWeapon() && player.getRangeWeapon().getShootStateManager().isShooting()) {
             return 0.1f;
         }

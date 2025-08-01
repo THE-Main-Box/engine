@@ -1,8 +1,10 @@
 package official.sketchBook.weapon_related.base_model;
 
 import com.badlogic.gdx.math.Vector2;
+import official.sketchBook.gameObject_related.base_model.ArmedEntity;
 import official.sketchBook.gameObject_related.base_model.Entity;
 import official.sketchBook.projectiles_related.util.ProjectilePool;
+import official.sketchBook.util_related.helpers.HelpMethods;
 import official.sketchBook.util_related.util.entity.AnchorPoint;
 import official.sketchBook.weapon_related.util.ShootStateManager;
 import official.sketchBook.weapon_related.util.status.RangeWeaponStatus;
@@ -29,7 +31,10 @@ public abstract class RangeWeapon<T extends RangeWeapon<T>> extends BaseWeapon<T
     protected RechargeManager rechargeManager;
     protected ShootStateManager shootStateManager;
 
-    protected RangeWeapon(Class<T> weaponClass, Entity owner, AnchorPoint point) {
+    protected final Vector2 shootDirection = new Vector2();
+    protected float projectileSpeed;
+
+    protected RangeWeapon(Class<T> weaponClass, ArmedEntity owner, AnchorPoint point) {
         super(weaponClass, owner, point);
         this.projectileEmitter = EmitterRegister.getEmitter(owner);
         Objects.requireNonNull(projectileEmitter, "Emitter must be registered to use this weapon");
@@ -70,12 +75,26 @@ public abstract class RangeWeapon<T extends RangeWeapon<T>> extends BaseWeapon<T
         rechargeManager.updateRechargeState(deltaTime);
     }
 
+    /**
+     * Aplica uma força de recuo no dono da arma com base na direção e nos multiplicadores.
+     *
+     * @param direction Vetor de direção do tiro (espera-se um vetor unitário ou normalizável)
+     */
+    protected void applyRecoil(Vector2 direction) {
+        if (direction.isZero()) return;
+
+        HelpMethods.applyRecoil(
+            owner.getBody(),
+            direction,
+            weaponStatus.recoilForce * weaponStatus.recoilForceMultiplier
+        );
+    }
+
+
     @Override
     public void use() {
         shootStateManager.tryToShoot();
     }
-
-    //TODO: implementar um sistema para permitir um comportamento de entrando no estado de recarga e saindo do estado
 
     /// Permite que a arma implemente uma mecânica de recarga customizada
     public void recharge() {
@@ -120,9 +139,8 @@ public abstract class RangeWeapon<T extends RangeWeapon<T>> extends BaseWeapon<T
      * @param direction Enumerador do tipo direção, é passado como identificador do ângulo de disparo
      */
     public final Vector2 getProjectileSpawnPosition(Direction direction) {
-        Vector2 base = new Vector2(x / PPM, y / PPM);
-
-        return base.add(getOffsetForDirection(direction));
+        return new Vector2(x / PPM, y / PPM)
+            .add(getOffsetForDirection(direction));
     }
 
     /// Obtém offset da direção
@@ -133,6 +151,11 @@ public abstract class RangeWeapon<T extends RangeWeapon<T>> extends BaseWeapon<T
         if (direction.isUp()) return getUpOffset().scl(1f / PPM);
 
         return new Vector2(); // STILL ou default
+    }
+
+    public void setShootDirection(float x, float y) {
+        // Atualiza o vetor reutilizável com os novos valores normalizados
+        shootDirection.set(x, y);
     }
 
     protected void configProjectileTypeOnEmitter(Class<? extends Projectile> type) {

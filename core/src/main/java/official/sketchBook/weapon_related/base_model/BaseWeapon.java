@@ -3,7 +3,7 @@ package official.sketchBook.weapon_related.base_model;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import official.sketchBook.animation_related.ObjectAnimationPlayer;
 import official.sketchBook.animation_related.SpriteSheetDataHandler;
-import official.sketchBook.gameObject_related.base_model.Entity;
+import official.sketchBook.gameObject_related.base_model.ArmedEntity;
 import official.sketchBook.util_related.util.entity.AnchorPoint;
 
 public abstract class BaseWeapon<T extends BaseWeapon<T>> {
@@ -15,7 +15,7 @@ public abstract class BaseWeapon<T extends BaseWeapon<T>> {
     /// Descrição da arma
     protected String description;
     /// Dono da arma
-    protected Entity owner;
+    protected ArmedEntity owner;
 
     /// Gerenciador de dados da sprite-sheet
     protected SpriteSheetDataHandler spriteDataHandler;
@@ -24,12 +24,12 @@ public abstract class BaseWeapon<T extends BaseWeapon<T>> {
 
     /// Posições da arma
     protected float x, y;
-    /// Offset da posição a ser aplicada
-    protected float xOffset, yOffset;
+    /// Offset da posição a ser aplicada na renderização
+    protected float xDrawOffset, yDrawOffset;
 
     protected AnchorPoint point;
 
-    public BaseWeapon(Class<T> weaponClass, Entity owner, AnchorPoint point) {
+    public BaseWeapon(Class<T> weaponClass, ArmedEntity owner, AnchorPoint point) {
         this.weaponClass = weaponClass;
         this.owner = owner;
         this.point = point;
@@ -52,8 +52,8 @@ public abstract class BaseWeapon<T extends BaseWeapon<T>> {
 
         updatePosValues();
         spriteDataHandler.updatePosition(x, y);
-        spriteDataHandler.setDrawOffSetX(xOffset);
-        spriteDataHandler.setDrawOffSetY(yOffset);
+        spriteDataHandler.setDrawOffSetX(xDrawOffset);
+        spriteDataHandler.setDrawOffSetY(yDrawOffset);
         spriteDataHandler.setFacingForward(owner.isFacingForward());
         spriteDataHandler.renderSprite(batch, aniPlayer.getCurrentSprite());
     }
@@ -78,8 +78,8 @@ public abstract class BaseWeapon<T extends BaseWeapon<T>> {
     }
 
     protected final void setRelativeOffset(float xOff, float yOff){
-        this.xOffset = (spriteDataHandler.getCanvasWidth() / 2f) + xOff;
-        this.yOffset = (spriteDataHandler.getCanvasHeight() / 2f) + yOff;
+        this.xDrawOffset = (spriteDataHandler.getCanvasWidth() / 2f) + xOff;
+        this.yDrawOffset = (spriteDataHandler.getCanvasHeight() / 2f) + yOff;
     }
 
     public static <U extends BaseWeapon<U>> U cast(BaseWeapon<?> weapon, Class<U> cls) {

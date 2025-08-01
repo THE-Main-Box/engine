@@ -7,6 +7,9 @@ import official.sketchBook.weapon_related.base_model.RangeWeapon;
 
 public abstract class ArmedEntity extends Entity {
 
+    /// flags de mira adicionais
+    protected boolean aimingUp, aimingDown;
+
     protected AnchorPoint weaponAnchorPoint;
     /// Valores de ponto de ancoragem relativos
     protected float xAP, yAP;
@@ -89,4 +92,19 @@ public abstract class ArmedEntity extends Entity {
         throw new ClassCastException("Weapon is not of type " + clazz.getSimpleName());
     }
 
+    public boolean isAimingUp() {
+        return aimingUp;
+    }
+
+    public void setAimingUp(boolean aimingUp) {
+        this.aimingUp = aimingUp;
+    }
+
+    public boolean isAimingDown() {
+        return aimingDown;
+    }
+
+    public void setAimingDown(boolean aimingDown) {
+        this.aimingDown = aimingDown;
+    }
 }

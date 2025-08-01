@@ -96,7 +96,7 @@ public class JumpComponent implements Component {
         if (!enhancedGravity) return;
 
         float defaultScale = 1f;
-        float enhancedScale = 2f;
+        float enhancedScale = 1.3f;
 
         if (jumpedFromGround && falling) {
             if (entity.getBody().getGravityScale() == defaultScale) {

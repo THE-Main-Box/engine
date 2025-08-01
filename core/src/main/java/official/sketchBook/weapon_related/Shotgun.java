@@ -5,7 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 import official.sketchBook.animation_related.ObjectAnimationPlayer;
 import official.sketchBook.animation_related.Sprite;
 import official.sketchBook.animation_related.SpriteSheetDataHandler;
-import official.sketchBook.gameObject_related.base_model.Entity;
+import official.sketchBook.gameObject_related.base_model.ArmedEntity;
 import official.sketchBook.projectiles_related.Projectile;
 import official.sketchBook.projectiles_related.projectiles.SlugProjectile;
 import official.sketchBook.util_related.enumerators.directions.Direction;
@@ -23,7 +23,7 @@ import static official.sketchBook.util_related.info.values.constants.RangeWeapon
 
 public class Shotgun extends RangeWeapon<Shotgun> {
 
-    public Shotgun(Entity owner, AnchorPoint point) {
+    public Shotgun(ArmedEntity owner, AnchorPoint point) {
         super(Shotgun.class, owner, point);
 
         updateProjectileIndex(1);
@@ -36,9 +36,9 @@ public class Shotgun extends RangeWeapon<Shotgun> {
             maxAmmo,
             ammoCost,
             fireCooldown,
+            fireRecoilSpeed,
             rechargeSpeedMulti,
             fireCooldownSpeedMulti,
-            fireRecoilForce,
             fireRecoilForceMulti
         );
     }
@@ -46,6 +46,13 @@ public class Shotgun extends RangeWeapon<Shotgun> {
     @Override
     public void update(float deltaTime) {
         super.update(deltaTime);
+
+        if(owner.isAimingDown()) {
+            this.weaponStatus.recoilForceMultiplier = 1f;
+        } else {
+            this.weaponStatus.recoilForceMultiplier = 0;
+        }
+
     }
 
     @Override
@@ -60,30 +67,36 @@ public class Shotgun extends RangeWeapon<Shotgun> {
     protected void updateOffSets() {
         float x, y;
 
-        if (owner.isFacingForward()) {
-            x = -16f;
-        } else {
-            x = 16f;
-        }
         y = -4;
 
-        setRelativeOffset(x, y);
+        //Se estiver mirando pra baixo
+        if (owner.isAimingDown()) {
+            // Mira para baixo
+            spriteDataHandler.setRotation(owner.isFacingForward() ? -90 : 90);
+            x = owner.isFacingForward() ? -10f : 10f;
+        } else {//se não estiver mirando
+            // Mira para frente (nem cima nem baixo)
+            spriteDataHandler.setRotation(0);
+            x = owner.isFacingForward() ? -16f : 16f;
+        }
 
+        setRelativeOffset(x, y);
     }
+
 
     @Override
     public void updateAnimations() {
-        if(shootStateManager.isShooting())return;
+        if (shootStateManager.isShooting()) return;
 
         //Se estivermos recarregando
-        if(rechargeManager.isRecharging()){
+        if (rechargeManager.isRecharging()) {
             aniPlayer.playAnimation(recharge);
             aniPlayer.setAutoUpdateAni(true);
             aniPlayer.setAnimationLooping(false);
         } else // Se não estivermos recarregando, mas estivermos andando ou parados sem fazer nada
-        if(owner.isRunning() || owner.isIdle()){
-            aniPlayer.playAnimation(run);
-        }
+            if (owner.isRunning() || owner.isIdle()) {
+                aniPlayer.playAnimation(run);
+            }
 
     }
 
@@ -114,13 +127,41 @@ public class Shotgun extends RangeWeapon<Shotgun> {
     private void slugShot() {
         if (!canShoot()) return;
 
+        Direction dir;
+
+        if (owner.isAimingDown()) {
+            dir = Direction.DOWN;
+        } else {
+            dir = owner.isFacingForward() ? Direction.RIGHT : Direction.LEFT;
+        }
+
         Projectile p = projectileEmitter.obtain(
-            getProjectileSpawnPosition(owner.isFacingForward() ? Direction.RIGHT : Direction.LEFT)
+            getProjectileSpawnPosition(dir)
         );
 
         // Supondo que você queira disparar a 300 pixels/seg
-        float xSpeed = 400f / PPM;
-        projectileEmitter.fire(p, owner.isFacingForward() ? xSpeed : -xSpeed, 0, 1f);
+        projectileSpeed = 400f / PPM;
+
+        int xDir = 0;
+        int yDir = 0;
+
+//        if (owner.isAimingUp()) {
+//            yDir = 1;
+//        } else
+
+        if (owner.isAimingDown()) {
+            yDir = -1;
+        } else {
+            xDir = owner.isFacingForward() ? 1 : -1;
+        }
+
+        setShootDirection(
+            xDir,//mirando para direita ou esquerda
+            yDir //mirando para cima ou para baixo
+        );
+
+        shoot(p);
+        applyRecoil(shootDirection);
     }
 
     @Override
@@ -128,14 +169,29 @@ public class Shotgun extends RangeWeapon<Shotgun> {
 
     }
 
+    private void shoot(Projectile p) {
+        projectileEmitter.fire(
+            p,
+            projectileSpeed * shootDirection.x,
+            projectileSpeed * shootDirection.y,
+            1f
+        );
+
+    }
+
     @Override
     protected Vector2 getRightOffset() {
-        return new Vector2(40, 4);
+        return new Vector2(42, 5);
     }
 
     @Override
     protected Vector2 getLeftOffset() {
-        return new Vector2(-40, 4);
+        return new Vector2(-42, 5);
+    }
+
+    @Override
+    protected Vector2 getDownOffset() {
+        return new Vector2(owner.isFacingForward()? 11 : -10, -22);
     }
 
     protected void initAnimations() {

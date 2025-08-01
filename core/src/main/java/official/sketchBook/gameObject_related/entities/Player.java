@@ -67,7 +67,7 @@ public class Player extends ArmedEntity {
             0.1f,
             0.2f,
             aniPlayer.getTotalAnimationTime(aniPlayer.getAnimationByKey(afterFall)),
-            false
+            true
         );
         addComponent(jComponent);
     }

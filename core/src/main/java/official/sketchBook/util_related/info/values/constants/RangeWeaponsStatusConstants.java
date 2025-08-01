@@ -6,7 +6,7 @@ public class RangeWeaponsStatusConstants {
         public static int maxAmmo;
         public static int ammoCost;
         public static float fireCooldown;
-        public static float fireRecoilForce;
+        public static float fireRecoilSpeed;
         public static float rechargeSpeedMulti;
         public static float fireCooldownSpeedMulti;
         public static float fireRecoilForceMulti;
@@ -15,10 +15,10 @@ public class RangeWeaponsStatusConstants {
             maxAmmo = 2;
             ammoCost = 1;
             fireCooldown = 0.1f;
-            fireRecoilForce = 1f;
             rechargeSpeedMulti = 1f;
             fireCooldownSpeedMulti = 1f;
             fireRecoilForceMulti = 1f;
+            fireRecoilSpeed = 3f;
         }
     }
 

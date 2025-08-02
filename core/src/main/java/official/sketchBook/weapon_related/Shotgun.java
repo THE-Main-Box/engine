@@ -27,7 +27,6 @@ public class Shotgun extends RangeWeapon<Shotgun> {
         super(Shotgun.class, owner, point);
 
         updateProjectileIndex(1);
-
     }
 
     @Override
@@ -47,7 +46,7 @@ public class Shotgun extends RangeWeapon<Shotgun> {
     public void update(float deltaTime) {
         super.update(deltaTime);
 
-        if(owner.isAimingDown()) {
+        if(canPogoShoot()) {
             this.weaponStatus.recoilForceMultiplier = 1f;
         } else {
             this.weaponStatus.recoilForceMultiplier = 0;
@@ -70,7 +69,7 @@ public class Shotgun extends RangeWeapon<Shotgun> {
         y = -4;
 
         //Se estiver mirando pra baixo
-        if (owner.isAimingDown()) {
+        if (canPogoShoot()) {
             // Mira para baixo
             spriteDataHandler.setRotation(owner.isFacingForward() ? -90 : 90);
             x = owner.isFacingForward() ? -10f : 10f;
@@ -107,9 +106,32 @@ public class Shotgun extends RangeWeapon<Shotgun> {
             return;
         }
 
+        //Determinamos a posição em que iremos disparar com base em alguns fatores
+        Direction dir;
+        if (canPogoShoot()) {
+            dir = Direction.DOWN;
+        } else {
+            dir = owner.isFacingForward() ? Direction.RIGHT : Direction.LEFT;
+        }
+
+        //Determinamos a direção da movimentação do projétil
+        int xDir = 0;
+        int yDir = 0;
+        if (canPogoShoot()) {
+            yDir = -1;
+        } else {
+            xDir = owner.isFacingForward() ? 1 : -1;
+        }
+
+        //Passamos a direção que o projétil deve ir
+        setShootDirection(
+            xDir,//mirando para direita ou esquerda
+            yDir //mirando para cima ou para baixo
+        );
+
         //Verifica o tipo de projétil e assim executa o tiro correspondente
         if (projectileType.equals(SlugProjectile.class)) {
-            slugShot();
+            slugShot(dir);
         }
 
         aniPlayer.playAnimation(shoot);
@@ -123,17 +145,9 @@ public class Shotgun extends RangeWeapon<Shotgun> {
 
     }
 
-    /// Tiro único
-    private void slugShot() {
+    /// Tiro único (slug)
+    private void slugShot(Direction dir) {
         if (!canShoot()) return;
-
-        Direction dir;
-
-        if (owner.isAimingDown()) {
-            dir = Direction.DOWN;
-        } else {
-            dir = owner.isFacingForward() ? Direction.RIGHT : Direction.LEFT;
-        }
 
         Projectile p = projectileEmitter.obtain(
             getProjectileSpawnPosition(dir)
@@ -141,24 +155,6 @@ public class Shotgun extends RangeWeapon<Shotgun> {
 
         // Supondo que você queira disparar a 300 pixels/seg
         projectileSpeed = 400f / PPM;
-
-        int xDir = 0;
-        int yDir = 0;
-
-//        if (owner.isAimingUp()) {
-//            yDir = 1;
-//        } else
-
-        if (owner.isAimingDown()) {
-            yDir = -1;
-        } else {
-            xDir = owner.isFacingForward() ? 1 : -1;
-        }
-
-        setShootDirection(
-            xDir,//mirando para direita ou esquerda
-            yDir //mirando para cima ou para baixo
-        );
 
         shoot(p);
         applyRecoil(shootDirection);
@@ -180,18 +176,21 @@ public class Shotgun extends RangeWeapon<Shotgun> {
     }
 
     @Override
-    protected Vector2 getRightOffset() {
-        return new Vector2(42, 5);
+    protected Vector2 getRightOffSet() {
+        setRightOffSet(42, 5);
+        return super.getRightOffSet();
     }
 
     @Override
-    protected Vector2 getLeftOffset() {
-        return new Vector2(-42, 5);
+    protected Vector2 getLeftOffSet() {
+        setLeftOffSet(-42, 5);
+        return super.getLeftOffSet();
     }
 
     @Override
-    protected Vector2 getDownOffset() {
-        return new Vector2(owner.isFacingForward()? 11 : -10, -22);
+    protected Vector2 getDownOffSet() {
+        setDownOffSet(owner.isFacingForward()? 11 : -10, -22);
+        return super.getDownOffSet();
     }
 
     protected void initAnimations() {
@@ -237,5 +236,9 @@ public class Shotgun extends RangeWeapon<Shotgun> {
         if (projectileIndex == 1) {
             configProjectileTypeOnEmitter(SlugProjectile.class);
         }
+    }
+
+    protected boolean canPogoShoot(){
+        return owner.isAimingDown() && !owner.isOnGround();
     }
 }

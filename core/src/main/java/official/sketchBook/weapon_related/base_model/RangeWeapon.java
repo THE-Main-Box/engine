@@ -23,16 +23,41 @@ import static official.sketchBook.util_related.info.values.constants.GameConstan
 
 public abstract class RangeWeapon<T extends RangeWeapon<T>> extends BaseWeapon<T> implements IRangeCapable {
 
+    /// Tipo de projétil
     protected Class<? extends Projectile> projectileType;
+
+    /// Emissor de projétil
     protected Emitter projectileEmitter;
 
+    /// Status de configuração de arma
     protected RangeWeaponStatus weaponStatus;
 
+    /// Gerência do sistema de recarga
     protected RechargeManager rechargeManager;
+
+    /// Gerencia do sistema de disparo
     protected ShootStateManager shootStateManager;
 
-    protected final Vector2 shootDirection = new Vector2();
+    /// Velocidade do projétil
     protected float projectileSpeed;
+
+    /// Buffer para direção de disparo
+    protected final Vector2 shootDirection = new Vector2();
+
+    /// Buffer para posição inicial de projéteis
+    private final Vector2 cachedSpawnPos = new Vector2();
+
+    /// Offset padrão para projéteis do lado esquerdo
+    protected final Vector2 leftOffSet = new Vector2(0, 0);
+
+    /// Offset padrão para projéteis do lado direito
+    protected final Vector2 rightOffSet = new Vector2(0, 0);
+
+    /// Offset padrão para projéteis do lado de cima
+    protected final Vector2 upOffSet = new Vector2(0, 0);
+
+    /// Offset padrão para projéteis do lado de baixo
+    protected final Vector2 downOffSet = new Vector2(0, 0);
 
     protected RangeWeapon(Class<T> weaponClass, ArmedEntity owner, AnchorPoint point) {
         super(weaponClass, owner, point);
@@ -134,23 +159,23 @@ public abstract class RangeWeapon<T extends RangeWeapon<T>> extends BaseWeapon<T
     }
 
     /**
-     * Ponto de disparo com base na direção passada.     *
+     * Ponto de início do disparo com base na direção passada
      *
      * @param direction Enumerador do tipo direção, é passado como identificador do ângulo de disparo
      */
     public final Vector2 getProjectileSpawnPosition(Direction direction) {
-        return new Vector2(x / PPM, y / PPM)
+        return cachedSpawnPos.set(x / PPM, y / PPM)
             .add(getOffsetForDirection(direction));
     }
 
     /// Obtém offset da direção
     protected Vector2 getOffsetForDirection(Direction direction) {
-        if (direction.isRight()) return getRightOffset().scl(1f / PPM);
-        if (direction.isLeft()) return getLeftOffset().scl(1f / PPM);
-        if (direction.isDown()) return getDownOffset().scl(1f / PPM);
-        if (direction.isUp()) return getUpOffset().scl(1f / PPM);
+        if (direction.isRight()) return getRightOffSet().scl(1f / PPM);
+        if (direction.isLeft()) return getLeftOffSet().scl(1f / PPM);
+        if (direction.isDown()) return getDownOffSet().scl(1f / PPM);
+        if (direction.isUp()) return getUpOffSet().scl(1f / PPM);
 
-        return new Vector2(); // STILL ou default
+        return shootDirection; // STILL ou default
     }
 
     public void setShootDirection(float x, float y) {
@@ -183,19 +208,33 @@ public abstract class RangeWeapon<T extends RangeWeapon<T>> extends BaseWeapon<T
     }
 
     // Métodos customizáveis por subclasses
-    protected Vector2 getRightOffset() {
-        return new Vector2(0, 0);
+    protected Vector2 getLeftOffSet() {
+        return leftOffSet;
     }
 
-    protected Vector2 getLeftOffset() {
-        return new Vector2(0, 0);
+    protected Vector2 getRightOffSet() {
+        return rightOffSet;
     }
 
-    protected Vector2 getDownOffset() {
-        return new Vector2(0, 0);
+    protected Vector2 getUpOffSet() {
+        return upOffSet;
     }
 
-    protected Vector2 getUpOffset() {
-        return new Vector2(0, 0);
+    protected Vector2 getDownOffSet() {
+        return downOffSet;
     }
+
+    protected void setLeftOffSet(float x, float y){
+        leftOffSet.set(x,y);
+    }
+    protected void setRightOffSet(float x, float y){
+        rightOffSet.set(x,y);
+    }
+    protected void setUpOffSet(float x, float y){
+        upOffSet.set(x,y);
+    }
+    protected void setDownOffSet(float x, float y){
+        downOffSet.set(x,y);
+    }
+
 }

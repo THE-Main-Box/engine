@@ -14,7 +14,7 @@ public class SpeedRelatedConstants {
 
     public static class Player {
         //Velocidade máxima calculada por centena por ponto inteiro
-        public static final float HORIZONTAL_WALK_MAX = 110f;
+        public static final float HORIZONTAL_WALK_MAX = 120f;
         public static final float HORIZONTAL_AIR_MAX = 140f;
 
         //Valores de desaceleração por segundo por multiplicação

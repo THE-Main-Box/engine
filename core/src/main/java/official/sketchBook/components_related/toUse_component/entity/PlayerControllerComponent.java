@@ -18,7 +18,6 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
     private boolean rightPressed = false;
     private Direction lastDirectionPressed = Direction.STILL;
 
-    private boolean holdingUse = false;
 
     public PlayerControllerComponent(GameObject gameObject) {
         this.player = (Player) gameObject;
@@ -60,8 +59,6 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
                 player.useWeapon();
             }
         }
-
-        holdingUse = pressed;
 
     }
 

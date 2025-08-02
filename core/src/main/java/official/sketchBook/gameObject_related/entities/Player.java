@@ -62,7 +62,7 @@ public class Player extends ArmedEntity {
 
         jComponent = new JumpComponent(
             this,
-            35,
+            40,
             100,
             0.1f,
             0.2f,

@@ -7,14 +7,17 @@ public class TimerComponent implements Component {
     private float targetTime;
     private boolean running = false;
 
+    private static final float EPSILON = 0.0001f; // evita problemas de precisão
+
     public TimerComponent() {
     }
 
     public TimerComponent(float targetTime) {
-        this.targetTime = targetTime;
+        setTargetTimeSafe(targetTime);
     }
 
     public void update(float deltaTime) {
+        if (deltaTime < 0) return; // evita bugs por deltas negativos
         if (running) {
             timeElapsed += deltaTime;
             if (timeElapsed >= targetTime) {
@@ -31,7 +34,7 @@ public class TimerComponent implements Component {
     }
 
     public boolean isFinished() {
-        return (timeElapsed >= targetTime);
+        return timeElapsed + EPSILON >= targetTime; // evita erro de ponto flutuante
     }
 
     public void stop() {
@@ -55,14 +58,20 @@ public class TimerComponent implements Component {
     }
 
     public void setTargetTime(float targetTime) {
-        this.targetTime = targetTime;
-        if (timeElapsed >= targetTime) { // Se já passou do novo tempo-alvo, marca como finalizado
-            stop();
+        setTargetTimeSafe(targetTime);
+    }
+
+    private void setTargetTimeSafe(float newTargetTime) {
+        if (newTargetTime < 0) {
+            throw new IllegalArgumentException("Target time must be non-negative");
+        }
+        this.targetTime = newTargetTime;
+        if (timeElapsed >= targetTime) {
+            stop(); // mantém lógica original
         }
     }
 
     public boolean isRunning() {
         return running;
     }
-
 }

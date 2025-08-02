@@ -178,10 +178,8 @@ public class JumpComponent implements Component {
             if (entity.getPhysicsC().getBody().getLinearVelocity().y > 0 && entity.getPhysicsC().getBody().getLinearVelocity().y > fallSpeedAfterJCancel) {
 
                 entity.getPhysicsC().getBody().setLinearVelocity(
-                    new Vector2(
                         entity.getPhysicsC().getBody().getLinearVelocity().x,
                         fallSpeedAfterJCancel
-                    )
                 );
 
             }

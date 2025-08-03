@@ -1,14 +1,11 @@
 package official.sketchBook.projectiles_related.projectiles;
 
-import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.World;
-import official.sketchBook.components_related.collisionBehaviorComponents.IEnterCollisionBehavior;
-import official.sketchBook.components_related.toUse_component.projectile.ProjectileControllerComponent;
 import official.sketchBook.gameObject_related.base_model.Entity;
 import official.sketchBook.projectiles_related.Projectile;
 
-public class SlugProjectile extends Projectile {
-    public SlugProjectile(World world) {
+public class ShotgunProjectile extends Projectile {
+    public ShotgunProjectile(World world) {
         super(world);
 
         this.setLifeTime(5);

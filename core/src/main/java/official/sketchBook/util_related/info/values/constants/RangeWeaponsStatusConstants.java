@@ -18,7 +18,7 @@ public class RangeWeaponsStatusConstants {
             rechargeSpeedMulti = 1f;
             fireCooldownSpeedMulti = 1f;
             fireRecoilForceMulti = 1f;
-            fireRecoilSpeed = 3f;
+            fireRecoilSpeed = 2f;
         }
     }
 

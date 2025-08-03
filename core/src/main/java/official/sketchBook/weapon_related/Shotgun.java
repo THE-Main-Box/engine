@@ -7,7 +7,7 @@ import official.sketchBook.animation_related.Sprite;
 import official.sketchBook.animation_related.SpriteSheetDataHandler;
 import official.sketchBook.gameObject_related.base_model.ArmedEntity;
 import official.sketchBook.projectiles_related.Projectile;
-import official.sketchBook.projectiles_related.projectiles.SlugProjectile;
+import official.sketchBook.projectiles_related.projectiles.ShotgunProjectile;
 import official.sketchBook.util_related.enumerators.directions.Direction;
 import official.sketchBook.util_related.info.paths.WeaponsSpritePath;
 import official.sketchBook.util_related.util.entity.AnchorPoint;
@@ -92,11 +92,11 @@ public class Shotgun extends RangeWeapon<Shotgun> {
             aniPlayer.playAnimation(recharge);
             aniPlayer.setAutoUpdateAni(true);
             aniPlayer.setAnimationLooping(false);
-        } else // Se não estivermos recarregando, mas estivermos andando ou parados sem fazer nada
+        } else {// Se não estivermos recarregando, mas estivermos andando ou parados sem fazer nada
             if (owner.isRunning() || owner.isIdle()) {
                 aniPlayer.playAnimation(run);
             }
-
+        }
     }
 
     @Override
@@ -130,7 +130,7 @@ public class Shotgun extends RangeWeapon<Shotgun> {
         );
 
         //Verifica o tipo de projétil e assim executa o tiro correspondente
-        if (projectileType.equals(SlugProjectile.class)) {
+        if (projectileType.equals(ShotgunProjectile.class)) {
             slugShot(dir);
         }
 
@@ -234,7 +234,7 @@ public class Shotgun extends RangeWeapon<Shotgun> {
 
     private void updateProjectileIndex(int projectileIndex) {
         if (projectileIndex == 1) {
-            configProjectileTypeOnEmitter(SlugProjectile.class);
+            configProjectileTypeOnEmitter(ShotgunProjectile.class);
         }
     }
 

@@ -1,5 +1,6 @@
 package official.sketchBook.weapon_related.base_model;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import official.sketchBook.gameObject_related.base_model.ArmedEntity;
 import official.sketchBook.gameObject_related.base_model.Entity;
@@ -93,11 +94,14 @@ public abstract class RangeWeapon<T extends RangeWeapon<T>> extends BaseWeapon<T
 
     @Override
     public void update(float deltaTime) {
-        updateOffSets();
-        updateAnimations();
-
         shootStateManager.update(deltaTime);
         rechargeManager.updateRechargeState(deltaTime);
+    }
+
+    @Override
+    protected void updateRenderVariables() {
+        super.updateRenderVariables();
+        updateOffSets();
     }
 
     /**

@@ -42,7 +42,11 @@ public abstract class BaseWeapon<T extends BaseWeapon<T>> {
     /// Habilidade secundária
     public abstract void secondaryUse();
 
-    protected final void updatePosValues() {
+    protected void updateRenderVariables(){
+        updatePosValues();
+        updateAnimations();
+    }
+    private void updatePosValues() {
         this.x = point.getX();
         this.y = point.getY();
     }
@@ -50,7 +54,7 @@ public abstract class BaseWeapon<T extends BaseWeapon<T>> {
     public final void render(SpriteBatch batch) {
         if (spriteDataHandler == null || aniPlayer == null || owner == null) return;
 
-        updatePosValues();
+        updateRenderVariables();
         spriteDataHandler.updatePosition(x, y);
         spriteDataHandler.setDrawOffSetX(xDrawOffset);
         spriteDataHandler.setDrawOffSetY(yDrawOffset);

@@ -133,7 +133,7 @@ public class Player extends ArmedEntity {
 
     @Override
     protected void setBodyDefValues() {
-        this.defDens = 0.1f;
+        this.defDens = 0.5f;
         this.defFric = 1.5f;
         this.defRest = 0;
 

@@ -34,7 +34,7 @@ public abstract class MovableGameObject extends GameObject {
     }
 
 
-    public void updateSpritePos() {
+    public void syncObjectSpritePos() {
         for (SpriteSheetDataHandler dataHandler : spriteSheetDatahandlerList) {
             dataHandler.updatePosition(this.getX(), this.getY());
         }

@@ -23,7 +23,7 @@ public class SpeedRelatedConstants {
 
         //Valor de aceleração de 70 centímetros por segundo
         public static final float GROUND_ACCEL = 0.5f;
-        public static final float AIR_ACCEL = 0.1f;
+        public static final float AIR_ACCEL = 0.3f;
     }
 
     public static class Mobs {

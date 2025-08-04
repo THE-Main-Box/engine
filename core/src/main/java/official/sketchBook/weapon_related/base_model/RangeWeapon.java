@@ -1,20 +1,18 @@
 package official.sketchBook.weapon_related.base_model;
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import official.sketchBook.gameObject_related.base_model.ArmedEntity;
-import official.sketchBook.gameObject_related.base_model.Entity;
-import official.sketchBook.projectiles_related.util.ProjectilePool;
-import official.sketchBook.util_related.helpers.HelpMethods;
-import official.sketchBook.util_related.util.entity.AnchorPoint;
-import official.sketchBook.weapon_related.util.ShootStateManager;
-import official.sketchBook.weapon_related.util.status.RangeWeaponStatus;
+import official.sketchBook.gameObject_related.base_model.DamageAbleEntity;
 import official.sketchBook.projectiles_related.Projectile;
 import official.sketchBook.projectiles_related.emitters.Emitter;
+import official.sketchBook.projectiles_related.util.ProjectilePool;
 import official.sketchBook.util_related.enumerators.directions.Direction;
+import official.sketchBook.util_related.helpers.HelpMethods;
 import official.sketchBook.util_related.registers.EmitterRegister;
-import official.sketchBook.weapon_related.util.RechargeManager;
+import official.sketchBook.util_related.util.entity.AnchorPoint;
 import official.sketchBook.weapon_related.base_model.interfaces.IRangeCapable;
+import official.sketchBook.weapon_related.util.RechargeManager;
+import official.sketchBook.weapon_related.util.ShootStateManager;
+import official.sketchBook.weapon_related.util.status.RangeWeaponStatus;
 
 import java.util.Objects;
 
@@ -60,7 +58,7 @@ public abstract class RangeWeapon<T extends RangeWeapon<T>> extends BaseWeapon<T
     /// Offset padrão para projéteis do lado de baixo
     protected final Vector2 downOffSet = new Vector2(0, 0);
 
-    protected RangeWeapon(Class<T> weaponClass, ArmedEntity owner, AnchorPoint point) {
+    protected RangeWeapon(Class<T> weaponClass, DamageAbleEntity owner, AnchorPoint point) {
         super(weaponClass, owner, point);
         this.projectileEmitter = EmitterRegister.getEmitter(owner);
         Objects.requireNonNull(projectileEmitter, "Emitter must be registered to use this weapon");

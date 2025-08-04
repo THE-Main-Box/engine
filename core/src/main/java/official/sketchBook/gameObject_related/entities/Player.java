@@ -11,7 +11,7 @@ import official.sketchBook.animation_related.SpriteSheetDataHandler;
 import official.sketchBook.components_related.toUse_component.entity.PlayerAnimationManagerComponent;
 import official.sketchBook.components_related.toUse_component.entity.PlayerControllerComponent;
 import official.sketchBook.components_related.toUse_component.object.JumpComponent;
-import official.sketchBook.gameObject_related.base_model.ArmedEntity;
+import official.sketchBook.gameObject_related.base_model.DamageAbleEntity;
 import official.sketchBook.projectiles_related.emitters.Emitter;
 import official.sketchBook.room_related.model.PlayableRoom;
 import official.sketchBook.util_related.enumerators.types.FactionTypes;
@@ -20,7 +20,6 @@ import official.sketchBook.util_related.helpers.body.BodyCreatorHelper;
 import official.sketchBook.util_related.info.paths.EntitiesSpritePath;
 import official.sketchBook.util_related.info.values.GameObjectTag;
 import official.sketchBook.util_related.registers.EmitterRegister;
-import official.sketchBook.weapon_related.Shotgun;
 
 import java.util.Arrays;
 import java.util.List;
@@ -28,7 +27,7 @@ import java.util.List;
 import static official.sketchBook.util_related.enumerators.layers.CollisionLayers.*;
 import static official.sketchBook.util_related.info.values.AnimationTitles.Entity.*;
 
-public class Player extends ArmedEntity {
+public class Player extends DamageAbleEntity {
 
     private PlayerAnimationManagerComponent animationController;
     private PlayerControllerComponent controllerComponent;
@@ -41,12 +40,12 @@ public class Player extends ArmedEntity {
 
         this.initSpriteSheet();
         this.initAnimations();
+        this.initComponents();
         this.initProjectileUsage();
 
-        this.xAP = width / 2;
-        this.yAP = width / 2;
+        this.weaponWC.setRxAP(width / 2);
+        this.weaponWC.setRyAP(height / 2);
 
-        initComponents();
 
         this.faction = FactionTypes.ALLY;
     }
@@ -70,11 +69,13 @@ public class Player extends ArmedEntity {
             true
         );
         addComponent(jComponent);
+
+
     }
 
     private void initProjectileUsage() {
         EmitterRegister.register(new Emitter(this));
-        this.weapon = new Shotgun(this, this.weaponAnchorPoint);
+//        this.weaponWC.setWeapon(new Shotgun(this, this.weaponWC.getWeaponAnchorPoint()));
     }
 
     private void initSpriteSheet() {
@@ -171,55 +172,9 @@ public class Player extends ArmedEntity {
     }
 
     @Override
-    protected void applySpeedOnBody() {
-        if (physicsC == null || moveC == null) return;
-        if (jComponent.isEntityLanded() && !moveC.isAcceleratingX()) {
-
-            float reducedSpeedX = moveC.getxSpeed() * 0.7f; // exemplo de redução
-            physicsC.applyImpulseForSpeed(
-                reducedSpeedX,
-                moveC.getySpeed(),
-                moveC.getxMaxSpeed(),
-                moveC.getyMaxSpeed()
-            );
-
-        } else {
-
-            physicsC.applyImpulseForSpeed(
-                moveC.getxSpeed(),
-                moveC.getySpeed(),
-                moveC.getxMaxSpeed(),
-                moveC.getyMaxSpeed()
-            );
-
-        }
-
-    }
-
-    @Override
     public void render(SpriteBatch batch) {
-        if (weapon != null) {
-            weapon.render(batch);
-        }
+        this.weaponWC.render(batch);
         super.render(batch);
-    }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-
-        if (weapon != null) {
-            weapon.dispose();
-        }
-    }
-
-    public void rechargeWeapon() {
-        if (weapon == null) return;
-
-        if (hasRangeWeapon()) {
-            getRangeWeapon().recharge();
-        }
-
     }
 
     //verifica se dá para pular

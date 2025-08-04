@@ -38,25 +38,25 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
     }
 
     private void dirUp(boolean pressed) {
-        player.setAimingUp(pressed);
+        player.getWeaponWC().setAimingUp(pressed);
     }
 
     private void dirDown(boolean pressed) {
-        player.setAimingDown(pressed);
+        player.getWeaponWC().setAimingDown(pressed);
     }
 
     private void secondaryItemUse(boolean pressed) {
         if (pressed) {
-            if (player.getWeapon(BaseWeapon.class) != null) {
-                player.useWeaponSecondary();
+            if (player.getWeaponWC().getWeapon(BaseWeapon.class) != null) {
+                player.getWeaponWC().secondaryWeaponUse();
             }
         }
     }
 
     private void normalUse(boolean pressed) {
         if (pressed) {
-            if (player.getWeapon(BaseWeapon.class) != null) {
-                player.useWeapon();
+            if (player.getWeaponWC().getWeapon(BaseWeapon.class) != null) {
+                player.getWeaponWC().primaryWeaponUse();
             }
         }
 
@@ -99,19 +99,10 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
         }
 
 
-        this.accelToApply = accel * getAccelBoost();
+        this.accelToApply = accel;
         player.getMoveC().setxMaxSpeed(maxAccel);
         player.getMoveC().setDecelerationX(decel);
 
-    }
-
-    /// Obtém um valor de influência de aceleração
-    private float getAccelBoost() {
-        if (player.hasRangeWeapon() && player.getRangeWeapon().getShootStateManager().isShooting()) {
-            return 0.1f;
-        }
-
-        return 1f;
     }
 
     private void updateMovement() {

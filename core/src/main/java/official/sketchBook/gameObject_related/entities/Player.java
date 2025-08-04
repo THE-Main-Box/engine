@@ -10,8 +10,9 @@ import official.sketchBook.animation_related.Sprite;
 import official.sketchBook.animation_related.SpriteSheetDataHandler;
 import official.sketchBook.components_related.toUse_component.entity.PlayerAnimationManagerComponent;
 import official.sketchBook.components_related.toUse_component.entity.PlayerControllerComponent;
+import official.sketchBook.components_related.toUse_component.entity.WeaponWieldComponent;
 import official.sketchBook.components_related.toUse_component.object.JumpComponent;
-import official.sketchBook.gameObject_related.base_model.ArmedEntity;
+import official.sketchBook.gameObject_related.base_model.Entity;
 import official.sketchBook.projectiles_related.emitters.Emitter;
 import official.sketchBook.room_related.model.PlayableRoom;
 import official.sketchBook.util_related.enumerators.types.FactionTypes;
@@ -28,7 +29,7 @@ import java.util.List;
 import static official.sketchBook.util_related.enumerators.layers.CollisionLayers.*;
 import static official.sketchBook.util_related.info.values.AnimationTitles.Entity.*;
 
-public class Player extends ArmedEntity {
+public class Player extends Entity {
 
     private PlayerAnimationManagerComponent animationController;
     private PlayerControllerComponent controllerComponent;
@@ -41,12 +42,12 @@ public class Player extends ArmedEntity {
 
         this.initSpriteSheet();
         this.initAnimations();
+        this.initComponents();
         this.initProjectileUsage();
 
-        this.xAP = width / 2;
-        this.yAP = width / 2;
+        this.weaponWC.setRxAP(width / 2);;
+        this.weaponWC.setRyAP(height / 2);
 
-        initComponents();
 
         this.faction = FactionTypes.ALLY;
     }
@@ -70,11 +71,14 @@ public class Player extends ArmedEntity {
             true
         );
         addComponent(jComponent);
+
+        weaponWC = new WeaponWieldComponent(this);
+        addComponent(weaponWC);
     }
 
     private void initProjectileUsage() {
         EmitterRegister.register(new Emitter(this));
-        this.weapon = new Shotgun(this, this.weaponAnchorPoint);
+//        this.weaponWC.setWeapon(new Shotgun(this, this.weaponWC.getWeaponAnchorPoint()));
     }
 
     private void initSpriteSheet() {
@@ -198,28 +202,25 @@ public class Player extends ArmedEntity {
 
     @Override
     public void render(SpriteBatch batch) {
-        if (weapon != null) {
-            weapon.render(batch);
-        }
+        this.weaponWC.render(batch);
         super.render(batch);
     }
 
     @Override
     public void dispose() {
         super.dispose();
-
-        if (weapon != null) {
-            weapon.dispose();
-        }
+        weaponWC.dispose();
     }
 
     public void rechargeWeapon() {
-        if (weapon == null) return;
+        if(!weaponWC.isWeaponRanged()) return;
+        weaponWC.getRangeWeapon().recharge();
+    }
 
-        if (hasRangeWeapon()) {
-            getRangeWeapon().recharge();
-        }
-
+    @Override
+    public void syncObjectSpritePos() {
+        super.syncObjectSpritePos();
+        weaponWC.syncWeaponPosToWielder();
     }
 
     //verifica se dá para pular

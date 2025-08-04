@@ -88,7 +88,7 @@ public class PlayableRoom implements Poolable {
         for (GameObject object : gameObjects) {
             if (object instanceof MovableGameObject mObj && mObj.getPhysicsC() != null) {
                 mObj.getPhysicsC().syncBodyObjectPos();
-                mObj.updateSpritePos();
+                mObj.syncObjectSpritePos();
             }
         }
 

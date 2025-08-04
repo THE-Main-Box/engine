@@ -5,7 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 import official.sketchBook.animation_related.ObjectAnimationPlayer;
 import official.sketchBook.animation_related.Sprite;
 import official.sketchBook.animation_related.SpriteSheetDataHandler;
-import official.sketchBook.gameObject_related.base_model.ArmedEntity;
+import official.sketchBook.gameObject_related.base_model.Entity;
 import official.sketchBook.projectiles_related.Projectile;
 import official.sketchBook.projectiles_related.projectiles.ShotgunProjectile;
 import official.sketchBook.util_related.enumerators.directions.Direction;
@@ -23,7 +23,7 @@ import static official.sketchBook.util_related.info.values.constants.RangeWeapon
 
 public class Shotgun extends RangeWeapon<Shotgun> {
 
-    public Shotgun(ArmedEntity owner, AnchorPoint point) {
+    public Shotgun(Entity owner, AnchorPoint point) {
         super(Shotgun.class, owner, point);
 
         updateProjectileIndex(1);
@@ -239,6 +239,6 @@ public class Shotgun extends RangeWeapon<Shotgun> {
     }
 
     protected boolean canPogoShoot(){
-        return owner.isAimingDown() && !owner.isOnGround();
+        return owner.getWeaponWC().isAimingDown() && !owner.isOnGround();
     }
 }

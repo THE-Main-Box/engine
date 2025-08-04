@@ -1,7 +1,7 @@
 package official.sketchBook.weapon_related.base_model;
 
 import com.badlogic.gdx.math.Vector2;
-import official.sketchBook.gameObject_related.base_model.Entity;
+import official.sketchBook.gameObject_related.base_model.DamageAbleEntity;
 import official.sketchBook.projectiles_related.Projectile;
 import official.sketchBook.projectiles_related.emitters.Emitter;
 import official.sketchBook.projectiles_related.util.ProjectilePool;
@@ -58,7 +58,7 @@ public abstract class RangeWeapon<T extends RangeWeapon<T>> extends BaseWeapon<T
     /// Offset padrão para projéteis do lado de baixo
     protected final Vector2 downOffSet = new Vector2(0, 0);
 
-    protected RangeWeapon(Class<T> weaponClass, Entity owner, AnchorPoint point) {
+    protected RangeWeapon(Class<T> weaponClass, DamageAbleEntity owner, AnchorPoint point) {
         super(weaponClass, owner, point);
         this.projectileEmitter = EmitterRegister.getEmitter(owner);
         Objects.requireNonNull(projectileEmitter, "Emitter must be registered to use this weapon");

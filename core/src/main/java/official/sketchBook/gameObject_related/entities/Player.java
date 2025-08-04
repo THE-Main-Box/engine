@@ -10,9 +10,8 @@ import official.sketchBook.animation_related.Sprite;
 import official.sketchBook.animation_related.SpriteSheetDataHandler;
 import official.sketchBook.components_related.toUse_component.entity.PlayerAnimationManagerComponent;
 import official.sketchBook.components_related.toUse_component.entity.PlayerControllerComponent;
-import official.sketchBook.components_related.toUse_component.entity.WeaponWieldComponent;
 import official.sketchBook.components_related.toUse_component.object.JumpComponent;
-import official.sketchBook.gameObject_related.base_model.Entity;
+import official.sketchBook.gameObject_related.base_model.DamageAbleEntity;
 import official.sketchBook.projectiles_related.emitters.Emitter;
 import official.sketchBook.room_related.model.PlayableRoom;
 import official.sketchBook.util_related.enumerators.types.FactionTypes;
@@ -21,7 +20,6 @@ import official.sketchBook.util_related.helpers.body.BodyCreatorHelper;
 import official.sketchBook.util_related.info.paths.EntitiesSpritePath;
 import official.sketchBook.util_related.info.values.GameObjectTag;
 import official.sketchBook.util_related.registers.EmitterRegister;
-import official.sketchBook.weapon_related.Shotgun;
 
 import java.util.Arrays;
 import java.util.List;
@@ -29,7 +27,7 @@ import java.util.List;
 import static official.sketchBook.util_related.enumerators.layers.CollisionLayers.*;
 import static official.sketchBook.util_related.info.values.AnimationTitles.Entity.*;
 
-public class Player extends Entity {
+public class Player extends DamageAbleEntity {
 
     private PlayerAnimationManagerComponent animationController;
     private PlayerControllerComponent controllerComponent;
@@ -45,7 +43,7 @@ public class Player extends Entity {
         this.initComponents();
         this.initProjectileUsage();
 
-        this.weaponWC.setRxAP(width / 2);;
+        this.weaponWC.setRxAP(width / 2);
         this.weaponWC.setRyAP(height / 2);
 
 
@@ -72,8 +70,7 @@ public class Player extends Entity {
         );
         addComponent(jComponent);
 
-        weaponWC = new WeaponWieldComponent(this);
-        addComponent(weaponWC);
+
     }
 
     private void initProjectileUsage() {
@@ -175,52 +172,9 @@ public class Player extends Entity {
     }
 
     @Override
-    protected void applySpeedOnBody() {
-        if (physicsC == null || moveC == null) return;
-        if (jComponent.isEntityLanded() && !moveC.isAcceleratingX()) {
-
-            float reducedSpeedX = moveC.getxSpeed() * 0.7f; // exemplo de redução
-            physicsC.applyImpulseForSpeed(
-                reducedSpeedX,
-                moveC.getySpeed(),
-                moveC.getxMaxSpeed(),
-                moveC.getyMaxSpeed()
-            );
-
-        } else {
-
-            physicsC.applyImpulseForSpeed(
-                moveC.getxSpeed(),
-                moveC.getySpeed(),
-                moveC.getxMaxSpeed(),
-                moveC.getyMaxSpeed()
-            );
-
-        }
-
-    }
-
-    @Override
     public void render(SpriteBatch batch) {
         this.weaponWC.render(batch);
         super.render(batch);
-    }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        weaponWC.dispose();
-    }
-
-    public void rechargeWeapon() {
-        if(!weaponWC.isWeaponRanged()) return;
-        weaponWC.getRangeWeapon().recharge();
-    }
-
-    @Override
-    public void syncObjectSpritePos() {
-        super.syncObjectSpritePos();
-        weaponWC.syncWeaponPosToWielder();
     }
 
     //verifica se dá para pular

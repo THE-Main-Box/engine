@@ -3,7 +3,7 @@ package official.sketchBook.weapon_related.base_model;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import official.sketchBook.animation_related.ObjectAnimationPlayer;
 import official.sketchBook.animation_related.SpriteSheetDataHandler;
-import official.sketchBook.gameObject_related.base_model.Entity;
+import official.sketchBook.gameObject_related.base_model.DamageAbleEntity;
 import official.sketchBook.util_related.util.entity.AnchorPoint;
 
 public abstract class BaseWeapon<T extends BaseWeapon<T>> {
@@ -17,7 +17,7 @@ public abstract class BaseWeapon<T extends BaseWeapon<T>> {
     protected String description;
 
     /// Dono da arma
-    protected Entity owner;
+    protected DamageAbleEntity owner;
 
     /// Gerenciador de dados da sprite-sheet
     protected SpriteSheetDataHandler spriteDataHandler;
@@ -31,7 +31,7 @@ public abstract class BaseWeapon<T extends BaseWeapon<T>> {
 
     protected AnchorPoint point;
 
-    public BaseWeapon(Class<T> weaponClass, Entity owner, AnchorPoint point) {
+    public BaseWeapon(Class<T> weaponClass, DamageAbleEntity owner, AnchorPoint point) {
         this.weaponClass = weaponClass;
         this.owner = owner;
         this.point = point;

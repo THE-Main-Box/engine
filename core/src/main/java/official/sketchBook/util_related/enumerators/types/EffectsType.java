@@ -1,6 +1,5 @@
 package official.sketchBook.util_related.enumerators.types;
 
-import official.sketchBook.components_related.toUse_component.entity.DamageReceiveComponent.DamageReceiver;
 import official.sketchBook.util_related.util.effect.EffectReceiver;
 import official.sketchBook.util_related.util.effect.EffectsAppliance;
 

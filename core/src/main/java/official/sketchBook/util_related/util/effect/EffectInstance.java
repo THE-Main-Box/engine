@@ -29,40 +29,45 @@ public class EffectInstance {
 
     }
 
-    private void apply(EffectReceiver target){
-        if(target == null) return;
+    private void apply(EffectReceiver target) {
+        if (target == null) return;
         effect.applyTo(target);
         applied = true;
     }
 
+    /**
+     * @param delta  aplicamos o deltaTime para fazer com que os temporizadores possa funcionar corretamente
+     * @param target Alvo que temos que afetar deve ser passado,<p>
+     *               pois nem sempre teremos acesso a esse tipo de informação
+     */
     public void update(float delta, EffectReceiver target) {
         //Se tivermos terminado paramos de atualizar
-        if(isFinished()){
+        if (isFinished()) {
             durationTimer.stop();
             return;
         }
 
         //Se não tivermos iniciado e estivermos atualizando,
         // iniciamos garantindo um tempo limpo
-        if(!durationTimer.isRunning()){
+        if (!durationTimer.isRunning()) {
             durationTimer.reset();
             durationTimer.start();
         }
 
         //Verificamos se ainda não aplicamos e se devemos aplicar apenas uma única vez
-        if(applyOnce && !applied){//Aplicamos caso a if esteja correta
+        if (applyOnce && !applied) {//Aplicamos caso a if esteja correta
             apply(target);
             return;
         }
         //Se tivermos um tempo de intervalo, ou seja um delay até ser executado
-        if(intervalTimer != null){
+        if (intervalTimer != null) {
             //Verificamos se está rodando, se não iniciamos
-            if(!intervalTimer.isRunning()){
+            if (!intervalTimer.isRunning()) {
                 intervalTimer.reset();
                 intervalTimer.start();
             }
             //Se tiver terminado executamos, ou se não tiver sido aplicado ainda
-            if(intervalTimer.isFinished() || !applied){
+            if (intervalTimer.isFinished() || !applied) {
                 apply(target);
                 intervalTimer.reset();
             }

@@ -2,39 +2,22 @@ package official.sketchBook.components_related.toUse_component.projectile;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import official.sketchBook.components_related.base_component.BasePhysicsComponent;
 import official.sketchBook.components_related.base_component.Component;
+import official.sketchBook.components_related.interfaces.MovementCapable;
 import official.sketchBook.projectiles_related.Projectile;
 
 import static official.sketchBook.util_related.info.values.constants.GameConstants.Physics.PPM;
 
 
-public class ProjectilePhysicsComponent implements Component {
-    protected final Projectile proj;
-    protected final Body body;
-    private boolean affectedByGravity = false;
+public class ProjectilePhysicsComponent extends BasePhysicsComponent implements Component {
 
     public ProjectilePhysicsComponent(Projectile proj) {
-        this.proj = proj;
-        this.body = proj.getBody();
+        super(proj);
     }
 
     public void update(float delta) {
 
-    }
-
-    public void applyImpulse(Vector2 impulse) {
-        if (body != null && !impulse.isZero()) {
-            body.applyLinearImpulse(impulse, body.getWorldCenter(), true);
-        }
-    }
-
-    /// Sincroniza o objeto ao corpo físico
-    public void syncBodyObjectPos() {
-        if (body == null) return;
-        Vector2 pos = body.getPosition();
-
-        proj.setX((pos.x * PPM) - proj.getRadius());
-        proj.setY((pos.y * PPM) - proj.getRadius());
     }
 
     /**
@@ -88,18 +71,6 @@ public class ProjectilePhysicsComponent implements Component {
     /// zera ou reseta a escala de gravidade do corpo
     public void setAffectedByGravity(boolean affected) {
         body.setGravityScale(affected ? 1f : 0f);
-        this.affectedByGravity = affected;
     }
 
-    public boolean isAffectedByGravity() {
-        return affectedByGravity;
-    }
-
-    public Projectile getProj() {
-        return proj;
-    }
-
-    public Body getBody() {
-        return body;
-    }
 }

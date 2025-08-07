@@ -1,6 +1,6 @@
 package official.sketchBook.util_related.enumerators.types;
 
-import official.sketchBook.util_related.util.effect.EffectReceiver;
+import official.sketchBook.components_related.interfaces.EffectReceiver;
 import official.sketchBook.util_related.util.effect.EffectsAppliance;
 
 import java.util.function.Consumer;

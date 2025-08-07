@@ -1,5 +1,7 @@
 package official.sketchBook.util_related.util.effect;
 
+import official.sketchBook.components_related.interfaces.EffectReceiver;
+
 public class EffectsAppliance {
 
     public static void burnEffect(EffectReceiver damageReceiver) {

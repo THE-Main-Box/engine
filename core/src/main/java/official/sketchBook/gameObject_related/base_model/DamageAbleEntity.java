@@ -7,8 +7,8 @@ public abstract class DamageAbleEntity extends Entity{
 
     protected WeaponWieldComponent weaponWC;
 
-    public DamageAbleEntity(float x, float y, float width, float height, boolean facingForward, World world) {
-        super(x, y, width, height, facingForward, world);
+    public DamageAbleEntity(float x, float y, float width, float height, boolean xAxisInverted,boolean yAxisInverted, World world) {
+        super(x, y, width, height, xAxisInverted, yAxisInverted, world);
 
         weaponWC = new WeaponWieldComponent(this);
         addComponent(weaponWC);
@@ -33,8 +33,8 @@ public abstract class DamageAbleEntity extends Entity{
     }
 
     @Override
-    public void syncObjectSpritePos() {
-        super.syncObjectSpritePos();
+    public void onObjectBodySync() {
+        super.onObjectBodySync();
         weaponWC.syncWeaponPosToWielder();
 
     }

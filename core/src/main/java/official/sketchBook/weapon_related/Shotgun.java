@@ -71,12 +71,12 @@ public class Shotgun extends RangeWeapon<Shotgun> {
         //Se estiver mirando pra baixo
         if (canPogoShoot()) {
             // Mira para baixo
-            spriteDataHandler.setRotation(owner.isFacingForward() ? -90 : 90);
-            x = owner.isFacingForward() ? -10f : 10f;
+            spriteDataHandler.setRotation(owner.isxAxisInverted() ? -90 : 90);
+            x = owner.isxAxisInverted() ? -10f : 10f;
         } else {//se não estiver mirando
             // Mira para frente (nem cima nem baixo)
             spriteDataHandler.setRotation(0);
-            x = owner.isFacingForward() ? -16f : 16f;
+            x = owner.isxAxisInverted() ? -16f : 16f;
         }
 
         setRelativeOffset(x, y);
@@ -111,7 +111,7 @@ public class Shotgun extends RangeWeapon<Shotgun> {
         if (canPogoShoot()) {
             dir = Direction.DOWN;
         } else {
-            dir = owner.isFacingForward() ? Direction.RIGHT : Direction.LEFT;
+            dir = owner.isxAxisInverted() ? Direction.RIGHT : Direction.LEFT;
         }
 
         //Determinamos a direção da movimentação do projétil
@@ -120,7 +120,7 @@ public class Shotgun extends RangeWeapon<Shotgun> {
         if (canPogoShoot()) {
             yDir = -1;
         } else {
-            xDir = owner.isFacingForward() ? 1 : -1;
+            xDir = owner.isxAxisInverted() ? 1 : -1;
         }
 
         //Passamos a direção que o projétil deve ir
@@ -189,7 +189,7 @@ public class Shotgun extends RangeWeapon<Shotgun> {
 
     @Override
     protected Vector2 getDownOffSet() {
-        setDownOffSet(owner.isFacingForward()? 11 : -10, -22);
+        setDownOffSet(owner.isxAxisInverted()? 11 : -10, -22);
         return super.getDownOffSet();
     }
 
@@ -226,7 +226,7 @@ public class Shotgun extends RangeWeapon<Shotgun> {
             0,
             3,
             3,
-            owner.isFacingForward(),
+            owner.isxAxisInverted(),
             false,
             new Texture(WeaponsSpritePath.shotgun_path)
         );

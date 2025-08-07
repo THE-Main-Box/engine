@@ -1,8 +1,6 @@
 package official.sketchBook.gameObject_related.base_model;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.World;
 import official.sketchBook.animation_related.ObjectAnimationPlayer;
 import official.sketchBook.animation_related.SpriteSheetDataHandler;
 import official.sketchBook.components_related.base_component.Component;
@@ -12,84 +10,70 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class GameObject {
-
-    //dimensions and position related
-    protected float x, y;
-    protected float width, height;
-
-    //physics related
-    protected Body body;
-    protected World world;
-
-    //rendering and animation related
-    protected List<SpriteSheetDataHandler> spriteSheetDatahandlerList;
-    protected List<ObjectAnimationPlayer> objectAnimationPlayerList;
-
-    protected boolean facingForward;
-
-    //components related
-    protected List<Component> components;
-
-    protected float defFric, defRest, defDens;
-
+    /// Sala física em que estamos instanciados
     protected PlayableRoom ownerRoom;
 
-    protected short maskBit;
-    protected short categoryBit;
+    /// Posição no mundo em pixels
+    protected float x, y;
+    /// Dimensões do corpo em pixels
+    protected float width, height;
 
-    public GameObject(float x, float y, float width, float height, boolean facingForward, World world) {
+    /// Inversão de percepção do objeto em relação ao eixo
+    protected boolean xAxisInverted, yAxisInverted;
+
+    /// Lista de gerenciadores de dado de sprites
+    /// <p>(a ordem é muito importante, deve ser a mesma da dos tocadores de animação)
+    protected List<SpriteSheetDataHandler> spriteSheetDatahandlerList = new ArrayList<>();
+
+    /// Lista de gerenciadores de animações
+    /// <p> (a ordem é muito importante, deve ser a mesma da dos gerenciadores de spritesheet)
+    protected List<ObjectAnimationPlayer> objectAnimationPlayerList = new ArrayList<>();
+
+    /// Lista de componentes existentes
+    protected List<Component> components = new ArrayList<>();
+
+
+    public GameObject(float x, float y, float width, float height, boolean xAxisInverted, boolean yAxisInverted) {
         this.x = x;
         this.y = y;
-
         this.width = width;
         this.height = height;
-
-        this.facingForward = facingForward;
-
-        objectAnimationPlayerList = new ArrayList<>();
-        spriteSheetDatahandlerList = new ArrayList<>();
-        components = new ArrayList<>();
-
-        this.world = world;
-
-        setBodyDefValues();
-        createBody();
-
+        this.xAxisInverted = xAxisInverted;
+        this.yAxisInverted = yAxisInverted;
     }
 
-    protected abstract void setBodyDefValues();
-
-    // Métodos para inicializar a física e a renderização (implementados nas subclasses)
-    protected abstract void createBody();
-
+    /// Atualizamos o objeto em si
     public abstract void update(float deltaTime);
 
-    protected void updateAnimationPlayer(float delta) {
-        for (ObjectAnimationPlayer animationPlayer : objectAnimationPlayerList) {
-            animationPlayer.update(delta);
+    /// Atualizamos os componentes salvos
+    protected final void updateComponents(float delta) {
+        for (Component component : components) {
+            component.update(delta);
         }
     }
 
+    /// Renderizamos todas as sprite sheets a partir da lista dos gerenciadores dos dados das sprites
     public void render(SpriteBatch batch) {
         if (!spriteSheetDatahandlerList.isEmpty() && !objectAnimationPlayerList.isEmpty()) {
             //renderizamos primeiro tudo o que tivermos para renderizar do objeto do jogador
             for (int i = 0; i < spriteSheetDatahandlerList.size(); i++) {
-                spriteSheetDatahandlerList.get(i).setFacingForward(facingForward);
-                spriteSheetDatahandlerList.get(i).renderSprite(
-                    batch,
+                spriteSheetDatahandlerList.get(i).setFacingForward(xAxisInverted);
+                spriteSheetDatahandlerList.get(i).renderSprite(batch,
                     objectAnimationPlayerList.get(i).getCurrentSprite()
                 );
             }
         }
     }
 
-    protected void updateComponents(float delta) {
-        for (Component component : components) {
-            component.update(delta);
+    /// Atualizamos os gerenciadores de animação dentro das listas
+    protected final void updateAnimationPlayer(float delta) {
+        for (ObjectAnimationPlayer animationPlayer : objectAnimationPlayerList) {
+            animationPlayer.update(delta);
         }
     }
 
     public void dispose() {
+        // validamos a lista de sprite sheets e permitimos assim que ela seja limpa corretamente
         if (!spriteSheetDatahandlerList.isEmpty()) {
             for (SpriteSheetDataHandler spriteSheetDatahandler : spriteSheetDatahandlerList) {
                 spriteSheetDatahandler.dispose();
@@ -97,25 +81,59 @@ public abstract class GameObject {
         }
     }
 
-    public List<Component> getComponents() {
-        return components;
-    }
-
+    /// Adicionamos mais um componente à lista
     public void addComponent(Component comp) {
         components.add(comp);
     }
 
-    public <T> T getComponent(Class<T> componentClass) {
-        for (Component comp : components) {
-            if (componentClass.isInstance(comp)) {
-                return componentClass.cast(comp);
-            }
+    public abstract void onEnterNewRoom();
+
+    /// Adicionamos um tocador de animações
+    public void addAnimationPlayer(ObjectAnimationPlayer aniPlayer) {
+        if (aniPlayer != null) {
+            objectAnimationPlayerList.add(aniPlayer);
         }
-        return null;
     }
 
-    public boolean hasComponent(Class<? extends Component> type) {
-        return components.stream().anyMatch(type::isInstance);
+    /// Adicionamos um gerenciador de sprites
+    public void addSpriteSheetDataHandler(SpriteSheetDataHandler spriteHandler) {
+        if (spriteHandler != null) {
+            spriteSheetDatahandlerList.add(spriteHandler);
+        }
+    }
+
+
+    // Métodos para acessar os principais elementos
+    public SpriteSheetDataHandler getPrimarySpriteHandler() {
+        return spriteSheetDatahandlerList.isEmpty() ? null : spriteSheetDatahandlerList.get(0);
+    }
+
+    public ObjectAnimationPlayer getPrimaryAnimationPlayer() {
+        return objectAnimationPlayerList.isEmpty() ? null : objectAnimationPlayerList.get(0);
+    }
+
+    public List<SpriteSheetDataHandler> getSpriteSheetDatahandlerList() {
+        return spriteSheetDatahandlerList;
+    }
+
+    public List<ObjectAnimationPlayer> getObjectAnimationPlayerList() {
+        return objectAnimationPlayerList;
+    }
+
+    public boolean isxAxisInverted() {
+        return xAxisInverted;
+    }
+
+    public void setxAxisInverted(boolean xAxisInverted) {
+        this.xAxisInverted = xAxisInverted;
+    }
+
+    public boolean isyAxisInverted() {
+        return yAxisInverted;
+    }
+
+    public void setyAxisInverted(boolean yAxisInverted) {
+        this.yAxisInverted = yAxisInverted;
     }
 
     public PlayableRoom getOwnerRoom() {
@@ -124,58 +142,7 @@ public abstract class GameObject {
 
     public void setOwnerRoom(PlayableRoom ownerRoom) {
         this.ownerRoom = ownerRoom;
-    }
-
-    public float getDefFric() {
-        return defFric;
-    }
-
-    public float getDefRest() {
-        return defRest;
-    }
-
-    public float getDefDens() {
-        return defDens;
-    }
-
-    public World getWorld() {
-        return world;
-    }
-
-    public void setWorld(World world) {
-        this.world = world;
-    }
-
-    public Body getBody() {
-        return body;
-    }
-
-    public void setBody(Body body) {
-        this.body = body;
-    }
-
-    public boolean isFacingForward() {
-        return facingForward;
-    }
-
-    public void setFacingForward(boolean facingForward) {
-        this.facingForward = facingForward;
-    }
-
-    public float getX() {
-        return x;
-    }
-
-    public void setX(float x) {
-        this.x = x;
-    }
-
-    public float getY() {
-        return y;
-    }
-
-    public void setY(float y) {
-        this.y = y;
+        this.onEnterNewRoom();
     }
 
     public float getWidth() {
@@ -194,50 +161,19 @@ public abstract class GameObject {
         this.height = height;
     }
 
-    // Métodos para adicionar handlers de sprite e animação
-    public void addAnimationPlayer(ObjectAnimationPlayer aniPlayer) {
-        if (aniPlayer != null) {
-            objectAnimationPlayerList.add(aniPlayer);
-        }
+    public float getX() {
+        return x;
     }
 
-    public void addSpriteSheetDataHandler(SpriteSheetDataHandler spriteHandler) {
-        if (spriteHandler != null) {
-            spriteSheetDatahandlerList.add(spriteHandler);
-        }
+    public void setX(float x) {
+        this.x = x;
     }
 
-    // Métodos para acessar os principais elementos
-    public SpriteSheetDataHandler getPrimarySpriteHandler() {
-        return spriteSheetDatahandlerList.isEmpty() ? null : spriteSheetDatahandlerList.get(0);
+    public float getY() {
+        return y;
     }
 
-    public ObjectAnimationPlayer getPrimaryAnimationPlayer() {
-        return objectAnimationPlayerList.isEmpty() ? null : objectAnimationPlayerList.get(0);
-    }
-
-
-    public List<SpriteSheetDataHandler> getSpriteSheetDatahandlerList() {
-        return spriteSheetDatahandlerList;
-    }
-
-    public List<ObjectAnimationPlayer> getObjectAnimationPlayerList() {
-        return objectAnimationPlayerList;
-    }
-
-    public short getCategoryBit() {
-        return categoryBit;
-    }
-
-    public void setCategoryBit(short categoryBit) {
-        this.categoryBit = categoryBit;
-    }
-
-    public short getMaskBit() {
-        return maskBit;
-    }
-
-    public void setMaskBit(short maskBit) {
-        this.maskBit = maskBit;
+    public void setY(float y) {
+        this.y = y;
     }
 }

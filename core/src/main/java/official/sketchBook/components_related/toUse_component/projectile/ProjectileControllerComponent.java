@@ -158,7 +158,7 @@ public class ProjectileControllerComponent implements Component {
         activeTimeLimit.stop();
         activeTimeLimit.reset();
 
-        projectile.getPhysicsComponent().resetMovement();
+        projectile.getPhysicsC().resetMovement();
         projectile.getBody().setTransform(projectile.getX(), projectile.getY(), 0);
     }
 
@@ -216,16 +216,16 @@ public class ProjectileControllerComponent implements Component {
         projectile.setActive(true);
         projectile.getOwnerPool().addToActive(projectile);
 
-        projectile.getPhysicsComponent().getBody().setTransform(
+        projectile.getPhysicsC().getBody().setTransform(
             projectile.getX(),
             projectile.getY(),
             projectile.getRotation()
         );
 
-        projectile.getPhysicsComponent().getBody().setLinearVelocity(0, 0);
-        projectile.getPhysicsComponent().getBody().setAngularVelocity(0);
+        projectile.getPhysicsC().getBody().setLinearVelocity(0, 0);
+        projectile.getPhysicsC().getBody().setAngularVelocity(0);
 
-        projectile.getPhysicsComponent().applyTimedTrajectory(displacement, timeSeconds);
+        projectile.getPhysicsC().applyTimedTrajectory(displacement, timeSeconds);
     }
 
     // ----- GETTERS/SETTERS -----
@@ -304,7 +304,7 @@ public class ProjectileControllerComponent implements Component {
 
     public void setAffectedByGravity(boolean affected) {
         this.affectedByGravity = affected;
-        this.projectile.getPhysicsComponent().setAffectedByGravity(affected);
+        this.projectile.getPhysicsC().setAffectedByGravity(affected);
     }
 
     public void setCanRotate(boolean canRotate) {

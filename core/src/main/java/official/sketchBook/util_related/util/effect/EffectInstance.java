@@ -1,5 +1,6 @@
 package official.sketchBook.util_related.util.effect;
 
+import official.sketchBook.components_related.interfaces.EffectReceiver;
 import official.sketchBook.components_related.toUse_component.util.TimerComponent;
 import official.sketchBook.util_related.enumerators.types.EffectsType;
 

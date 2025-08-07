@@ -2,19 +2,19 @@ package official.sketchBook.components_related.toUse_component.object;
 
 import com.badlogic.gdx.math.Vector2;
 import official.sketchBook.components_related.base_component.BasePhysicsComponent;
-import official.sketchBook.gameObject_related.base_model.GameObject;
-import official.sketchBook.gameObject_related.base_model.MovableGameObject;
+import official.sketchBook.components_related.interfaces.MovementCapable;
+import official.sketchBook.gameObject_related.base_model.PhysicalGameObject;
 
 import static official.sketchBook.util_related.info.values.constants.GameConstants.Physics.PPM;
 
 
 public class MObjectPhysicsComponent extends BasePhysicsComponent {
 
-    private MovableGameObject mob;
+    private final MovementCapable mob;
 
-    public MObjectPhysicsComponent(GameObject object) {
-        super(object, object.getBody());
-        this.mob = (MovableGameObject) object;
+    public MObjectPhysicsComponent(PhysicalGameObject object) {
+        super(object);
+        this.mob = (MovementCapable) object;
     }
 
     public void update(float deltaTime) {

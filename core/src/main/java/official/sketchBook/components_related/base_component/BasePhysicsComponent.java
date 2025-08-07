@@ -2,19 +2,19 @@ package official.sketchBook.components_related.base_component;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
-import official.sketchBook.gameObject_related.base_model.GameObject;
+import official.sketchBook.components_related.interfaces.Physical;
 
 import static official.sketchBook.util_related.info.values.constants.GameConstants.Physics.PPM;
 
 
 public abstract class BasePhysicsComponent implements Component {
 
-    protected GameObject object;
+    protected Physical object;
     protected Body body;
 
-    public BasePhysicsComponent(GameObject object, Body body) {
+    public BasePhysicsComponent(Physical object) {
         this.object = object;
-        this.body = body;
+        this.body = object.getBody();
     }
 
     public final void applyImpulse(Vector2 impulse) {
@@ -66,11 +66,18 @@ public abstract class BasePhysicsComponent implements Component {
         }
     }
 
+    public final void deactivate(){
+        body.setActive(false);
+        resetMovement();
+    }
+
+    public final void activate(){
+        body.setActive(true);
+    }
 
     public void resetMovement(){
         body.setLinearVelocity(0, 0);
         body.setAngularVelocity(0);
-        body.setActive(false); // Desativa o corpo no mundo físico
     }
 
     public Body getBody() {

@@ -2,7 +2,8 @@ package official.sketchBook.components_related.toUse_component.object;
 
 import com.badlogic.gdx.physics.box2d.Body;
 import official.sketchBook.components_related.base_component.Component;
-import official.sketchBook.util_related.util.entity.DamageType;
+import official.sketchBook.components_related.interfaces.DamageReceiver;
+import official.sketchBook.util_related.util.damage.DamageType;
 
 public class DamageReceiveComponent implements Component {
 
@@ -52,9 +53,5 @@ public class DamageReceiveComponent implements Component {
         this.invincible = invincible;
     }
 
-    public interface DamageReceiver {
-        Body getBody();
-        void die();
-        DamageReceiveComponent getDamageReceiveC();
-    }
+
 }

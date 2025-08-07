@@ -3,7 +3,7 @@ package official.sketchBook.components_related.toUse_component.object;
 import official.sketchBook.components_related.base_component.Component;
 import official.sketchBook.util_related.enumerators.types.EffectsType;
 import official.sketchBook.util_related.util.effect.EffectInstance;
-import official.sketchBook.util_related.util.effect.EffectReceiver;
+import official.sketchBook.components_related.interfaces.EffectReceiver;
 
 import java.util.ArrayList;
 import java.util.List;

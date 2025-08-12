@@ -1,7 +1,7 @@
 package official.sketchBook.gameObject_related.base_model;
 
 import com.badlogic.gdx.physics.box2d.World;
-import official.sketchBook.components_related.toUse_component.entity.WeaponWieldComponent;
+import official.sketchBook.components_related.toUse_component.object.WeaponWieldComponent;
 
 public abstract class DamageAbleEntity extends Entity{
 

@@ -1,9 +1,8 @@
 package official.sketchBook.components_related.toUse_component.object;
 
 import official.sketchBook.components_related.base_component.Component;
-import official.sketchBook.components_related.interfaces.JumpCapable;
+import official.sketchBook.components_related.integration_interfaces.JumpCapableII;
 import official.sketchBook.components_related.toUse_component.util.TimerComponent;
-import official.sketchBook.gameObject_related.base_model.Entity;
 
 import static official.sketchBook.util_related.info.values.constants.GameConstants.Physics.PPM;
 
@@ -15,7 +14,7 @@ public class JumpComponent implements Component {
     private float jumpForce, fallSpeedAfterJCancel;
     private boolean enhancedGravity;
 
-    private JumpCapable JumpableObject;
+    private JumpCapableII JumpableObject;
 
     private boolean prevOnGround;        // armazena onGround do frame anterior
     private boolean landedThisFrame;     // true somente no frame em que aterrissa
@@ -39,7 +38,7 @@ public class JumpComponent implements Component {
      * @param enhancedGravity       a gravidade ficará mais forte na queda
      */
     public JumpComponent(
-        JumpCapable JumpableObject,
+        JumpCapableII JumpableObject,
         float jumpForce,
         float fallSpeedAfterJCancel,
         float coyoteTimeTarget,

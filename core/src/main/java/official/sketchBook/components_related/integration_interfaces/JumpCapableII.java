@@ -1,10 +1,10 @@
-package official.sketchBook.components_related.interfaces;
+package official.sketchBook.components_related.integration_interfaces;
 
 import com.badlogic.gdx.physics.box2d.Body;
 import official.sketchBook.components_related.base_component.BasePhysicsComponent;
 import official.sketchBook.components_related.toUse_component.object.JumpComponent;
 
-public interface JumpCapable {
+public interface JumpCapableII {
     /// Verifica se o objeto permite um salto
     boolean canJump();
     /// Garante que haverá um componente de pulo

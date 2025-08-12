@@ -1,4 +1,4 @@
-package official.sketchBook.components_related.toUse_component.entity;
+package official.sketchBook.components_related.toUse_component.object;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import official.sketchBook.components_related.base_component.Component;

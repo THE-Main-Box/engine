@@ -6,11 +6,10 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
 import official.sketchBook.animation_related.ObjectAnimationPlayer;
 import official.sketchBook.animation_related.SpriteSheetDataHandler;
-import official.sketchBook.components_related.base_component.BasePhysicsComponent;
 import official.sketchBook.components_related.base_component.Component;
 import official.sketchBook.components_related.collisionBehaviorComponents.StickToSurfaceBehavior;
-import official.sketchBook.components_related.interfaces.MovementCapable;
-import official.sketchBook.components_related.interfaces.Physical;
+import official.sketchBook.components_related.integration_interfaces.MovementCapableII;
+import official.sketchBook.components_related.integration_interfaces.PhysicalObjectII;
 import official.sketchBook.components_related.toUse_component.object.MovementComponent;
 import official.sketchBook.components_related.toUse_component.projectile.ProjectileControllerComponent;
 import official.sketchBook.components_related.toUse_component.projectile.ProjectilePhysicsComponent;
@@ -25,7 +24,7 @@ import official.sketchBook.util_related.info.values.GameObjectTag;
 import static official.sketchBook.util_related.enumerators.layers.CollisionLayers.*;
 import static official.sketchBook.util_related.helpers.HelpMethods.updateCollisionFilters;
 
-public abstract class Projectile implements CustomPool.Poolable, MovementCapable, Physical {
+public abstract class Projectile implements CustomPool.Poolable, MovementCapableII, PhysicalObjectII {
 
     /// Raio do projétil
     protected float radius;

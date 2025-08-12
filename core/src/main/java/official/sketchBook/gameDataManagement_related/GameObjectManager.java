@@ -2,7 +2,7 @@ package official.sketchBook.gameDataManagement_related;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.World;
-import official.sketchBook.gameObject_related.base_model.PhysicalGameObject;
+import official.sketchBook.gameObject_related.base_model.PhysicalObjectIIGameObject;
 import official.sketchBook.gameObject_related.entities.Player;
 import official.sketchBook.room_related.model.PlayableRoom;
 import official.sketchBook.room_related.worldGeneration_related.blueprint.RoomBlueprint;
@@ -121,11 +121,11 @@ public class GameObjectManager {
         currentRoom.dispose();
     }
 
-    public void removeGameObject(PlayableRoom room, PhysicalGameObject object) {
+    public void removeGameObject(PlayableRoom room, PhysicalObjectIIGameObject object) {
         room.removeObject(object);
     }
 
-    public void addGameObject(PlayableRoom room, PhysicalGameObject object) {
+    public void addGameObject(PlayableRoom room, PhysicalObjectIIGameObject object) {
         room.addObject(object);
     }
 

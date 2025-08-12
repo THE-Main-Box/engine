@@ -2,17 +2,17 @@ package official.sketchBook.components_related.base_component;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
-import official.sketchBook.components_related.interfaces.Physical;
+import official.sketchBook.components_related.integration_interfaces.PhysicalObjectII;
 
 import static official.sketchBook.util_related.info.values.constants.GameConstants.Physics.PPM;
 
 
 public abstract class BasePhysicsComponent implements Component {
 
-    protected Physical object;
+    protected PhysicalObjectII object;
     protected Body body;
 
-    public BasePhysicsComponent(Physical object) {
+    public BasePhysicsComponent(PhysicalObjectII object) {
         this.object = object;
         this.body = object.getBody();
     }

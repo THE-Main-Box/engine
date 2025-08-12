@@ -8,16 +8,19 @@ import com.badlogic.gdx.physics.box2d.World;
 import official.sketchBook.animation_related.ObjectAnimationPlayer;
 import official.sketchBook.animation_related.Sprite;
 import official.sketchBook.animation_related.SpriteSheetDataHandler;
-import official.sketchBook.components_related.interfaces.JumpCapable;
+import official.sketchBook.components_related.integration_interfaces.JumpCapableII;
 import official.sketchBook.components_related.toUse_component.entity.PlayerAnimationManagerComponent;
 import official.sketchBook.components_related.toUse_component.entity.PlayerControllerComponent;
 import official.sketchBook.components_related.toUse_component.object.JumpComponent;
 import official.sketchBook.gameObject_related.base_model.DamageAbleEntity;
+import official.sketchBook.projectiles_related.emitters.Emitter;
 import official.sketchBook.util_related.enumerators.types.FactionTypes;
 import official.sketchBook.util_related.enumerators.types.ObjectType;
 import official.sketchBook.util_related.helpers.body.BodyCreatorHelper;
 import official.sketchBook.util_related.info.paths.EntitiesSpritePath;
 import official.sketchBook.util_related.info.values.GameObjectTag;
+import official.sketchBook.util_related.registers.EmitterRegister;
+import official.sketchBook.weapon_related.Shotgun;
 
 import java.util.Arrays;
 import java.util.List;
@@ -25,10 +28,10 @@ import java.util.List;
 import static official.sketchBook.util_related.enumerators.layers.CollisionLayers.*;
 import static official.sketchBook.util_related.info.values.AnimationTitles.Entity.*;
 
-public class Player extends DamageAbleEntity implements JumpCapable {
+public class Player extends DamageAbleEntity implements JumpCapableII {
     private JumpComponent jComponent;
 
-    public Player(float x, float y, float width, float height, boolean xAxisInverted,boolean yAxisInverted, World world) {
+    public Player(float x, float y, float width, float height, boolean xAxisInverted, boolean yAxisInverted, World world) {
         super(x, y, width, height, xAxisInverted, yAxisInverted, world);
 
         this.initSpriteSheet();
@@ -62,13 +65,13 @@ public class Player extends DamageAbleEntity implements JumpCapable {
 
     }
 
-    public void onEnterNewRoom(){
+    public void onEnterNewRoom() {
         initProjectileUsage();
     }
 
     private void initProjectileUsage() {
-//        EmitterRegister.register(new Emitter(this));
-//        this.weaponWC.setWeapon(new Shotgun(this, this.weaponWC.getWeaponAnchorPoint()));
+        EmitterRegister.register(new Emitter(this));
+        this.weaponWC.setWeapon(new Shotgun(this, this.weaponWC.getWeaponAnchorPoint()));
     }
 
     private void initSpriteSheet() {
@@ -81,7 +84,7 @@ public class Player extends DamageAbleEntity implements JumpCapable {
                 5,
                 4,
                 xAxisInverted,
-                false,
+                yAxisInverted,
                 new Texture(EntitiesSpritePath.duck_path)
             )
         );

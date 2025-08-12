@@ -3,12 +3,12 @@ package official.sketchBook.components_related.toUse_component.object;
 import official.sketchBook.components_related.base_component.Component;
 import official.sketchBook.util_related.enumerators.types.EffectsType;
 import official.sketchBook.util_related.util.effect.EffectInstance;
-import official.sketchBook.components_related.interfaces.EffectReceiver;
+import official.sketchBook.components_related.integration_interfaces.EffectReceiverII;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class EffectManagerComponent implements Component {
+public class EffectReceiverComponent implements Component {
     /// Lista de efeitos
     private final List<EffectInstance> effects = new ArrayList<>();
 
@@ -16,7 +16,7 @@ public class EffectManagerComponent implements Component {
     private final List<EffectsType> effectsImmune = new ArrayList<>();
 
     /// Objeto que irá receber os efeitos
-    private EffectReceiver target;
+    private EffectReceiverII target;
 
     /// Atualizamos os efeitos que podem ser aplicados e removemos o que precisam ser removidos
     public void update(float delta) {
@@ -68,11 +68,11 @@ public class EffectManagerComponent implements Component {
     }
 
     /// Atualizamos o alvo afetado pro efeitos
-    public void setTarget(EffectReceiver target) {
+    public void setTarget(EffectReceiverII target) {
         this.target = target;
     }
 
-    public EffectReceiver getTarget() {
+    public EffectReceiverII getTarget() {
         return target;
     }
 }

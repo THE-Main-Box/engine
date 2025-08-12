@@ -227,7 +227,7 @@ public class Shotgun extends RangeWeapon<Shotgun> {
             3,
             3,
             owner.isxAxisInverted(),
-            false,
+            owner.isyAxisInverted(),
             new Texture(WeaponsSpritePath.shotgun_path)
         );
     }

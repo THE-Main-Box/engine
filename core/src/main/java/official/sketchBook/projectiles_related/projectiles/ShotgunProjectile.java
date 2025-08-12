@@ -1,8 +1,6 @@
 package official.sketchBook.projectiles_related.projectiles;
 
 import com.badlogic.gdx.physics.box2d.World;
-import official.sketchBook.components_related.base_component.BasePhysicsComponent;
-import official.sketchBook.components_related.toUse_component.object.MovementComponent;
 import official.sketchBook.gameObject_related.base_model.Entity;
 import official.sketchBook.projectiles_related.Projectile;
 

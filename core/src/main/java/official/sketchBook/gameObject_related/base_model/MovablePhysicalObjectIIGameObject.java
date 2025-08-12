@@ -2,16 +2,16 @@ package official.sketchBook.gameObject_related.base_model;
 
 import com.badlogic.gdx.physics.box2d.World;
 import official.sketchBook.animation_related.SpriteSheetDataHandler;
-import official.sketchBook.components_related.interfaces.MovementCapable;
+import official.sketchBook.components_related.integration_interfaces.MovementCapableII;
 import official.sketchBook.components_related.toUse_component.object.MObjectPhysicsComponent;
 import official.sketchBook.components_related.toUse_component.object.MovementComponent;
 import official.sketchBook.util_related.info.values.constants.SpeedRelatedConstants;
 
-public abstract class MovablePhysicalGameObject extends PhysicalGameObject implements MovementCapable{
+public abstract class MovablePhysicalObjectIIGameObject extends PhysicalObjectIIGameObject implements MovementCapableII {
     protected MovementComponent moveC;
     protected MObjectPhysicsComponent physicsC;
 
-    public MovablePhysicalGameObject(float x, float y, float width, float height, boolean xAxisInverted,boolean yAxisInverted, World world) {
+    public MovablePhysicalObjectIIGameObject(float x, float y, float width, float height, boolean xAxisInverted, boolean yAxisInverted, World world) {
         super(x, y, width, height, xAxisInverted, yAxisInverted, world);
 
         moveC = new MovementComponent(this.body.getMass());

@@ -1,18 +1,10 @@
 package official.sketchBook.gameObject_related.base_model;
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
-import official.sketchBook.animation_related.ObjectAnimationPlayer;
-import official.sketchBook.animation_related.SpriteSheetDataHandler;
-import official.sketchBook.components_related.base_component.Component;
-import official.sketchBook.components_related.interfaces.Physical;
-import official.sketchBook.room_related.model.PlayableRoom;
+import official.sketchBook.components_related.integration_interfaces.PhysicalObjectII;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public abstract class PhysicalGameObject extends GameObject implements Physical {
+public abstract class PhysicalObjectIIGameObject extends GameObject implements PhysicalObjectII {
 
     //physics related
     protected Body body;
@@ -23,7 +15,7 @@ public abstract class PhysicalGameObject extends GameObject implements Physical 
     protected short maskBit;
     protected short categoryBit;
 
-    public PhysicalGameObject(float x, float y, float width, float height, boolean xAxisInverted, boolean yAxisInverted, World world) {
+    public PhysicalObjectIIGameObject(float x, float y, float width, float height, boolean xAxisInverted, boolean yAxisInverted, World world) {
         super(x, y, width, height, xAxisInverted, yAxisInverted);
 
         this.world = world;

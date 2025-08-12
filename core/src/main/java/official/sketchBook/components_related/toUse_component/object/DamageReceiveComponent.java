@@ -1,17 +1,16 @@
 package official.sketchBook.components_related.toUse_component.object;
 
-import com.badlogic.gdx.physics.box2d.Body;
 import official.sketchBook.components_related.base_component.Component;
-import official.sketchBook.components_related.interfaces.DamageReceiver;
+import official.sketchBook.components_related.integration_interfaces.DamageReceiverII;
 import official.sketchBook.util_related.util.damage.DamageType;
 
 public class DamageReceiveComponent implements Component {
 
-    private final DamageReceiver receiver;
+    private final DamageReceiverII receiver;
     private double health;
     private boolean invincible;
 
-    public DamageReceiveComponent(DamageReceiver receiver, double health) {
+    public DamageReceiveComponent(DamageReceiverII receiver, double health) {
         this.receiver = receiver;
         this.health = health;
     }
@@ -33,7 +32,7 @@ public class DamageReceiveComponent implements Component {
         receiver.die();
     }
 
-    public DamageReceiver getReceiver() {
+    public DamageReceiverII getReceiver() {
         return receiver;
     }
 

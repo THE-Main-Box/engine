@@ -4,11 +4,11 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Pool.Poolable;
-import official.sketchBook.components_related.interfaces.MovementCapable;
-import official.sketchBook.components_related.interfaces.RayCaster;
+import official.sketchBook.components_related.integration_interfaces.MovementCapableII;
+import official.sketchBook.components_related.integration_interfaces.RayCasterII;
 import official.sketchBook.gameObject_related.base_model.Entity;
 import official.sketchBook.gameObject_related.base_model.GameObject;
-import official.sketchBook.gameObject_related.base_model.PhysicalGameObject;
+import official.sketchBook.gameObject_related.base_model.PhysicalObjectIIGameObject;
 import official.sketchBook.projectiles_related.util.GlobalProjectilePool;
 import official.sketchBook.room_related.worldGeneration_related.connection.RoomNode;
 import official.sketchBook.util_related.helpers.body.RoomBodyDataConversor;
@@ -97,7 +97,7 @@ public class PlayableRoom implements Poolable {
 
     /// Sincroniza os corpos dos objetos com suas posições relativas
     public void syncObjectBody(GameObject object) {
-        if (object instanceof MovementCapable mObj && mObj.getPhysicsC() != null) {
+        if (object instanceof MovementCapableII mObj && mObj.getPhysicsC() != null) {
             mObj.getPhysicsC().syncBodyObjectPos();
             mObj.onObjectBodySync();
         }
@@ -105,7 +105,7 @@ public class PlayableRoom implements Poolable {
 
     /// Atualiza os ray casts de todas as entidades que possuem a capacidade de usar um rayCast
     public void updateObjectsRayCast(GameObject object) {
-        if (object instanceof RayCaster castable && castable.getRayCastHelper() != null) {
+        if (object instanceof RayCasterII castable && castable.getRayCastHelper() != null) {
             castable.updateRayCast();
         }
     }
@@ -167,12 +167,12 @@ public class PlayableRoom implements Poolable {
 //        }
 //    }
 
-    public void addObject(PhysicalGameObject object) {
+    public void addObject(PhysicalObjectIIGameObject object) {
         this.gameObjects.add(object);
         object.setOwnerRoom(this);
     }
 
-    public void removeObject(PhysicalGameObject object) {
+    public void removeObject(PhysicalObjectIIGameObject object) {
         this.gameObjects.remove(object);
         object.setOwnerRoom(null);
         if (object instanceof Entity entity && EmitterRegister.getEmitter(entity) != null) {

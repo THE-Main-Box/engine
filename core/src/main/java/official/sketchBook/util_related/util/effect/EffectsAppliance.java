@@ -1,15 +1,15 @@
 package official.sketchBook.util_related.util.effect;
 
-import official.sketchBook.components_related.interfaces.EffectReceiver;
+import official.sketchBook.components_related.integration_interfaces.EffectReceiverII;
 
 public class EffectsAppliance {
 
-    public static void burnEffect(EffectReceiver damageReceiver) {
+    public static void burnEffect(EffectReceiverII damageReceiver) {
         System.out.println("🔥 Aplicando efeito de queimadura em " + damageReceiver.getClass().getSimpleName());
         // lógica real entraria aqui
     }
 
-    public static void freezeEffect(EffectReceiver damageReceiver) {
+    public static void freezeEffect(EffectReceiverII damageReceiver) {
         System.out.println("Aplicando efeito de congelamento...");
         // lógica real entraria aqui
     }

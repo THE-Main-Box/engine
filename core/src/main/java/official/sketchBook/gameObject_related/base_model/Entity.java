@@ -2,7 +2,7 @@ package official.sketchBook.gameObject_related.base_model;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
-import official.sketchBook.components_related.interfaces.RayCaster;
+import official.sketchBook.components_related.integration_interfaces.RayCasterII;
 import official.sketchBook.util_related.enumerators.types.FactionTypes;
 import official.sketchBook.util_related.enumerators.types.ObjectType;
 import official.sketchBook.util_related.helpers.RayCastHelper;
@@ -12,7 +12,7 @@ import static official.sketchBook.util_related.helpers.HelpMethods.getTag;
 import static official.sketchBook.util_related.info.values.constants.GameConstants.Physics.PPM;
 
 
-public abstract class Entity extends MovablePhysicalGameObject implements RayCaster {
+public abstract class Entity extends MovablePhysicalObjectIIGameObject implements RayCasterII {
 
     protected FactionTypes faction;
     protected boolean onGround;

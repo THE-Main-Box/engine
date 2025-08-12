@@ -1,6 +1,6 @@
 package official.sketchBook.util_related.util.effect;
 
-import official.sketchBook.components_related.interfaces.EffectReceiver;
+import official.sketchBook.components_related.integration_interfaces.EffectReceiverII;
 import official.sketchBook.components_related.toUse_component.util.TimerComponent;
 import official.sketchBook.util_related.enumerators.types.EffectsType;
 
@@ -30,7 +30,7 @@ public class EffectInstance {
 
     }
 
-    private void apply(EffectReceiver target) {
+    private void apply(EffectReceiverII target) {
         if (target == null) return;
         effect.applyTo(target);
         applied = true;
@@ -41,7 +41,7 @@ public class EffectInstance {
      * @param target Alvo que temos que afetar deve ser passado,<p>
      *               pois nem sempre teremos acesso a esse tipo de informação
      */
-    public void update(float delta, EffectReceiver target) {
+    public void update(float delta, EffectReceiverII target) {
         //Se tivermos terminado paramos de atualizar
         if (isFinished()) {
             durationTimer.stop();

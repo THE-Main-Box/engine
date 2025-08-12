@@ -1,13 +1,9 @@
 package official.sketchBook.components_related.toUse_component.projectile;
 
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
 import official.sketchBook.components_related.base_component.BasePhysicsComponent;
 import official.sketchBook.components_related.base_component.Component;
-import official.sketchBook.components_related.interfaces.MovementCapable;
 import official.sketchBook.projectiles_related.Projectile;
-
-import static official.sketchBook.util_related.info.values.constants.GameConstants.Physics.PPM;
 
 
 public class ProjectilePhysicsComponent extends BasePhysicsComponent implements Component {

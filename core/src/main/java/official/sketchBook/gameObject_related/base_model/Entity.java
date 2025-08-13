@@ -19,8 +19,8 @@ public abstract class Entity extends MovablePhysicalObjectIIGameObject implement
     protected RayCastHelper rayCastHelper;
     protected GameObjectTag groundTag;
 
-    public Entity(float x, float y, float width, float height, boolean xAxisInverted, boolean yAxisInverted, World world) {
-        super(x, y, width, height, xAxisInverted, yAxisInverted, world);
+    public Entity(float x, float y, float width, float height, boolean xAxisNormal, boolean yAxisNormal, World world) {
+        super(x, y, width, height, xAxisNormal, yAxisNormal, world);
 
         this.rayCastHelper = new RayCastHelper(world);
     }

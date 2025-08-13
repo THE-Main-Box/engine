@@ -31,8 +31,8 @@ import static official.sketchBook.util_related.info.values.AnimationTitles.Entit
 public class Player extends DamageAbleEntity implements JumpCapableII {
     private JumpComponent jComponent;
 
-    public Player(float x, float y, float width, float height, boolean xAxisInverted, boolean yAxisInverted, World world) {
-        super(x, y, width, height, xAxisInverted, yAxisInverted, world);
+    public Player(float x, float y, float width, float height, boolean xAxisNormal, boolean yAxisNormal, World world) {
+        super(x, y, width, height, xAxisNormal, yAxisNormal, world);
 
         this.initSpriteSheet();
         this.initAnimations();
@@ -83,8 +83,8 @@ public class Player extends DamageAbleEntity implements JumpCapableII {
                 0,
                 5,
                 4,
-                xAxisInverted,
-                yAxisInverted,
+                xAxisNormal,
+                yAxisNormal,
                 new Texture(EntitiesSpritePath.duck_path)
             )
         );

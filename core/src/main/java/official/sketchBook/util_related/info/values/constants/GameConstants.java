@@ -1,5 +1,7 @@
 package official.sketchBook.util_related.info.values.constants;
 
+import com.badlogic.gdx.math.Vector2;
+
 public class GameConstants {
 
     //TODO: implementar sistema de carregamento de configurações dinâmicas por json nos métodos setter dos valores
@@ -70,6 +72,9 @@ public class GameConstants {
         public static boolean showProjectilesActive = true;
         /// Permite que a ui mostre a quantidade de pools de projéteis ativas no momento
         public static boolean showActiveProjectilePools = true;
+
+        /// Valor de fallback seguro para referencias vazias ou nulas para evitar bugs
+        public static Vector2 ZERO_V2 = new Vector2(0,0);
     }
 
     /// Valores de comportamento de som

@@ -122,7 +122,7 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
         leftPressed = pressed;
         if (pressed) {
             lastDirectionPressed = Direction.LEFT;
-            player.setxAxisInverted(false);
+            player.setxAxisNormal(false);
         }
     }
 
@@ -130,7 +130,7 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
         rightPressed = pressed;
         if (pressed) {
             lastDirectionPressed = Direction.RIGHT;
-            player.setxAxisInverted(true);
+            player.setxAxisNormal(true);
         }
 
     }
@@ -138,13 +138,13 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
     private void movePlayer(Direction directions) {
         switch (directions) {
             case LEFT:
-                player.setxAxisInverted(false);
+                player.setxAxisNormal(false);
                 player.getMoveC().setAcceleratingX(true);
                 player.getMoveC().setMoving(true);
                 player.getMoveC().setxAccel(-accelToApply);
                 break;
             case RIGHT:
-                player.setxAxisInverted(true);
+                player.setxAxisNormal(true);
                 player.getMoveC().setAcceleratingX(true);
                 player.getMoveC().setMoving(true);
                 player.getMoveC().setxAccel(accelToApply);

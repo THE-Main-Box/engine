@@ -11,8 +11,8 @@ public abstract class MovablePhysicalObjectIIGameObject extends PhysicalObjectII
     protected MovementComponent moveC;
     protected MObjectPhysicsComponent physicsC;
 
-    public MovablePhysicalObjectIIGameObject(float x, float y, float width, float height, boolean xAxisInverted, boolean yAxisInverted, World world) {
-        super(x, y, width, height, xAxisInverted, yAxisInverted, world);
+    public MovablePhysicalObjectIIGameObject(float x, float y, float width, float height, boolean xAxisNormal, boolean yAxisNormal, World world) {
+        super(x, y, width, height, xAxisNormal, yAxisNormal, world);
 
         moveC = new MovementComponent(this.body.getMass());
         addComponent(moveC);

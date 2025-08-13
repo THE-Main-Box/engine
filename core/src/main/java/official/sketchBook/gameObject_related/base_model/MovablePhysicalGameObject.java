@@ -7,11 +7,11 @@ import official.sketchBook.components_related.toUse_component.object.MObjectPhys
 import official.sketchBook.components_related.toUse_component.object.MovementComponent;
 import official.sketchBook.util_related.info.values.constants.SpeedRelatedConstants;
 
-public abstract class MovablePhysicalObjectIIGameObject extends PhysicalObjectIIGameObject implements MovementCapableII {
+public abstract class MovablePhysicalGameObject extends PhysicalGameObject implements MovementCapableII {
     protected MovementComponent moveC;
     protected MObjectPhysicsComponent physicsC;
 
-    public MovablePhysicalObjectIIGameObject(float x, float y, float width, float height, boolean xAxisNormal, boolean yAxisNormal, World world) {
+    public MovablePhysicalGameObject(float x, float y, float width, float height, boolean xAxisNormal, boolean yAxisNormal, World world) {
         super(x, y, width, height, xAxisNormal, yAxisNormal, world);
 
         moveC = new MovementComponent(this.body.getMass());

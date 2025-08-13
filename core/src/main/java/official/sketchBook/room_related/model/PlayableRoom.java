@@ -8,7 +8,7 @@ import official.sketchBook.components_related.integration_interfaces.MovementCap
 import official.sketchBook.components_related.integration_interfaces.RayCasterII;
 import official.sketchBook.gameObject_related.base_model.Entity;
 import official.sketchBook.gameObject_related.base_model.GameObject;
-import official.sketchBook.gameObject_related.base_model.PhysicalObjectIIGameObject;
+import official.sketchBook.gameObject_related.base_model.PhysicalGameObject;
 import official.sketchBook.projectiles_related.util.GlobalProjectilePool;
 import official.sketchBook.room_related.worldGeneration_related.connection.RoomNode;
 import official.sketchBook.util_related.helpers.body.RoomBodyDataConversor;
@@ -167,12 +167,12 @@ public class PlayableRoom implements Poolable {
 //        }
 //    }
 
-    public void addObject(PhysicalObjectIIGameObject object) {
+    public void addObject(PhysicalGameObject object) {
         this.gameObjects.add(object);
         object.setOwnerRoom(this);
     }
 
-    public void removeObject(PhysicalObjectIIGameObject object) {
+    public void removeObject(PhysicalGameObject object) {
         this.gameObjects.remove(object);
         object.setOwnerRoom(null);
         if (object instanceof Entity entity && EmitterRegister.getEmitter(entity) != null) {

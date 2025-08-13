@@ -1,7 +1,7 @@
 package official.sketchBook.components_related.toUse_component.entity;
 
 import official.sketchBook.components_related.base_component.KeyBindedControllerComponent;
-import official.sketchBook.gameObject_related.base_model.PhysicalObjectIIGameObject;
+import official.sketchBook.gameObject_related.base_model.PhysicalGameObject;
 import official.sketchBook.gameObject_related.entities.Player;
 import official.sketchBook.util_related.enumerators.directions.Direction;
 import official.sketchBook.util_related.info.values.ControlKeys;
@@ -19,7 +19,7 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
     private Direction lastDirectionPressed = Direction.STILL;
 
 
-    public PlayerControllerComponent(PhysicalObjectIIGameObject physicalGameObject) {
+    public PlayerControllerComponent(PhysicalGameObject physicalGameObject) {
         this.player = (Player) physicalGameObject;
 
         // Vinculando teclas ao movimento

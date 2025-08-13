@@ -4,7 +4,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import official.sketchBook.components_related.integration_interfaces.PhysicalObjectII;
 
-public abstract class PhysicalObjectIIGameObject extends GameObject implements PhysicalObjectII {
+public abstract class PhysicalGameObject extends GameObject implements PhysicalObjectII {
 
     //physics related
     protected Body body;
@@ -15,7 +15,7 @@ public abstract class PhysicalObjectIIGameObject extends GameObject implements P
     protected short maskBit;
     protected short categoryBit;
 
-    public PhysicalObjectIIGameObject(float x, float y, float width, float height, boolean xAxisNormal, boolean yAxisNormal, World world) {
+    public PhysicalGameObject(float x, float y, float width, float height, boolean xAxisNormal, boolean yAxisNormal, World world) {
         super(x, y, width, height, xAxisNormal, yAxisNormal);
 
         this.world = world;

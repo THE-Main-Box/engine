@@ -19,6 +19,10 @@ public class ProjectilePhysicsComponent extends BasePhysicsComponent implements 
     /**
      * Aplica um impulso baseado em um deslocamento ao longo do tempo,
      * levando em consideração a gravidade (ou não).
+     *
+     * @param displacement distancia a ser percorrida
+     *
+     * @param time tempo até chegar lá
      */
     public void applyTimedTrajectory(Vector2 displacement, float time) {
         if (time <= 0f) return;
@@ -31,9 +35,8 @@ public class ProjectilePhysicsComponent extends BasePhysicsComponent implements 
 
         if (gravityScale == 0f || gravity == 0f) {
             // Sem influência gravitacional: movimento linear
-            Vector2 velocity = new Vector2(dx / time, dy / time);
-            Vector2 impulse = velocity.scl(body.getMass());
-            applyImpulse(impulse);
+            tmpImpulse.set(dx / time, dy / time).scl(body.getMass());
+            applyImpulse(tmpImpulse);
             return;
         }
 
@@ -53,9 +56,9 @@ public class ProjectilePhysicsComponent extends BasePhysicsComponent implements 
         float mass = body.getMass();
 
         float vy = (float) Math.copySign(Math.sqrt(2 * gravity * Math.abs(height)), height);
-        Vector2 impulse = new Vector2(distance * mass, vy * mass);
+        tmpImpulse.set(distance * mass, vy * mass);
 
-        applyImpulse(impulse);
+        applyImpulse(tmpImpulse);
     }
 
     /// Reset da velocidade da body do projétil

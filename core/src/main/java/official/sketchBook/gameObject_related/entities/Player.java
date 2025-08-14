@@ -58,7 +58,9 @@ public class Player extends DamageAbleEntity implements JumpCapableII {
             0.1f,
             0.2f,
             aniPlayer.getTotalAnimationTime(aniPlayer.getAnimationByKey(afterFall)),
-            true
+            1,
+            1f,
+            false
         );
         addComponent(jComponent);
 

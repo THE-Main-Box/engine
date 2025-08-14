@@ -129,4 +129,16 @@ public abstract class BasePhysicsComponent implements Component {
     public Body getBody() {
         return body;
     }
+
+    public Vector2 getTempPos() {
+        return tempPos;
+    }
+
+    public Vector2 getTmpImpulse() {
+        return tmpImpulse;
+    }
+
+    public Vector2 getTmpVel() {
+        return tmpVel;
+    }
 }

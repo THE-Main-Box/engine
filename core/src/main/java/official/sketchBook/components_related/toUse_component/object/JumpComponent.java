@@ -9,25 +9,37 @@ import static official.sketchBook.util_related.info.values.constants.GameConstan
 
 public class JumpComponent implements Component {
 
-
+    /// Flag de estado de pulo
     private boolean jumping, falling, jumpedFromGround, coyoteConsumed;
+    /// Valor de impulso de pulo
     private float jumpForce, fallSpeedAfterJCancel;
+
+    private float defGravityScale, enhancedGravityScale;
+
+    /// Flag para determinar se estamos lidando com uma gravidade aprimorada ou não
     private boolean enhancedGravity;
 
-    private JumpCapableII JumpableObject;
+    private boolean superJump;
 
-    private boolean prevOnGround;        // armazena onGround do frame anterior
-    private boolean landedThisFrame;     // true somente no frame em que aterrissa
+    /// Objeto que pode saltar
+    private final JumpCapableII jumpableObject;
 
+    /// Buffer para dizer se estávamos no chão no último frame
+    private boolean prevOnGround;
+    /// Buffer para dizer se aterrissamos no chão neste frame
+    private boolean landedThisFrame;
+
+    /// Valida se estamos no estado de aterrissagem
     private final TimerComponent landBuffer;
-    private TimerComponent coyoteTimer;
-    private TimerComponent jumpBufferTimer;
-
+    /// Valida se podemos usar o coyoteTime
+    private final TimerComponent coyoteTimer;
+    /// Valida se podemos usar um pulo mesmo após termos saído do chão
+    private final TimerComponent jumpBufferTimer;
 
     /**
      * Componente de pulo
      *
-     * @param JumpableObject                entidade dona do componente
+     * @param JumpableObject        entidade dona do componente
      * @param jumpForce             força de pulo da entidade
      * @param coyoteTimeTarget      tempo disponível para o jogador pular após começar a cair
      * @param fallSpeedAfterJCancel Força para terminar o pulo, quanto maior o número,
@@ -35,7 +47,7 @@ public class JumpComponent implements Component {
      * @param jumpBufferTime        tempo que o jogador tem para entrar no estado de pulo,
      *                              por pressionar o pulo uma única vez
      * @param landBufferTime        tempo de recuperação após aterrar no chão
-     * @param enhancedGravity       a gravidade ficará mais forte na queda
+     *
      */
     public JumpComponent(
         JumpCapableII JumpableObject,
@@ -44,17 +56,24 @@ public class JumpComponent implements Component {
         float coyoteTimeTarget,
         float jumpBufferTime,
         float landBufferTime,
-        boolean enhancedGravity
+        float defGravityScale,
+        float enhancedGravityScale,
+        boolean superJump
     ) {
-        this.JumpableObject = JumpableObject;
+        this.jumpableObject = JumpableObject;
         this.coyoteTimer = new TimerComponent(coyoteTimeTarget);
         this.landBuffer = new TimerComponent(landBufferTime);
         this.jumpBufferTimer = new TimerComponent(jumpBufferTime);
 
-        this.enhancedGravity = enhancedGravity;
+        //Se a gravidade aplicada for diferente que a gravidade especial
+        this.enhancedGravity = defGravityScale != enhancedGravityScale;
+        this.superJump = superJump;
 
         this.jumpForce = jumpForce / PPM;
         this.fallSpeedAfterJCancel = fallSpeedAfterJCancel / PPM;
+
+        this.defGravityScale = defGravityScale;
+        this.enhancedGravityScale = enhancedGravityScale;
 
         this.jumping = false;
         this.falling = false;
@@ -75,7 +94,7 @@ public class JumpComponent implements Component {
     }
 
     private void updateLandedFlag() {
-        boolean currentlyOnGround = JumpableObject.isOnGround();
+        boolean currentlyOnGround = jumpableObject.isOnGround();
 
         // detecta aterrissagem: só se estava no ar ANTES e caiu (falling)
         landedThisFrame = !prevOnGround && currentlyOnGround;
@@ -94,16 +113,14 @@ public class JumpComponent implements Component {
     private void applyEnhancedGravity() {
         if (!enhancedGravity) return;
 
-        float defaultScale = 1f;
-        float enhancedScale = 1.3f;
 
         if (jumpedFromGround && falling) {
-            if (JumpableObject.getBody().getGravityScale() == defaultScale) {
-                JumpableObject.getBody().setGravityScale(enhancedScale);
+            if (jumpableObject.getBody().getGravityScale() == defGravityScale) {
+                jumpableObject.getBody().setGravityScale(enhancedGravityScale);
             }
-        } else if ((!jumpedFromGround && !falling) || JumpableObject.isOnGround()) {
-            if (JumpableObject.getBody().getGravityScale() > defaultScale) {
-                JumpableObject.getBody().setGravityScale(defaultScale);
+        } else if (jumpableObject.isOnGround()) {
+            if (jumpableObject.getBody().getGravityScale() != defGravityScale) {
+                jumpableObject.getBody().setGravityScale(defGravityScale);
             }
         }
     }
@@ -120,7 +137,7 @@ public class JumpComponent implements Component {
         jumpBufferTimer.resetByFinished();
 
         if (jumpBufferTimer.isRunning()) {
-            if (JumpableObject.canJump()) {
+            if (jumpableObject.canJump()) {
                 executeJump(false); // Executa o pulo real
                 jumpBufferTimer.stop();
                 jumpBufferTimer.reset();
@@ -130,7 +147,7 @@ public class JumpComponent implements Component {
 
     public void jump(boolean cancel) {
         if (!cancel) {
-            if (JumpableObject.isOnGround()) {//Se estivermos no chão já executamos o pulo
+            if (jumpableObject.isOnGround()) {//Se estivermos no chão já executamos o pulo
                 executeJump(false);
             } else {//Caso precisemos executar um pulo, e não estejamos no chão, preparamos o buffer
                 jumpBufferTimer.reset();
@@ -153,15 +170,18 @@ public class JumpComponent implements Component {
     //pula ou cancela um pulo
     private void executeJump(boolean cancel) {
         if (!cancel) {
-            if (JumpableObject.canJump()) {
+            if (jumpableObject.canJump()) {
 
                 //zera a velocidade vertical caso ela seja negativa antes de pular para evitar um pulo fraco
-                if (JumpableObject.getBody().getLinearVelocity().y < 0) {
-                    JumpableObject.getBody().setLinearVelocity(JumpableObject.getBody().getLinearVelocity().x, 0);
+                //ou zeramos para evitar um superPulo sem a intenção
+                if (jumpableObject.getPhysicsC().getTmpVel().y < 0 ||
+                    jumpableObject.getPhysicsC().getTmpVel().y > 0 && !superJump
+                ) {
+                    jumpableObject.getBody().setLinearVelocity(jumpableObject.getPhysicsC().getTmpVel().x, 0);
                 }
 
                 // Aplica o impulso inicial do pulo
-                JumpableObject.getPhysicsC().applyTrajectoryImpulse(
+                jumpableObject.getPhysicsC().applyTrajectoryImpulse(
                     jumpForce,
                     0
                 );
@@ -174,11 +194,11 @@ public class JumpComponent implements Component {
                 coyoteTimer.reset();
             }
         } else {
-            if (JumpableObject.getPhysicsC().getBody().getLinearVelocity().y > 0 && JumpableObject.getPhysicsC().getBody().getLinearVelocity().y > fallSpeedAfterJCancel) {
+            if (jumpableObject.getPhysicsC().getTmpVel().y > fallSpeedAfterJCancel) {
 
-                JumpableObject.getPhysicsC().getBody().setLinearVelocity(
-                        JumpableObject.getPhysicsC().getBody().getLinearVelocity().x,
-                        fallSpeedAfterJCancel
+                jumpableObject.getPhysicsC().getBody().setLinearVelocity(
+                    jumpableObject.getPhysicsC().getTmpVel().x,
+                    fallSpeedAfterJCancel
                 );
 
             }
@@ -187,7 +207,7 @@ public class JumpComponent implements Component {
 
     /**
      * Atualiza o estado do coyoteTimer
-     * caso o jogador esteja a cair, não tenha pulado e o temporizador ainda não iniciou iniciamos ele,
+     * caso o objeto esteja a cair, não tenha pulado e o temporizador ainda não iniciou iniciamos ele,
      * mas isso apenas caso ainda não tenhamos usado o primeiro pulo do coyote
      * isso porque se não fazer isso o temporizador do coyoteTiming irá ser executado várias vezes devido
      * às circunstâncias semelhantes a usar o pulo do coyote e não fazer isso,
@@ -203,40 +223,37 @@ public class JumpComponent implements Component {
         }
 
         //impede que o coyoteTiming exceda seus limites ao resetarmos quando tocamos no chão pulamos oou o tempo acabe
-        if (coyoteTimer.isFinished() || JumpableObject.isOnGround() || jumpedFromGround || coyoteConsumed) {
+        if (coyoteTimer.isFinished() || jumpableObject.isOnGround() || jumpedFromGround || coyoteConsumed) {
             coyoteTimer.stop();
             coyoteTimer.reset();
         }
     }
 
-    //atualiza o estado referido a ter pulado ou não do chão
+    ///atualiza o estado referido a ter pulado ou não do chão
     private void updateJumpedFlag() {
-        if (JumpableObject.isOnGround() && jumpedFromGround) {
+        if (jumpableObject.isOnGround() && jumpedFromGround) {
             jumpedFromGround = false;
 
-        } else if (!JumpableObject.isOnGround() && jumping) {
+        } else if (!jumpableObject.isOnGround() && jumping) {
             jumpedFromGround = true;
         }
     }
 
-    //atualiza se o jogador está caindo, ou pulando ou no chão
+    ///atualiza se o objeto está caindo, ou pulando ou no chão
     private void updateJumpingFallingFlags() {
-        if (JumpableObject.isOnGround()) {
-            // O jogador está no chão, resetamos as flags de pulo e queda
+        boolean onGround = jumpableObject.isOnGround();
+        float vy = jumpableObject.getPhysicsC().getTmpVel().y;
+
+        if (onGround) {
             jumping = false;
             falling = false;
-
             coyoteConsumed = false;
-
-        } else if (JumpableObject.getPhysicsC().getBody().getLinearVelocity().y > 0) {
-            // O jogador está subindo (pulando)
+        } else if (vy > 0) {
             jumping = true;
             falling = false;
-        } else if (!JumpableObject.isOnGround() && JumpableObject.getPhysicsC().getBody().getLinearVelocity().y < 0) {
-            // O jogador está caindo
+        } else if (vy < 0) {
             falling = true;
             jumping = false;
-
         }
 
     }
@@ -270,8 +287,8 @@ public class JumpComponent implements Component {
         return coyoteTimer.isRunning();
     }
 
-    public boolean isOnGround(){
-        return JumpableObject.isOnGround();
+    public boolean isOnGround() {
+        return jumpableObject.isOnGround();
     }
 
     //Flags de estado//
@@ -293,6 +310,10 @@ public class JumpComponent implements Component {
 
     public float getJumpForce() {
         return jumpForce;
+    }
+
+    public boolean isLandedThisFrame() {
+        return landedThisFrame;
     }
 
     public boolean isFalling() {

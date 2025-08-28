@@ -1,5 +1,6 @@
 package official.sketchBook.util_related.registers;
 
+import official.sketchBook.components_related.integration_interfaces.RangeWeaponWielderII;
 import official.sketchBook.gameObject_related.base_model.Entity;
 import official.sketchBook.projectiles_related.emitters.Emitter;
 import official.sketchBook.room_related.model.PlayableRoom;
@@ -8,27 +9,27 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class EmitterRegister {
-    private static final Map<PlayableRoom, Map<Entity, Emitter>> emitterMap = new HashMap<>();
+    private static final Map<PlayableRoom, Map<RangeWeaponWielderII, Emitter>> emitterMap = new HashMap<>();
 
     public static void register(Emitter emitter) {
         emitterMap.computeIfAbsent(emitter.getOwner().getOwnerRoom(), r -> new HashMap<>())
             .put(emitter.getOwner(), emitter);
     }
 
-    public static Emitter getEmitter(Entity entity) {
-        if (entity.getOwnerRoom() == null) return null;
+    public static Emitter getEmitter(RangeWeaponWielderII wielder) {
+        if (wielder.getOwnerRoom() == null) return null;
 
-        Map<Entity, Emitter> roomEmitters = emitterMap.get(entity.getOwnerRoom());
+        Map<RangeWeaponWielderII, Emitter> roomEmitters = emitterMap.get(wielder.getOwnerRoom());
         if (roomEmitters == null) return null;
-        return roomEmitters.get(entity);
+        return roomEmitters.get(wielder);
     }
 
-    public static void unregister(Entity entity) {
-        Map<Entity, Emitter> roomEmitters = emitterMap.get(entity.getOwnerRoom());
+    public static void unregister(RangeWeaponWielderII wielder) {
+        Map<RangeWeaponWielderII, Emitter> roomEmitters = emitterMap.get(wielder.getOwnerRoom());
         if (roomEmitters != null) {
-            roomEmitters.remove(entity);
+            roomEmitters.remove(wielder);
             if (roomEmitters.isEmpty()) {
-                emitterMap.remove(entity.getOwnerRoom());
+                emitterMap.remove(wielder.getOwnerRoom());
             }
         }
     }

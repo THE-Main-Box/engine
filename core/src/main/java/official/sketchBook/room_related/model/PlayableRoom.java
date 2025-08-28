@@ -5,6 +5,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Pool.Poolable;
 import official.sketchBook.components_related.integration_interfaces.MovementCapableII;
+import official.sketchBook.components_related.integration_interfaces.RangeWeaponWielderII;
 import official.sketchBook.components_related.integration_interfaces.RayCasterII;
 import official.sketchBook.gameObject_related.base_model.Entity;
 import official.sketchBook.gameObject_related.base_model.GameObject;
@@ -175,8 +176,8 @@ public class PlayableRoom implements Poolable {
     public void removeObject(PhysicalGameObject object) {
         this.gameObjects.remove(object);
         object.setOwnerRoom(null);
-        if (object instanceof Entity entity && EmitterRegister.getEmitter(entity) != null) {
-            EmitterRegister.unregister(entity);
+        if (object instanceof RangeWeaponWielderII wielder&& EmitterRegister.getEmitter(wielder) != null) {
+            EmitterRegister.unregister(wielder);
         }
     }
 

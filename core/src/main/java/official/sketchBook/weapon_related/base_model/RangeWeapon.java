@@ -1,7 +1,7 @@
 package official.sketchBook.weapon_related.base_model;
 
 import com.badlogic.gdx.math.Vector2;
-import official.sketchBook.gameObject_related.base_model.DamageAbleEntity;
+import official.sketchBook.gameObject_related.base_model.RangeWeaponWieldingEntity;
 import official.sketchBook.projectiles_related.Projectile;
 import official.sketchBook.projectiles_related.emitters.Emitter;
 import official.sketchBook.projectiles_related.util.ProjectilePool;
@@ -53,7 +53,7 @@ public abstract class RangeWeapon<T extends RangeWeapon<T>> extends BaseWeapon<T
     /// Pré-definições para direção de disparo
     protected final EnumMap<Direction, Vector2> defShootDirMap = new EnumMap<>(Direction.class);
 
-    protected RangeWeapon(Class<T> weaponClass, DamageAbleEntity owner, AnchorPoint point) {
+    protected RangeWeapon(Class<T> weaponClass, RangeWeaponWieldingEntity owner, AnchorPoint point) {
         super(weaponClass, owner, point);
         this.projectileEmitter = EmitterRegister.getEmitter(owner);
         Objects.requireNonNull(projectileEmitter, "Emitter must be registered to use this weapon");

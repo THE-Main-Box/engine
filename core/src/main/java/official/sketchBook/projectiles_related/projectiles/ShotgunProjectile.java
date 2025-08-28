@@ -1,6 +1,7 @@
 package official.sketchBook.projectiles_related.projectiles;
 
 import com.badlogic.gdx.physics.box2d.World;
+import official.sketchBook.components_related.integration_interfaces.RangeWeaponWielderII;
 import official.sketchBook.gameObject_related.base_model.Entity;
 import official.sketchBook.projectiles_related.Projectile;
 
@@ -27,7 +28,7 @@ public class ShotgunProjectile extends Projectile {
     }
 
     @Override
-    public void init(Entity owner) {
+    public void init(RangeWeaponWielderII owner) {
         super.init(owner);
     }
 

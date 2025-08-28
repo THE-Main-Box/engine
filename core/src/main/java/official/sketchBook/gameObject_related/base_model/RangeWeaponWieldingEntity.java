@@ -1,14 +1,16 @@
 package official.sketchBook.gameObject_related.base_model;
 
 import com.badlogic.gdx.physics.box2d.World;
-import official.sketchBook.components_related.integration_interfaces.WeaponWielderII;
+import official.sketchBook.components_related.integration_interfaces.RangeWeaponWielderII;
 import official.sketchBook.components_related.toUse_component.object.WeaponWieldComponent;
+import official.sketchBook.util_related.enumerators.types.FactionTypes;
 
-public abstract class DamageAbleEntity extends Entity implements WeaponWielderII {
+public abstract class RangeWeaponWieldingEntity extends Entity implements RangeWeaponWielderII {
 
+    protected FactionTypes faction;
     protected WeaponWieldComponent weaponWC;
 
-    public DamageAbleEntity(float x, float y, float width, float height, boolean xAxisNormal,boolean yAxisNormal, World world) {
+    public RangeWeaponWieldingEntity(float x, float y, float width, float height, boolean xAxisNormal, boolean yAxisNormal, World world) {
         super(x, y, width, height, xAxisNormal, yAxisNormal, world);
 
         weaponWC = new WeaponWieldComponent(this);
@@ -43,4 +45,9 @@ public abstract class DamageAbleEntity extends Entity implements WeaponWielderII
     public WeaponWieldComponent getWeaponWC() {
         return weaponWC;
     }
+
+    public FactionTypes getFaction() {
+        return faction;
+    }
+
 }

@@ -5,7 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 import official.sketchBook.animation_related.ObjectAnimationPlayer;
 import official.sketchBook.animation_related.Sprite;
 import official.sketchBook.animation_related.SpriteSheetDataHandler;
-import official.sketchBook.gameObject_related.base_model.DamageAbleEntity;
+import official.sketchBook.gameObject_related.base_model.RangeWeaponWieldingEntity;
 import official.sketchBook.projectiles_related.Projectile;
 import official.sketchBook.projectiles_related.projectiles.ShotgunProjectile;
 import official.sketchBook.util_related.enumerators.directions.Direction;
@@ -25,7 +25,7 @@ public class Shotgun extends RangeWeapon<Shotgun> {
 
     private static final float slugSpeed = 400 / PPM;
 
-    public Shotgun(DamageAbleEntity owner, AnchorPoint point) {
+    public Shotgun(RangeWeaponWieldingEntity owner, AnchorPoint point) {
         super(Shotgun.class, owner, point);
 
         updateProjectileIndex(1);

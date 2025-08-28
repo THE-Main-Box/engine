@@ -1,6 +1,7 @@
 package official.sketchBook.projectiles_related.emitters;
 
 import com.badlogic.gdx.math.Vector2;
+import official.sketchBook.components_related.integration_interfaces.RangeWeaponWielderII;
 import official.sketchBook.gameObject_related.base_model.Entity;
 import official.sketchBook.projectiles_related.Projectile;
 import official.sketchBook.projectiles_related.util.GlobalProjectilePool;
@@ -10,11 +11,11 @@ import official.sketchBook.util_related.registers.ProjectilePoolRegister;
 public class Emitter {
     private GlobalProjectilePool pool;
     private Class<? extends Projectile> type;
-    private final Entity owner;
+    private final RangeWeaponWielderII owner;
     private boolean configured = false;
     private ProjectilePool<?> poolOfType;
 
-    public Emitter(Entity owner) {
+    public Emitter(RangeWeaponWielderII owner) {
         this.owner = owner;
         updatePool();
     }
@@ -76,12 +77,12 @@ public class Emitter {
         p.getControllerComponent().launch(new Vector2(x, y), timeToReach);
     }
 
-    public Class<? extends Projectile> getType() {
-        return type;
+    public RangeWeaponWielderII getOwner() {
+        return owner;
     }
 
-    public Entity getOwner() {
-        return owner;
+    public Class<? extends Projectile> getType() {
+        return type;
     }
 
     public boolean isConfigured() {

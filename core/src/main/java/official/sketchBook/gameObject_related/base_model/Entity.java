@@ -14,7 +14,6 @@ import static official.sketchBook.util_related.info.values.constants.GameConstan
 
 public abstract class Entity extends MovablePhysicalGameObject implements RayCasterII {
 
-    protected FactionTypes faction;
     protected boolean onGround;
     protected RayCastHelper rayCastHelper;
     protected GameObjectTag groundTag;
@@ -100,7 +99,4 @@ public abstract class Entity extends MovablePhysicalGameObject implements RayCas
         return groundTag;
     }
 
-    public FactionTypes getFaction() {
-        return faction;
-    }
 }

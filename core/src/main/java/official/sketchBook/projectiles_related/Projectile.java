@@ -10,6 +10,7 @@ import official.sketchBook.components_related.base_component.Component;
 import official.sketchBook.components_related.collisionBehaviorComponents.StickToSurfaceBehavior;
 import official.sketchBook.components_related.integration_interfaces.MovementCapableII;
 import official.sketchBook.components_related.integration_interfaces.PhysicalObjectII;
+import official.sketchBook.components_related.integration_interfaces.RangeWeaponWielderII;
 import official.sketchBook.components_related.toUse_component.object.MovementComponent;
 import official.sketchBook.components_related.toUse_component.projectile.ProjectileControllerComponent;
 import official.sketchBook.components_related.toUse_component.projectile.ProjectilePhysicsComponent;
@@ -48,7 +49,7 @@ public abstract class Projectile implements CustomPool.Poolable, MovementCapable
     protected ObjectAnimationPlayer animationPlayer;
 
     /// Dono do projétil, apenas uma entidade pode usar um projétil
-    protected Entity owner;
+    protected RangeWeaponWielderII owner;
 
     /// Corpo do projétil
     protected Body body;
@@ -110,7 +111,7 @@ public abstract class Projectile implements CustomPool.Poolable, MovementCapable
      * Inicia as informações dinâmicas do projétil
      * é preciso passar o tempo de vida e outros valores que precisam ser iniciados dinamicamente
      */
-    public void init(Entity owner) {
+    public void init(RangeWeaponWielderII owner) {
         this.owner = owner;
         this.reset = false;
 
@@ -302,14 +303,6 @@ public abstract class Projectile implements CustomPool.Poolable, MovementCapable
 
     public ProjectilePool<?> getOwnerPool() {
         return ownerPool;
-    }
-
-    public Entity getOwner() {
-        return owner;
-    }
-
-    public void setOwner(Entity owner) {
-        this.owner = owner;
     }
 
     public void setLifeTime(float lifeTime) {

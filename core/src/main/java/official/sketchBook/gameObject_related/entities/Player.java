@@ -12,7 +12,7 @@ import official.sketchBook.components_related.integration_interfaces.JumpCapable
 import official.sketchBook.components_related.toUse_component.entity.PlayerAnimationManagerComponent;
 import official.sketchBook.components_related.toUse_component.entity.PlayerControllerComponent;
 import official.sketchBook.components_related.toUse_component.object.JumpComponent;
-import official.sketchBook.gameObject_related.base_model.DamageAbleEntity;
+import official.sketchBook.gameObject_related.base_model.RangeWeaponWieldingEntity;
 import official.sketchBook.projectiles_related.emitters.Emitter;
 import official.sketchBook.util_related.enumerators.types.FactionTypes;
 import official.sketchBook.util_related.enumerators.types.ObjectType;
@@ -28,7 +28,7 @@ import java.util.List;
 import static official.sketchBook.util_related.enumerators.layers.CollisionLayers.*;
 import static official.sketchBook.util_related.info.values.AnimationTitles.Entity.*;
 
-public class Player extends DamageAbleEntity implements JumpCapableII {
+public class Player extends RangeWeaponWieldingEntity implements JumpCapableII {
     private JumpComponent jComponent;
 
     public Player(float x, float y, float width, float height, boolean xAxisNormal, boolean yAxisNormal, World world) {

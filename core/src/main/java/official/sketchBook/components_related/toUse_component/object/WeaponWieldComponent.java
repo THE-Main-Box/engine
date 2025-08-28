@@ -2,7 +2,7 @@ package official.sketchBook.components_related.toUse_component.object;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import official.sketchBook.components_related.base_component.Component;
-import official.sketchBook.gameObject_related.base_model.DamageAbleEntity;
+import official.sketchBook.components_related.integration_interfaces.WeaponWielderII;
 import official.sketchBook.util_related.util.entity.AnchorPoint;
 import official.sketchBook.weapon_related.base_model.BaseWeapon;
 import official.sketchBook.weapon_related.base_model.RangeWeapon;
@@ -10,7 +10,7 @@ import official.sketchBook.weapon_related.base_model.RangeWeapon;
 public class WeaponWieldComponent implements Component {
 
     /// Entidade que é dona da arma
-    private final DamageAbleEntity wielder;
+    private final WeaponWielderII wielder;
 
     /// flags de mira adicionais
     private boolean aimingUp, aimingDown;
@@ -21,7 +21,7 @@ public class WeaponWieldComponent implements Component {
     /// Arma que a entidade usa
     private BaseWeapon<?> weapon;
 
-    public WeaponWieldComponent(DamageAbleEntity wielder) {
+    public WeaponWieldComponent(WeaponWielderII wielder) {
         this.wielder = wielder;
 
         this.weaponAnchorPoint = new AnchorPoint();

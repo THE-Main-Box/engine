@@ -107,6 +107,18 @@ public class MovementComponent implements Component {
         this.decelerationX = decelerationX;
     }
 
+    public float getDecelerationX() {
+        return decelerationX;
+    }
+
+    public float getDecelerationY() {
+        return decelerationY;
+    }
+
+    public void setDecelerationY(float decelerationY) {
+        this.decelerationY = decelerationY;
+    }
+
     public boolean isAcceleratingX() {
         return acceleratingX;
     }

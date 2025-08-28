@@ -21,6 +21,7 @@ import official.sketchBook.util_related.info.values.GameObjectTag;
 import java.util.List;
 
 import static official.sketchBook.util_related.enumerators.layers.CollisionLayers.*;
+import static official.sketchBook.util_related.info.values.AnimationTitles.Entity.dmg;
 import static official.sketchBook.util_related.info.values.AnimationTitles.Entity.idle;
 
 public class Dummy extends Enemy implements DamageReceiverII {
@@ -44,7 +45,17 @@ public class Dummy extends Enemy implements DamageReceiverII {
         ObjectAnimationPlayer aniPlayer = new ObjectAnimationPlayer();
         this.objectAnimationPlayerList.add(aniPlayer);
 
+        aniPlayer.addAnimation(dmg, List.of(
+                new Sprite(0, 0, 0.1f),
+                new Sprite(1, 0, 0.1f),
+                new Sprite(2, 0, 0.1f),
+                new Sprite(3, 0, 0.1f),
+                new Sprite(4, 0, 0.1f)
+        ));
+
         aniPlayer.addAnimation(idle, List.of(new Sprite(0, 0)));
+
+//        aniPlayer.setAnimationSpeed(.2);
 
         aniPlayer.playAnimation(idle);
     }
@@ -54,9 +65,9 @@ public class Dummy extends Enemy implements DamageReceiverII {
                 new SpriteSheetDataHandler(
                         this.x,
                         this.y,
-                        41,
+                        0,
                         17,
-                        4,
+                        5,
                         1,
                         this.xAxisInverted,
                         this.yAxisInverted,
@@ -101,11 +112,18 @@ public class Dummy extends Enemy implements DamageReceiverII {
     @Override
     public void render(SpriteBatch batch) {
         if (this.xAxisInverted) {
-            spriteSheetDatahandlerList.get(0).setDrawOffSetX(26);
+            spriteSheetDatahandlerList.get(0).setDrawOffSetX(27);
         } else {
-            spriteSheetDatahandlerList.get(0).setDrawOffSetX(41);
+            spriteSheetDatahandlerList.get(0).setDrawOffSetX(25);
         }
         super.render(batch);
+    }
+
+    @Override
+    public void update(float deltaTime) {
+        super.update(deltaTime);
+
+        updateAnimationPlayer(deltaTime);
     }
 
     @Override
@@ -134,7 +152,12 @@ public class Dummy extends Enemy implements DamageReceiverII {
         );
         sensorFixtureDef.isSensor = true; // marca como sensor
 
-        body.createFixture(sensorFixtureDef).setUserData("HURTBOX");
+        body.createFixture(sensorFixtureDef).setUserData(
+                new GameObjectTag(
+                        ObjectType.HURTBOX,
+                        this
+                )
+        );
 
         sensorShape.dispose();
     }

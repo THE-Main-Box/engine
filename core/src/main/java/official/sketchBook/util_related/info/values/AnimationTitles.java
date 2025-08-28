@@ -25,6 +25,8 @@ public class AnimationTitles {
         public final static String fall = "FALL_E";
 
         public final static String afterFall = "AFT_FALL_E";
+
+        public final static String dmg = "DAMAGE_E";
     }
 
 }

@@ -9,14 +9,14 @@ public class MovementComponent implements Component {
     private float xAccel, yAccel;
     private float xMaxSpeed, yMaxSpeed;
     private float decelerationX, decelerationY;
-    private double weight;
+    private final float weight;
 
     private boolean acceleratingX, acceleratingY;
 
     private boolean moving = false;
 
 
-    public MovementComponent(double weight) {
+    public MovementComponent(float weight) {
         this.weight = weight;
     }
 
@@ -29,8 +29,8 @@ public class MovementComponent implements Component {
     }
 
     private void applyAcceleration() {
-        if (acceleratingX) xSpeed += (float) (xAccel / weight);
-        if (acceleratingY) ySpeed += (float) (yAccel / weight);
+        if (acceleratingX) xSpeed += xAccel / weight;
+        if (acceleratingY) ySpeed += yAccel / weight;
     }
 
     private void applyDeceleration() {
@@ -39,11 +39,8 @@ public class MovementComponent implements Component {
     }
 
     private float applyFriction(float speed, float deceleration) {
-        if (Math.abs(speed) > 0) {
-            float newSpeed = speed - Math.signum(speed) * deceleration;
-            return (Math.signum(speed) != Math.signum(newSpeed)) ? 0 : newSpeed;
-        }
-        return 0;
+        if(speed == 0|| deceleration == 0) return 0;
+        return speed - deceleration * Math.signum(speed);
     }
 
     private void limitSpeed() {
@@ -106,12 +103,12 @@ public class MovementComponent implements Component {
         this.yMaxSpeed = yMaxSpeed;
     }
 
-    public float getDecelerationX() {
-        return decelerationX;
-    }
-
     public void setDecelerationX(float decelerationX) {
         this.decelerationX = decelerationX;
+    }
+
+    public float getDecelerationX() {
+        return decelerationX;
     }
 
     public float getDecelerationY() {
@@ -138,19 +135,4 @@ public class MovementComponent implements Component {
         this.acceleratingY = acceleratingY;
     }
 
-    public void setxSpeed(float xSpeed) {
-        this.xSpeed = xSpeed;
-    }
-
-    public void setySpeed(float ySpeed) {
-        this.ySpeed = ySpeed;
-    }
-
-    public double getWeight() {
-        return weight;
-    }
-
-    public void setWeight(double weight) {
-        this.weight = weight;
-    }
 }

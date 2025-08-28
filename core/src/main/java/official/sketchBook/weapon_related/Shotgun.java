@@ -23,6 +23,8 @@ import static official.sketchBook.util_related.info.values.constants.RangeWeapon
 
 public class Shotgun extends RangeWeapon<Shotgun> {
 
+    private static final float slugSpeed = 400 / PPM;
+
     public Shotgun(DamageAbleEntity owner, AnchorPoint point) {
         super(Shotgun.class, owner, point);
 
@@ -43,10 +45,32 @@ public class Shotgun extends RangeWeapon<Shotgun> {
     }
 
     @Override
+    protected void initDefSpawnPos() {
+        // posições de spawn nas duas direções //
+        addSpawnPos(Direction.LEFT, -42, 5);
+        addSpawnPos(Direction.RIGHT, 42, 5);
+        // a direção para baixo será dividida em duas, diagonal esquerda e direita
+        // essa decisão servirá não porque estamos trabalhando com diagonais em si,
+        //mas para evitar a necessidade de aplicar valores no momento do disparo,
+        // o que pode causar uma arquitetura meio quebrada,
+        // iremos separar pelo enum,
+        // assim facilitando a integração de mais direções
+        addSpawnPos(Direction.DOWN_LEFT, -11, -22);
+        addSpawnPos(Direction.DOWN_RIGHT, 11, -22);
+    }
+
+    @Override
+    protected void initDefShootPos() {
+        addDefShotDir(Direction.LEFT, (byte) -1, (byte) 0);
+        addDefShotDir(Direction.RIGHT, (byte) 1, (byte) 0);
+        addDefShotDir(Direction.DOWN, (byte) 0, (byte) -1);
+    }
+
+    @Override
     public void update(float deltaTime) {
         super.update(deltaTime);
 
-        if(canPogoShoot()) {
+        if (canPogoShoot()) {
             this.weaponStatus.recoilForceMultiplier = 1f;
         } else {
             this.weaponStatus.recoilForceMultiplier = 0;
@@ -63,23 +87,27 @@ public class Shotgun extends RangeWeapon<Shotgun> {
 
     }
 
-    protected void updateOffSets() {
-        float x, y;
+    protected void updateRenderingOffSets() {
+        float xOffSet, yOffSet;
 
-        y = -4;
+        yOffSet = -4;
 
         //Se estiver mirando pra baixo
         if (canPogoShoot()) {
             // Mira para baixo
-            spriteDataHandler.setRotation(owner.isFacingForward() ? -90 : 90);
-            x = owner.isFacingForward() ? -10f : 10f;
+            spriteDataHandler.setRotation(owner.isxAxisNormal() ? -90 : 90);
+            xOffSet = owner.isxAxisNormal() ? -10f : 10f;
         } else {//se não estiver mirando
             // Mira para frente (nem cima nem baixo)
             spriteDataHandler.setRotation(0);
-            x = owner.isFacingForward() ? -16f : 16f;
+            xOffSet = owner.isxAxisNormal() ? -16f : 16f;
         }
 
-        setRelativeOffset(x, y);
+        if(rechargeManager.isRecharging()){
+            spriteDataHandler.setRotation(0);
+        }
+
+        setRelativeOffset(xOffSet, yOffSet);
     }
 
 
@@ -107,31 +135,28 @@ public class Shotgun extends RangeWeapon<Shotgun> {
         }
 
         //Determinamos a posição em que iremos disparar com base em alguns fatores
-        Direction dir;
+        Direction posOnDirection;//Chave que referencia a posição do projétil
+        Direction projDirection;//Chave que referencia a direção que o projétil deve percorrer
         if (canPogoShoot()) {
-            dir = Direction.DOWN;
+            posOnDirection = owner.isxAxisNormal() ? Direction.DOWN_RIGHT : Direction.DOWN_LEFT;
+            projDirection = Direction.DOWN;
         } else {
-            dir = owner.isFacingForward() ? Direction.RIGHT : Direction.LEFT;
+            posOnDirection = owner.isxAxisNormal() ? Direction.RIGHT : Direction.LEFT;
+            projDirection = posOnDirection;
         }
 
-        //Determinamos a direção da movimentação do projétil
-        int xDir = 0;
-        int yDir = 0;
-        if (canPogoShoot()) {
-            yDir = -1;
-        } else {
-            xDir = owner.isFacingForward() ? 1 : -1;
-        }
+        //Obtemos a direção que o projétil deve ser lançado
+        Vector2 direction = getDefShootDir(projDirection);
 
         //Passamos a direção que o projétil deve ir
         setShootDirection(
-            xDir,//mirando para direita ou esquerda
-            yDir //mirando para cima ou para baixo
+            direction.x,//mirando para direita ou esquerda
+            direction.y //mirando para cima ou para baixo
         );
 
         //Verifica o tipo de projétil e assim executa o tiro correspondente
         if (projectileType.equals(ShotgunProjectile.class)) {
-            slugShot(dir);
+            slugShot(posOnDirection);//Passamos a posição de disparo
         }
 
         aniPlayer.playAnimation(shoot);
@@ -153,8 +178,8 @@ public class Shotgun extends RangeWeapon<Shotgun> {
             getProjectileSpawnPosition(dir)
         );
 
-        // Supondo que você queira disparar a 300 pixels/seg
-        projectileSpeed = 400f / PPM;
+        // Supondo que você queira disparar a 400 pixels/seg
+        projectileSpeed = slugSpeed;
 
         shoot(p);
         applyRecoil(shootDirection);
@@ -163,34 +188,6 @@ public class Shotgun extends RangeWeapon<Shotgun> {
     @Override
     public void secondaryUse() {
 
-    }
-
-    private void shoot(Projectile p) {
-        projectileEmitter.fire(
-            p,
-            projectileSpeed * shootDirection.x,
-            projectileSpeed * shootDirection.y,
-            1f
-        );
-
-    }
-
-    @Override
-    protected Vector2 getRightOffSet() {
-        setRightOffSet(42, 5);
-        return super.getRightOffSet();
-    }
-
-    @Override
-    protected Vector2 getLeftOffSet() {
-        setLeftOffSet(-42, 5);
-        return super.getLeftOffSet();
-    }
-
-    @Override
-    protected Vector2 getDownOffSet() {
-        setDownOffSet(owner.isFacingForward()? 11 : -10, -22);
-        return super.getDownOffSet();
     }
 
     protected void initAnimations() {
@@ -226,8 +223,8 @@ public class Shotgun extends RangeWeapon<Shotgun> {
             0,
             3,
             3,
-            owner.isFacingForward(),
-            false,
+            owner.isxAxisNormal(),
+            owner.isyAxisNormal(),
             new Texture(WeaponsSpritePath.shotgun_path)
         );
     }
@@ -238,7 +235,7 @@ public class Shotgun extends RangeWeapon<Shotgun> {
         }
     }
 
-    protected boolean canPogoShoot(){
+    protected boolean canPogoShoot() {
         return owner.getWeaponWC().isAimingDown() && !owner.isOnGround();
     }
 }

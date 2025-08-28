@@ -2,7 +2,7 @@ package official.sketchBook.gameDataManagement_related;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.World;
-import official.sketchBook.gameObject_related.base_model.GameObject;
+import official.sketchBook.gameObject_related.base_model.PhysicalGameObject;
 import official.sketchBook.gameObject_related.entities.Player;
 import official.sketchBook.room_related.model.PlayableRoom;
 import official.sketchBook.room_related.worldGeneration_related.blueprint.RoomBlueprint;
@@ -35,7 +35,15 @@ public class GameObjectManager {
 
         this.initRoom();
 
-        this.player = new Player(60, 100, 16, 16, true, world, currentRoom);
+        this.player = new Player(
+            60,
+            100,
+            16,
+            16,
+            true,
+            false,
+            world
+        );
         currentRoom.addObject(player);
     }
 
@@ -97,12 +105,8 @@ public class GameObjectManager {
         return toReturn;
     }
 
-    public void syncObjectsBodies() {
-        currentRoom.syncObjectsBodies();
-    }
-
-    public void updateEntityRayCast(){
-        currentRoom.updateEntitiesRayCasts();
+    public void updateObjectsAfterStep() {
+        currentRoom.updateObjectsAfterStep();
     }
 
     public void updateObjects(float delta) {
@@ -117,11 +121,11 @@ public class GameObjectManager {
         currentRoom.dispose();
     }
 
-    public void removeGameObject(PlayableRoom room, GameObject object) {
+    public void removeGameObject(PlayableRoom room, PhysicalGameObject object) {
         room.removeObject(object);
     }
 
-    public void addGameObject(PlayableRoom room, GameObject object) {
+    public void addGameObject(PlayableRoom room, PhysicalGameObject object) {
         room.addObject(object);
     }
 

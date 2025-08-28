@@ -1,20 +1,19 @@
 package official.sketchBook.components_related.toUse_component.object;
 
-import com.badlogic.gdx.math.Vector2;
 import official.sketchBook.components_related.base_component.BasePhysicsComponent;
-import official.sketchBook.gameObject_related.base_model.GameObject;
-import official.sketchBook.gameObject_related.base_model.MovableGameObject;
+import official.sketchBook.components_related.integration_interfaces.MovementCapableII;
+import official.sketchBook.gameObject_related.base_model.PhysicalGameObject;
 
 import static official.sketchBook.util_related.info.values.constants.GameConstants.Physics.PPM;
 
 
 public class MObjectPhysicsComponent extends BasePhysicsComponent {
 
-    private MovableGameObject mob;
+    private final MovementCapableII mob;
 
-    public MObjectPhysicsComponent(GameObject object) {
-        super(object, object.getBody());
-        this.mob = (MovableGameObject) object;
+    public MObjectPhysicsComponent(PhysicalGameObject object) {
+        super(object);
+        this.mob = (MovementCapableII) object;
     }
 
     public void update(float deltaTime) {
@@ -33,16 +32,17 @@ public class MObjectPhysicsComponent extends BasePhysicsComponent {
     public void applyImpulseForSpeed(float xSpeed, float ySpeed, float maxXSpeed, float maxYSpeed) {
         if (body == null) return;
 
-        Vector2 currentVelocity = body.getLinearVelocity();
-        float desiredX = limitAndConvertSpeedToMeters(xSpeed, maxXSpeed, currentVelocity.x);
-        float desiredY = limitAndConvertSpeedToMeters(ySpeed, maxYSpeed, currentVelocity.y);
+        updateVelBuffer();
 
-        Vector2 deltaV = new Vector2(
-            desiredX != 0 ? desiredX - currentVelocity.x : 0,
-            desiredY != 0 ? desiredY - currentVelocity.y : 0
+        float desiredX = limitAndConvertSpeedToMeters(xSpeed, maxXSpeed, tmpVel.x);
+        float desiredY = limitAndConvertSpeedToMeters(ySpeed, maxYSpeed, tmpVel.y);
+
+        tmpVel.set(
+            desiredX != 0 ? desiredX - tmpVel.x : 0,
+            desiredY != 0 ? desiredY - tmpVel.y : 0
         );
 
-        applyImpulse(deltaV.scl(body.getMass()));
+        applyImpulse(tmpVel.scl(body.getMass()));
     }
 
     //converte os valores de velocidade em pixel para metros, e os limita com base em uma velocidade maxima passada

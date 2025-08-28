@@ -4,9 +4,11 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Pool.Poolable;
+import official.sketchBook.components_related.integration_interfaces.MovementCapableII;
+import official.sketchBook.components_related.integration_interfaces.RayCasterII;
 import official.sketchBook.gameObject_related.base_model.Entity;
 import official.sketchBook.gameObject_related.base_model.GameObject;
-import official.sketchBook.gameObject_related.base_model.MovableGameObject;
+import official.sketchBook.gameObject_related.base_model.PhysicalGameObject;
 import official.sketchBook.projectiles_related.util.GlobalProjectilePool;
 import official.sketchBook.room_related.worldGeneration_related.connection.RoomNode;
 import official.sketchBook.util_related.helpers.body.RoomBodyDataConversor;
@@ -81,28 +83,30 @@ public class PlayableRoom implements Poolable {
 
     }
 
-    /// Sincroniza os corpos dos objetos com suas posições relativas
-    public void syncObjectsBodies() {
-        if (!active || gameObjects == null) return;
+    public void updateObjectsAfterStep() {
+        if (!active || gameObjects == null || gameObjects.isEmpty()) return;
 
         for (GameObject object : gameObjects) {
-            if (object instanceof MovableGameObject mObj && mObj.getPhysicsC() != null) {
-                mObj.getPhysicsC().syncBodyObjectPos();
-                mObj.syncObjectSpritePos();
-            }
+            syncObjectBody(object);
+
+            updateObjectsRayCast(object);
         }
 
         this.projectilePool.syncProjectilesBodies();
     }
 
-    /// Atualiza os ray casts de todas as entidades que possuem a capacidade de usar um rayCast
-    public void updateEntitiesRayCasts() {
-        if (!active || gameObjects == null) return;
+    /// Sincroniza os corpos dos objetos com suas posições relativas
+    public void syncObjectBody(GameObject object) {
+        if (object instanceof MovementCapableII mObj && mObj.getPhysicsC() != null) {
+            mObj.getPhysicsC().syncBodyObjectPos();
+            mObj.onObjectBodySync();
+        }
+    }
 
-        for (GameObject object : gameObjects) {
-            if (object instanceof Entity entity && entity.getRayCastHelper() != null) {
-                entity.updateRayCast();
-            }
+    /// Atualiza os ray casts de todas as entidades que possuem a capacidade de usar um rayCast
+    public void updateObjectsRayCast(GameObject object) {
+        if (object instanceof RayCasterII castable && castable.getRayCastHelper() != null) {
+            castable.updateRayCast();
         }
     }
 
@@ -133,7 +137,7 @@ public class PlayableRoom implements Poolable {
         }
 
         if (projectilePool != null) {
-            projectilePool. renderActiveProjectiles(batch);
+            projectilePool.renderActiveProjectiles(batch);
         }
     }
 
@@ -163,13 +167,15 @@ public class PlayableRoom implements Poolable {
 //        }
 //    }
 
-    public void addObject(GameObject object) {
+    public void addObject(PhysicalGameObject object) {
         this.gameObjects.add(object);
+        object.setOwnerRoom(this);
     }
 
-    public void removeObject(GameObject object) {
+    public void removeObject(PhysicalGameObject object) {
         this.gameObjects.remove(object);
-        if (object instanceof Entity entity) {
+        object.setOwnerRoom(null);
+        if (object instanceof Entity entity && EmitterRegister.getEmitter(entity) != null) {
             EmitterRegister.unregister(entity);
         }
     }

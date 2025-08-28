@@ -9,48 +9,62 @@ import official.sketchBook.util_related.info.values.GameObjectTag;
 import static official.sketchBook.util_related.helpers.HelpMethods.getTag;
 import static official.sketchBook.util_related.info.values.constants.GameConstants.Physics.PPM;
 
-public interface GroundInteractableII extends RayCasterII{
+public interface GroundInteractableII extends RayCasterII {
+
+    // Vetores pré-alocados para raycasts
+    Vector2 rayStart = new Vector2();
+    Vector2 rayEnd = new Vector2();
+    Vector2 center = new Vector2();
+
+    // Flag temporária para o raycast
+    boolean[] hitBuffer = {false};
 
     World getWorld();
     Body getBody();
 
     float getWidth();
-
     float getHeight();
+
+    void setOnGround(boolean onGround);
 
     default void updateOnGroundValue() {
         if (getWorld() == null || getBody() == null) return;
 
         setOnGround(false);
-        Vector2 center = getBody().getPosition();
 
-        float halfWidth = (getWidth() / 2f) / PPM;
-        float halfHeight = (getHeight() / 2f) / PPM;
-        float footY = center.y - halfHeight + 2 / PPM; // Origem no "pé"
+        center.set(getBody().getPosition());
 
-        float rayLength = 4f / PPM; // Alcance pequeno pra detectar chão
+        float hw = getWidth() / 2f / PPM;
+        float hh = getHeight() / 2f / PPM;
+        float footY = center.y - hh + 2 / PPM;
 
-        float margin = 5f / PPM; // pequeno recuo lateral
+        float rayLength = 4f / PPM;
+        float margin = 5f / PPM;
 
-        Vector2[] rayStarts = new Vector2[]{
-            new Vector2(center.x - halfWidth + margin, footY),
-            new Vector2(center.x, footY),
-            new Vector2(center.x + halfWidth - margin, footY)
-        };
+        hitBuffer[0] = false;
 
-        for (Vector2 start : rayStarts) {
-            Vector2 end = new Vector2(start.x, start.y - rayLength);
-
-            getRayCastHelper().castRay(start, end, data -> {
-                GameObjectTag groundTag = getTag(data.fixture());
-                if (groundTag != null && groundTag.type() == ObjectType.ENVIRONMENT) {
-                    setOnGround(true);
-                }
-            });
-
-        }
+        // Esquerda
+        if (castRay(center.x - hw + margin, footY, rayLength)) return;
+        // Centro
+        if (castRay(center.x, footY, rayLength)) return;
+        // Direita
+        castRay(center.x + hw - margin, footY, rayLength);
     }
 
-    void setOnGround(boolean onGround);
+    private boolean castRay(float startX, float startY, float rayLength) {
+        rayStart.set(startX, startY);
+        rayEnd.set(startX, startY - rayLength);
 
+        hitBuffer[0] = false;
+
+        getRayCastHelper().castRay(rayStart, rayEnd, data -> {
+            GameObjectTag tag = getTag(data.fixture());
+            if (tag != null && tag.type() == ObjectType.ENVIRONMENT) {
+                setOnGround(true);
+                hitBuffer[0] = true;
+            }
+        });
+
+        return hitBuffer[0];
+    }
 }

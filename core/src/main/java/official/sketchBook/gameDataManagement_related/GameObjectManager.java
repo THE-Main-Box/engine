@@ -41,7 +41,7 @@ public class GameObjectManager {
             100,
             12,
             28,
-            false,
+            true,
             false,
             world
         );

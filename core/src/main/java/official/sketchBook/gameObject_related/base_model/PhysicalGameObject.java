@@ -15,8 +15,8 @@ public abstract class PhysicalGameObject extends GameObject implements PhysicalO
     protected short maskBit;
     protected short categoryBit;
 
-    public PhysicalGameObject(float x, float y, float width, float height, boolean xAxisNormal, boolean yAxisNormal, World world) {
-        super(x, y, width, height, xAxisNormal, yAxisNormal);
+    public PhysicalGameObject(float x, float y, float width, float height, boolean xAxisInverted, boolean yAxisInverted, World world) {
+        super(x, y, width, height, xAxisInverted, yAxisInverted);
 
         this.world = world;
 

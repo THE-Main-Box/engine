@@ -4,7 +4,13 @@ import official.sketchBook.components_related.toUse_component.object.DamageRecei
 
 public interface DamageReceiverII {
 
+    void createHutBox();
+
     void die();
 
     DamageReceiveComponent getDamageReceiveC();
+
+    short getHBMaskBit();
+    short getHBCategoryBit();
+
 }

@@ -8,7 +8,9 @@ import com.badlogic.gdx.physics.box2d.World;
 import official.sketchBook.animation_related.ObjectAnimationPlayer;
 import official.sketchBook.animation_related.Sprite;
 import official.sketchBook.animation_related.SpriteSheetDataHandler;
+import official.sketchBook.components_related.integration_interfaces.GroundInteractableII;
 import official.sketchBook.components_related.integration_interfaces.JumpCapableII;
+import official.sketchBook.components_related.integration_interfaces.RayCasterII;
 import official.sketchBook.components_related.toUse_component.entity.PlayerAnimationManagerComponent;
 import official.sketchBook.components_related.toUse_component.entity.PlayerControllerComponent;
 import official.sketchBook.components_related.toUse_component.object.JumpComponent;
@@ -26,13 +28,15 @@ import java.util.Arrays;
 import java.util.List;
 
 import static official.sketchBook.util_related.enumerators.layers.CollisionLayers.*;
+import static official.sketchBook.util_related.helpers.HelpMethods.getTag;
 import static official.sketchBook.util_related.info.values.AnimationTitles.Entity.*;
+import static official.sketchBook.util_related.info.values.constants.GameConstants.Physics.PPM;
 
-public class Player extends RangeWeaponWieldingEntity implements JumpCapableII {
+public class Player extends RangeWeaponWieldingEntity implements JumpCapableII, GroundInteractableII {
     private JumpComponent jComponent;
 
-    public Player(float x, float y, float width, float height, boolean xAxisNormal, boolean yAxisNormal, World world) {
-        super(x, y, width, height, xAxisNormal, yAxisNormal, world);
+    public Player(float x, float y, float width, float height, boolean xAxisInverted, boolean yAxisInverted, World world) {
+        super(x, y, width, height, xAxisInverted, yAxisInverted, world);
 
         this.initSpriteSheet();
         this.initAnimations();
@@ -43,6 +47,10 @@ public class Player extends RangeWeaponWieldingEntity implements JumpCapableII {
 
 
         this.faction = FactionTypes.ALLY;
+    }
+
+    public void updateRayCast() {
+        updateOnGroundValue();
     }
 
     private void initComponents() {
@@ -85,8 +93,8 @@ public class Player extends RangeWeaponWieldingEntity implements JumpCapableII {
                 0,
                 5,
                 4,
-                xAxisNormal,
-                yAxisNormal,
+                xAxisInverted,
+                yAxisInverted,
                 new Texture(EntitiesSpritePath.duck_path)
             )
         );

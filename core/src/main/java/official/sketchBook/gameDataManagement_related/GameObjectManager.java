@@ -3,6 +3,7 @@ package official.sketchBook.gameDataManagement_related;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.World;
 import official.sketchBook.gameObject_related.base_model.PhysicalGameObject;
+import official.sketchBook.gameObject_related.entities.Dummy;
 import official.sketchBook.gameObject_related.entities.Player;
 import official.sketchBook.room_related.model.PlayableRoom;
 import official.sketchBook.room_related.worldGeneration_related.blueprint.RoomBlueprint;
@@ -35,6 +36,17 @@ public class GameObjectManager {
 
         this.initRoom();
 
+        Dummy dumDum = new Dummy(
+            100,
+            100,
+            12,
+            28,
+            false,
+            false,
+            world
+        );
+        currentRoom.addObject(dumDum);
+
         this.player = new Player(
             60,
             100,
@@ -45,6 +57,7 @@ public class GameObjectManager {
             world
         );
         currentRoom.addObject(player);
+
     }
 
     private void initRoom() {

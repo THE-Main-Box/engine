@@ -19,7 +19,7 @@ public abstract class GameObject {
     protected float width, height;
 
     /// Inversão de percepção do objeto em relação ao eixo
-    protected boolean xAxisNormal, yAxisNormal;
+    protected boolean xAxisInverted, yAxisInverted;
 
     /// Lista de gerenciadores de dado de sprites
     /// <p>(a ordem é muito importante, deve ser a mesma da dos tocadores de animação)
@@ -33,13 +33,13 @@ public abstract class GameObject {
     protected List<Component> components = new ArrayList<>();
 
 
-    public GameObject(float x, float y, float width, float height, boolean xAxisNormal, boolean yAxisNormal) {
+    public GameObject(float x, float y, float width, float height, boolean xAxisInverted, boolean yAxisInverted) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
-        this.xAxisNormal = xAxisNormal;
-        this.yAxisNormal = yAxisNormal;
+        this.xAxisInverted = xAxisInverted;
+        this.yAxisInverted = yAxisInverted;
     }
 
     /// Atualizamos o objeto em si
@@ -57,7 +57,7 @@ public abstract class GameObject {
         if (!spriteSheetDatahandlerList.isEmpty() && !objectAnimationPlayerList.isEmpty()) {
             //renderizamos primeiro tudo o que tivermos para renderizar do objeto do jogador
             for (int i = 0; i < spriteSheetDatahandlerList.size(); i++) {
-                spriteSheetDatahandlerList.get(i).setFacingForward(xAxisNormal);
+                spriteSheetDatahandlerList.get(i).setFacingForward(xAxisInverted);
                 spriteSheetDatahandlerList.get(i).renderSprite(batch,
                     objectAnimationPlayerList.get(i).getCurrentSprite()
                 );
@@ -120,20 +120,20 @@ public abstract class GameObject {
         return objectAnimationPlayerList;
     }
 
-    public boolean isxAxisNormal() {
-        return xAxisNormal;
+    public boolean isxAxisInverted() {
+        return xAxisInverted;
     }
 
-    public void setxAxisNormal(boolean xAxisNormal) {
-        this.xAxisNormal = xAxisNormal;
+    public void setxAxisInverted(boolean xAxisInverted) {
+        this.xAxisInverted = xAxisInverted;
     }
 
-    public boolean isyAxisNormal() {
-        return yAxisNormal;
+    public boolean isyAxisInverted() {
+        return yAxisInverted;
     }
 
-    public void setyAxisNormal(boolean yAxisNormal) {
-        this.yAxisNormal = yAxisNormal;
+    public void setyAxisInverted(boolean yAxisInverted) {
+        this.yAxisInverted = yAxisInverted;
     }
 
     public PlayableRoom getOwnerRoom() {

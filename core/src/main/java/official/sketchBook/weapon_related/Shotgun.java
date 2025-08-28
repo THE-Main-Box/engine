@@ -95,12 +95,12 @@ public class Shotgun extends RangeWeapon<Shotgun> {
         //Se estiver mirando pra baixo
         if (canPogoShoot()) {
             // Mira para baixo
-            spriteDataHandler.setRotation(owner.isxAxisNormal() ? -90 : 90);
-            xOffSet = owner.isxAxisNormal() ? -10f : 10f;
+            spriteDataHandler.setRotation(owner.isxAxisInverted() ? -90 : 90);
+            xOffSet = owner.isxAxisInverted() ? -10f : 10f;
         } else {//se não estiver mirando
             // Mira para frente (nem cima nem baixo)
             spriteDataHandler.setRotation(0);
-            xOffSet = owner.isxAxisNormal() ? -16f : 16f;
+            xOffSet = owner.isxAxisInverted() ? -16f : 16f;
         }
 
         if(rechargeManager.isRecharging()){
@@ -138,10 +138,10 @@ public class Shotgun extends RangeWeapon<Shotgun> {
         Direction posOnDirection;//Chave que referencia a posição do projétil
         Direction projDirection;//Chave que referencia a direção que o projétil deve percorrer
         if (canPogoShoot()) {
-            posOnDirection = owner.isxAxisNormal() ? Direction.DOWN_RIGHT : Direction.DOWN_LEFT;
+            posOnDirection = owner.isxAxisInverted() ? Direction.DOWN_RIGHT : Direction.DOWN_LEFT;
             projDirection = Direction.DOWN;
         } else {
-            posOnDirection = owner.isxAxisNormal() ? Direction.RIGHT : Direction.LEFT;
+            posOnDirection = owner.isxAxisInverted() ? Direction.RIGHT : Direction.LEFT;
             projDirection = posOnDirection;
         }
 
@@ -223,8 +223,8 @@ public class Shotgun extends RangeWeapon<Shotgun> {
             0,
             3,
             3,
-            owner.isxAxisNormal(),
-            owner.isyAxisNormal(),
+            owner.isxAxisInverted(),
+            owner.isyAxisInverted(),
             new Texture(WeaponsSpritePath.shotgun_path)
         );
     }

@@ -10,8 +10,8 @@ public abstract class RangeWeaponWieldingEntity extends Entity implements RangeW
     protected FactionTypes faction;
     protected WeaponWieldComponent weaponWC;
 
-    public RangeWeaponWieldingEntity(float x, float y, float width, float height, boolean xAxisNormal, boolean yAxisNormal, World world) {
-        super(x, y, width, height, xAxisNormal, yAxisNormal, world);
+    public RangeWeaponWieldingEntity(float x, float y, float width, float height, boolean xAxisInverted, boolean yAxisInverted, World world) {
+        super(x, y, width, height, xAxisInverted, yAxisInverted, world);
 
         weaponWC = new WeaponWieldComponent(this);
         addComponent(weaponWC);

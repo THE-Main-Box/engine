@@ -8,18 +8,19 @@ import com.badlogic.gdx.physics.box2d.World;
 import official.sketchBook.animation_related.ObjectAnimationPlayer;
 import official.sketchBook.animation_related.Sprite;
 import official.sketchBook.animation_related.SpriteSheetDataHandler;
+import official.sketchBook.components_related.integration_interfaces.JumpCapableII;
 import official.sketchBook.components_related.toUse_component.entity.PlayerAnimationManagerComponent;
 import official.sketchBook.components_related.toUse_component.entity.PlayerControllerComponent;
 import official.sketchBook.components_related.toUse_component.object.JumpComponent;
 import official.sketchBook.gameObject_related.base_model.DamageAbleEntity;
 import official.sketchBook.projectiles_related.emitters.Emitter;
-import official.sketchBook.room_related.model.PlayableRoom;
 import official.sketchBook.util_related.enumerators.types.FactionTypes;
 import official.sketchBook.util_related.enumerators.types.ObjectType;
 import official.sketchBook.util_related.helpers.body.BodyCreatorHelper;
 import official.sketchBook.util_related.info.paths.EntitiesSpritePath;
 import official.sketchBook.util_related.info.values.GameObjectTag;
 import official.sketchBook.util_related.registers.EmitterRegister;
+import official.sketchBook.weapon_related.Shotgun;
 
 import java.util.Arrays;
 import java.util.List;
@@ -27,21 +28,15 @@ import java.util.List;
 import static official.sketchBook.util_related.enumerators.layers.CollisionLayers.*;
 import static official.sketchBook.util_related.info.values.AnimationTitles.Entity.*;
 
-public class Player extends DamageAbleEntity {
-
-    private PlayerAnimationManagerComponent animationController;
-    private PlayerControllerComponent controllerComponent;
+public class Player extends DamageAbleEntity implements JumpCapableII {
     private JumpComponent jComponent;
 
-    public Player(float x, float y, float width, float height, boolean facingForward, World world, PlayableRoom room) {
-        super(x, y, width, height, facingForward, world);
-
-        this.ownerRoom = room;
+    public Player(float x, float y, float width, float height, boolean xAxisNormal, boolean yAxisNormal, World world) {
+        super(x, y, width, height, xAxisNormal, yAxisNormal, world);
 
         this.initSpriteSheet();
         this.initAnimations();
         this.initComponents();
-        this.initProjectileUsage();
 
         this.weaponWC.setRxAP(width / 2);
         this.weaponWC.setRyAP(height / 2);
@@ -53,11 +48,8 @@ public class Player extends DamageAbleEntity {
     private void initComponents() {
         ObjectAnimationPlayer aniPlayer = this.objectAnimationPlayerList.get(0);
 
-        animationController = new PlayerAnimationManagerComponent(this);
-        addComponent(animationController);
-
-        controllerComponent = new PlayerControllerComponent(this);
-        addComponent(controllerComponent);
+        addComponent(new PlayerAnimationManagerComponent(this));
+        addComponent(new PlayerControllerComponent(this));
 
         jComponent = new JumpComponent(
             this,
@@ -66,16 +58,22 @@ public class Player extends DamageAbleEntity {
             0.1f,
             0.2f,
             aniPlayer.getTotalAnimationTime(aniPlayer.getAnimationByKey(afterFall)),
-            true
+            1f,
+            1f,
+            false
         );
         addComponent(jComponent);
 
 
     }
 
+    public void onEnterNewRoom() {
+        initProjectileUsage();
+    }
+
     private void initProjectileUsage() {
         EmitterRegister.register(new Emitter(this));
-//        this.weaponWC.setWeapon(new Shotgun(this, this.weaponWC.getWeaponAnchorPoint()));
+        this.weaponWC.setWeapon(new Shotgun(this, this.weaponWC.getWeaponAnchorPoint()));
     }
 
     private void initSpriteSheet() {
@@ -87,8 +85,8 @@ public class Player extends DamageAbleEntity {
                 0,
                 5,
                 4,
-                facingForward,
-                false,
+                xAxisNormal,
+                yAxisNormal,
                 new Texture(EntitiesSpritePath.duck_path)
             )
         );
@@ -182,11 +180,7 @@ public class Player extends DamageAbleEntity {
         return jComponent.isCoyoteJumpAvailable() || jComponent.isOnGround();
     }
 
-    public PlayerControllerComponent getControllerComponent() {
-        return controllerComponent;
-    }
-
-    public JumpComponent getjComponent() {
+    public JumpComponent getJumpC() {
         return jComponent;
     }
 }

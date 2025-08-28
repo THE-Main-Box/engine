@@ -1,14 +1,15 @@
 package official.sketchBook.gameObject_related.base_model;
 
 import com.badlogic.gdx.physics.box2d.World;
-import official.sketchBook.components_related.toUse_component.entity.WeaponWieldComponent;
+import official.sketchBook.components_related.integration_interfaces.WeaponWielderII;
+import official.sketchBook.components_related.toUse_component.object.WeaponWieldComponent;
 
-public abstract class DamageAbleEntity extends Entity{
+public abstract class DamageAbleEntity extends Entity implements WeaponWielderII {
 
     protected WeaponWieldComponent weaponWC;
 
-    public DamageAbleEntity(float x, float y, float width, float height, boolean facingForward, World world) {
-        super(x, y, width, height, facingForward, world);
+    public DamageAbleEntity(float x, float y, float width, float height, boolean xAxisNormal,boolean yAxisNormal, World world) {
+        super(x, y, width, height, xAxisNormal, yAxisNormal, world);
 
         weaponWC = new WeaponWieldComponent(this);
         addComponent(weaponWC);
@@ -33,8 +34,8 @@ public abstract class DamageAbleEntity extends Entity{
     }
 
     @Override
-    public void syncObjectSpritePos() {
-        super.syncObjectSpritePos();
+    public void onObjectBodySync() {
+        super.onObjectBodySync();
         weaponWC.syncWeaponPosToWielder();
 
     }

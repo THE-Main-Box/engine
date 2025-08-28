@@ -127,7 +127,7 @@ public class GlobalProjectilePool {
         for (ProjectilePool<? extends Projectile> pool : poolMap.values()) {
             for (Projectile p : pool.getActiveProjectiles()) {
                 p.getControllerComponent()
-                    .getProjectile().getPhysicsComponent()
+                    .getProjectile().getPhysicsC()
                     .syncBodyObjectPos();
             }
         }

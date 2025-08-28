@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import official.sketchBook.MainClass;
 import official.sketchBook.camera_related.CameraManager;
-import official.sketchBook.gameObject_related.base_model.Entity;
+import official.sketchBook.components_related.integration_interfaces.RayCasterII;
 import official.sketchBook.gameObject_related.base_model.GameObject;
 import official.sketchBook.gameState_related.model.State;
 import official.sketchBook.gameState_related.states.Configuration;
@@ -130,15 +130,15 @@ public class PlayScreen implements Screen {
 
         if (showRayCast) {
             for (GameObject object : playingState.objectManager.getCurrentRoom().getGameObjects()) {
-                if (object instanceof Entity entity && entity.getRayCastHelper() != null) {
-                    entity.getRayCastHelper().render(gameCameraManager.getCamera().combined.scl(PPM));
+                if (object instanceof RayCasterII caster && caster.getRayCastHelper() != null) {
+                    caster.getRayCastHelper().render(gameCameraManager.getCamera().combined.scl(PPM));
                 }
             }
         }
 
         for (GameObject object : playingState.objectManager.getCurrentRoom().getGameObjects()) {
-            if (object instanceof Entity entity && entity.getRayCastHelper() != null) {
-                entity.getRayCastHelper().clearRays();
+            if (object instanceof RayCasterII caster && caster.getRayCastHelper() != null) {
+                caster.getRayCastHelper().clearRays();
             }
         }
     }

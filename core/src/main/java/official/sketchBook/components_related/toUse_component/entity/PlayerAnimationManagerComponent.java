@@ -37,7 +37,7 @@ public class PlayerAnimationManagerComponent implements Component {
                 ani.setAniTick(0);
 
                 // 2) Stall (pico do salto): vy próximo de zero, dentro do intervalo [-t, +t]
-            } else if (Math.abs(vy) <= player.getjComponent().getFallSpeedAfterJCancel()) {
+            } else if (Math.abs(vy) <= player.getJumpC().getFallSpeedAfterJCancel()) {
                 ani.playAnimation(jump);
                 ani.setAnimationLooping(false);
                 ani.setAutoUpdateAni(false);
@@ -55,7 +55,7 @@ public class PlayerAnimationManagerComponent implements Component {
         }
 
         // Quando tocar o chão, entramos no afterFall
-        if (player.getjComponent().isEntityLanded() && !player.getMoveC().isMoving()) {
+        if (player.getJumpC().isEntityLanded() && !player.getMoveC().isMoving()) {
             ani.playAnimation(afterFall);
             ani.setAnimationLooping(false);
             ani.setAutoUpdateAni(true);

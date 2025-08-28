@@ -63,8 +63,7 @@ public class Playing extends State implements StateMethods {
             );
         }
 
-        objectManager.syncObjectsBodies();
-        objectManager.updateEntityRayCast();
+        objectManager.updateObjectsAfterStep();
 
         ProjectileCollisionRegister.update();
 

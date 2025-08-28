@@ -1,7 +1,7 @@
 package official.sketchBook.components_related.toUse_component.entity;
 
 import official.sketchBook.components_related.base_component.KeyBindedControllerComponent;
-import official.sketchBook.gameObject_related.base_model.GameObject;
+import official.sketchBook.gameObject_related.base_model.PhysicalGameObject;
 import official.sketchBook.gameObject_related.entities.Player;
 import official.sketchBook.util_related.enumerators.directions.Direction;
 import official.sketchBook.util_related.info.values.ControlKeys;
@@ -19,8 +19,8 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
     private Direction lastDirectionPressed = Direction.STILL;
 
 
-    public PlayerControllerComponent(GameObject gameObject) {
-        this.player = (Player) gameObject;
+    public PlayerControllerComponent(PhysicalGameObject physicalGameObject) {
+        this.player = (Player) physicalGameObject;
 
         // Vinculando teclas ao movimento
         bindKey(ControlKeys.dir_left, this::moveLeft);
@@ -69,7 +69,7 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
     }
 
     private void jump(boolean pressed) {
-        player.getjComponent().jump(!pressed);
+        player.jump(!pressed);
     }
 
     @Override
@@ -77,12 +77,12 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
         super.update(delta);
 
         updateMovement();
-        updateHMovementValues();
+        updateHorizontalMovementValues();
 
     }
 
     //atualiza as variaveis de movimentação em cada estado, se estivermos no ar
-    private void updateHMovementValues() {
+    private void updateHorizontalMovementValues() {
 
         float accel, decel, maxAccel;
 
@@ -122,7 +122,7 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
         leftPressed = pressed;
         if (pressed) {
             lastDirectionPressed = Direction.LEFT;
-            player.setFacingForward(false);
+            player.setxAxisNormal(false);
         }
     }
 
@@ -130,7 +130,7 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
         rightPressed = pressed;
         if (pressed) {
             lastDirectionPressed = Direction.RIGHT;
-            player.setFacingForward(true);
+            player.setxAxisNormal(true);
         }
 
     }
@@ -138,13 +138,13 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
     private void movePlayer(Direction directions) {
         switch (directions) {
             case LEFT:
-                player.setFacingForward(false);
+                player.setxAxisNormal(false);
                 player.getMoveC().setAcceleratingX(true);
                 player.getMoveC().setMoving(true);
                 player.getMoveC().setxAccel(-accelToApply);
                 break;
             case RIGHT:
-                player.setFacingForward(true);
+                player.setxAxisNormal(true);
                 player.getMoveC().setAcceleratingX(true);
                 player.getMoveC().setMoving(true);
                 player.getMoveC().setxAccel(accelToApply);

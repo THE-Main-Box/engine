@@ -14,10 +14,12 @@ import official.sketchBook.weapon_related.util.RechargeManager;
 import official.sketchBook.weapon_related.util.ShootStateManager;
 import official.sketchBook.weapon_related.util.status.RangeWeaponStatus;
 
+import java.util.EnumMap;
 import java.util.Objects;
 
 import static official.sketchBook.util_related.info.values.AnimationTitles.Weapon.recharge;
 import static official.sketchBook.util_related.info.values.AnimationTitles.Weapon.shoot;
+import static official.sketchBook.util_related.info.values.constants.GameConstants.Debug.ZERO_V2;
 import static official.sketchBook.util_related.info.values.constants.GameConstants.Physics.PPM;
 
 public abstract class RangeWeapon<T extends RangeWeapon<T>> extends BaseWeapon<T> implements IRangeCapable {
@@ -42,21 +44,14 @@ public abstract class RangeWeapon<T extends RangeWeapon<T>> extends BaseWeapon<T
 
     /// Buffer para direção de disparo
     protected final Vector2 shootDirection = new Vector2();
+    /// Buffer da posição inicial do projétil
+    protected final Vector2 spawnPos = new Vector2();
 
-    /// Buffer para posição inicial de projéteis
-    private final Vector2 cachedSpawnPos = new Vector2();
+    /// Pré-definições para posição inicial do projétil
+    protected final EnumMap<Direction, Vector2> defSpawnPosMap = new EnumMap<>(Direction.class);
 
-    /// Offset padrão para projéteis do lado esquerdo
-    protected final Vector2 leftOffSet = new Vector2(0, 0);
-
-    /// Offset padrão para projéteis do lado direito
-    protected final Vector2 rightOffSet = new Vector2(0, 0);
-
-    /// Offset padrão para projéteis do lado de cima
-    protected final Vector2 upOffSet = new Vector2(0, 0);
-
-    /// Offset padrão para projéteis do lado de baixo
-    protected final Vector2 downOffSet = new Vector2(0, 0);
+    /// Pré-definições para direção de disparo
+    protected final EnumMap<Direction, Vector2> defShootDirMap = new EnumMap<>(Direction.class);
 
     protected RangeWeapon(Class<T> weaponClass, DamageAbleEntity owner, AnchorPoint point) {
         super(weaponClass, owner, point);
@@ -68,8 +63,17 @@ public abstract class RangeWeapon<T extends RangeWeapon<T>> extends BaseWeapon<T
 
         this.initDefaultStatus();
 
+        initDefSpawnPos();
+        initDefShootPos();
+
         this.initManagers();
     }
+
+    /// Inicia dentro da classe filha as posições de criação de um projétil
+    protected abstract void initDefSpawnPos();
+
+    /// Inicia dentro da classe filha as direções que um projétil pode ser lançado
+    protected abstract void initDefShootPos();
 
     protected void initManagers() {
         this.rechargeManager = new RechargeManager(
@@ -99,7 +103,7 @@ public abstract class RangeWeapon<T extends RangeWeapon<T>> extends BaseWeapon<T
     @Override
     protected void updateRenderVariables() {
         super.updateRenderVariables();
-        updateOffSets();
+        updateRenderingOffSets();
     }
 
     /**
@@ -113,10 +117,24 @@ public abstract class RangeWeapon<T extends RangeWeapon<T>> extends BaseWeapon<T
         HelpMethods.applyRecoil(
             owner.getBody(),
             direction,
-            weaponStatus.recoilForce * weaponStatus.recoilForceMultiplier
+            (weaponStatus.recoilForce * weaponStatus.recoilForceMultiplier)
         );
     }
 
+    /**
+     * Função padrão para disparo de projétil comum
+     *
+     * @param p Projétil a ser disparado
+     */
+    protected void shoot(Projectile p) {
+        projectileEmitter.fire(
+            p,
+            projectileSpeed * shootDirection.x,
+            projectileSpeed * shootDirection.y,
+            1f
+        );
+
+    }
 
     @Override
     public void use() {
@@ -141,7 +159,7 @@ public abstract class RangeWeapon<T extends RangeWeapon<T>> extends BaseWeapon<T
     protected abstract void initDefaultStatus();
 
     /// Permite a alteração do offset gráfico da arma
-    protected abstract void updateOffSets();
+    protected abstract void updateRenderingOffSets();
 
     /// Permite uma implementação própria de um disparo, executado apenas caso possamos atirar de fato
     protected abstract void performShoot();
@@ -166,25 +184,17 @@ public abstract class RangeWeapon<T extends RangeWeapon<T>> extends BaseWeapon<T
      * @param direction Enumerador do tipo direção, é passado como identificador do ângulo de disparo
      */
     public final Vector2 getProjectileSpawnPosition(Direction direction) {
-        return cachedSpawnPos.set(x / PPM, y / PPM)
-            .add(getOffsetForDirection(direction));
+        return spawnPos.set(x / PPM, y / PPM)
+            .add(getDefPosFromSpawnPosMap(direction));
     }
 
-    /// Obtém offset da direção
-    protected Vector2 getOffsetForDirection(Direction direction) {
-        if (direction.isRight()) return getRightOffSet().scl(1f / PPM);
-        if (direction.isLeft()) return getLeftOffSet().scl(1f / PPM);
-        if (direction.isDown()) return getDownOffSet().scl(1f / PPM);
-        if (direction.isUp()) return getUpOffSet().scl(1f / PPM);
-
-        return shootDirection; // STILL ou default
-    }
-
+    /// Atualiza o buffer da direção de disparo
     public void setShootDirection(float x, float y) {
         // Atualiza o vetor reutilizável com os novos valores normalizados
         shootDirection.set(x, y);
     }
 
+    /// Atualiza o tipo de projétil do emissor
     protected void configProjectileTypeOnEmitter(Class<? extends Projectile> type) {
         this.projectileType = type;
         this.projectileEmitter.configure(type);
@@ -209,34 +219,47 @@ public abstract class RangeWeapon<T extends RangeWeapon<T>> extends BaseWeapon<T
         return shootStateManager;
     }
 
-    // Métodos customizáveis por subclasses
-    protected Vector2 getLeftOffSet() {
-        return leftOffSet;
+    /**
+     * Adiciona mais uma direção de disparo de acordo com uma direção
+     *
+     * @param dir  direção do disparo como chave
+     * @param xDir valor entre 1 e 0 para definir a direção em x
+     * @param yDir valor entre 1 e 0 para definir a direção em y
+     */
+    public final void addDefShotDir(Direction dir, byte xDir, byte yDir) {
+        if (xDir < -1 || xDir > 1 || yDir < -1 || yDir > 1) {
+            throw new IllegalArgumentException("xDir e yDir devem estar entre -1 e 1");
+        }
+        defShootDirMap.put(dir, new Vector2(xDir, yDir));
     }
 
-    protected Vector2 getRightOffSet() {
-        return rightOffSet;
+    /**
+     * Obtemos a direção do disparo do projétil
+     *
+     * @param dir Direção usada como chave
+     */
+    public final Vector2 getDefShootDir(Direction dir) {
+        return defShootDirMap.getOrDefault(dir, ZERO_V2);
     }
 
-    protected Vector2 getUpOffSet() {
-        return upOffSet;
+    /**
+     * Adiciona mais uma posição no mapa de posições de início
+     *
+     * @param dir  Direção que aquela deve ser atrelada
+     * @param xPos Posição de spawn x
+     * @param yPos Posição de spawn y
+     */
+    public final void addSpawnPos(Direction dir, float xPos, float yPos) {
+        defSpawnPosMap.put(dir, new Vector2(xPos, yPos).scl((1 / PPM)));
     }
 
-    protected Vector2 getDownOffSet() {
-        return downOffSet;
-    }
-
-    protected void setLeftOffSet(float x, float y){
-        leftOffSet.set(x,y);
-    }
-    protected void setRightOffSet(float x, float y){
-        rightOffSet.set(x,y);
-    }
-    protected void setUpOffSet(float x, float y){
-        upOffSet.set(x,y);
-    }
-    protected void setDownOffSet(float x, float y){
-        downOffSet.set(x,y);
+    /**
+     * Obtemos a posição inicial do projétil desde que esteja dentro da map
+     *
+     * @param dir Direção usada como chave
+     */
+    public final Vector2 getDefPosFromSpawnPosMap(Direction dir) {
+        return defSpawnPosMap.getOrDefault(dir, ZERO_V2);
     }
 
 }

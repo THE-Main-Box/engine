@@ -2,10 +2,10 @@ package official.sketchBook.lwjgl3;
 
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import official.sketchBook.MainClass;
-import official.sketchBook.screen_related.PlayScreen;
+import official.sketchBook.engine.MainClass;
+import official.sketchBook.game.screen_related.PlayScreen;
 
-import static official.sketchBook.util_related.info.values.constants.GameConstants.Screen.scale;
+import static official.sketchBook.game.util_related.info.values.constants.GameConstants.Screen.scale;
 
 /** Launches the desktop (LWJGL3) application. */
 public class Lwjgl3Launcher {

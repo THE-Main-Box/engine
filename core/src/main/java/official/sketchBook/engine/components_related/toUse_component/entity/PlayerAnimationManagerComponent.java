@@ -1,0 +1,110 @@
+package official.sketchBook.engine.components_related.toUse_component.entity;
+
+import official.sketchBook.engine.animation_related.ObjectAnimationPlayer;
+import official.sketchBook.engine.components_related.base_component.Component;
+import official.sketchBook.game.entities.Player;
+
+import static official.sketchBook.game.util_related.info.values.AnimationTitles.Entity.*;
+
+public class PlayerAnimationManagerComponent implements Component {
+    private final Player player;
+
+    public PlayerAnimationManagerComponent(Player player) {
+        this.player = player;
+    }
+
+    @Override
+    public void update(float delta) {
+        ObjectAnimationPlayer animationPlayer = player.getObjectAnimationPlayerList().get(0);
+
+        // Ordem de prioridade: Pulo > Queda > Corrida > Idle
+        if (handleJumpAnimation(animationPlayer)) return;
+        if (handleAirborneAnimation(animationPlayer)) return;
+        if (handleRunAnimation(animationPlayer)) return;
+        handleIdleAnimation(animationPlayer);
+    }
+
+    private boolean handleJumpAnimation(ObjectAnimationPlayer ani) {
+        float vy = player.getBody().getLinearVelocity().y;
+
+        // Só entramos aqui enquanto estivermos no ar
+        if (!player.isOnGround()) {
+            // 1) Subida plena: vy acima do threshold de stall
+            if (vy > 0.15f) {
+                ani.playAnimation(jump);
+                ani.setAnimationLooping(false);
+                ani.setAutoUpdateAni(false);
+                ani.setAniTick(0);
+
+                // 2) Stall (pico do salto): vy próximo de zero, dentro do intervalo [-t, +t]
+            } else if (Math.abs(vy) <= player.getJumpC().getFallSpeedAfterJCancel()) {
+                ani.playAnimation(jump);
+                ani.setAnimationLooping(false);
+                ani.setAutoUpdateAni(false);
+                ani.setAniTick(1);
+
+                // 3) Queda: vy negativo além do stall threshold
+            } else {
+                ani.playAnimation(fall);
+                ani.setAnimationLooping(false);
+                ani.setAutoUpdateAni(false);
+                ani.setAniTick(0);
+            }
+
+            return true;
+        }
+
+        // Quando tocar o chão, entramos no afterFall
+        if (player.getJumpC().isEntityLanded() && !player.getMoveC().isMoving()) {
+            ani.playAnimation(afterFall);
+            ani.setAnimationLooping(false);
+            ani.setAutoUpdateAni(true);
+            return true;
+        }
+
+        return false;
+    }
+
+
+    private boolean handleAirborneAnimation(ObjectAnimationPlayer ani) {
+        // só entra aqui se ainda não está no chão
+        if (player.isOnGround()) return false;
+
+        // se já tá tocando afterFall e não terminou, mantém
+        if (ani.getCurrentAnimationKey().equals(afterFall)
+            && !ani.isAnimationFinished()) {
+            return true;
+        }
+
+        // queda livre normal (loop)
+        if (player.getBody().getLinearVelocity().y < 0) {
+            ani.playAnimation(fall);
+            ani.setAnimationLooping(true);
+            ani.setAutoUpdateAni(true);
+        }
+
+        return true;
+    }
+
+    private boolean handleRunAnimation(ObjectAnimationPlayer animationPlayer) {
+        if (!player.isOnGround() || !player.getMoveC().isMoving() || isPlayingAfterFall(animationPlayer)) return false;
+
+        animationPlayer.setAutoUpdateAni(true);
+        animationPlayer.playAnimation(run);
+
+        return true;
+    }
+
+    private void handleIdleAnimation(ObjectAnimationPlayer animationPlayer) {
+        if (isPlayingAfterFall(animationPlayer)) return;
+
+        animationPlayer.setAutoUpdateAni(true);
+        animationPlayer.playAnimation(idle);
+    }
+
+    public boolean isPlayingAfterFall(ObjectAnimationPlayer ani) {
+        return ani.getCurrentAnimationKey().equals(afterFall)
+            && !ani.isAnimationFinished();
+    }
+
+}

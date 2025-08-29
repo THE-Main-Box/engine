@@ -5,53 +5,45 @@ import com.badlogic.gdx.physics.box2d.*;
 
 public class HelpMethods {
 
+    private static final Vector2 tmpRecoil = new Vector2(); // buffer estático para evitar criação a cada chamada
+    private static final Vector2 tmpSpeed = new Vector2(); // buffer estático para evitar criação a cada chamada
+
     /**
      * Aplica uma velocidade de recuo ao corpo, somando-a à velocidade atual,
      * mas apenas se a projeção da velocidade atual na direção do recuo for menor que a velocidade de recuo desejada.
      *
-     * @param body             O corpo que receberá o recuo
-     * @param direction        Direção do recuo (vetor com magnitude qualquer; será normalizado)
-     * @param recoilVelocity   Velocidade de recuo desejada (em m/s)
+     * @param body           O corpo que receberá o recuo
+     * @param direction      Direção do recuo (vetor com magnitude qualquer; será normalizado)
+     * @param recoilVelocity Velocidade de recuo desejada (em m/s)
      */
     public static void applyRecoil(Body body, Vector2 direction, float recoilVelocity) {
         if (body == null || direction == null || direction.isZero()) return;
 
+        // Cria o vetor de recuo invertido sem criar novos objetos
+        tmpRecoil.set(direction).scl(-recoilVelocity);
 
-        // Cria o vetor de recuo invertido: -dir * velocidade
-        Vector2 recoil = new Vector2(direction).scl(-recoilVelocity);
+        tmpSpeed.set(body.getLinearVelocity());
 
-        // Velocidade atual do corpo
-        Vector2 bodySpeed = body.getLinearVelocity();
-
-        // Resultado final a aplicar
-        Vector2 newVelocity = new Vector2(bodySpeed);
+        float newX = tmpSpeed.x;
+        float newY = tmpSpeed.y;
 
         // --- EIXO X ---
-        float recoilX = recoil.x;
-        float bodyX = bodySpeed.x;
-
-        if (Math.signum(recoilX) != Math.signum(bodyX)) {
-            // Direções opostas — reduz a velocidade
-            newVelocity.x = bodyX + recoilX;
-        } else if (Math.abs(bodyX) < Math.abs(recoilX)) {
-            // Mesma direção, mas abaixo do limite
-            newVelocity.x = recoilX;
+        if (Math.signum(tmpRecoil.x) != Math.signum(tmpSpeed.x)) {
+            newX += tmpRecoil.x; // direções opostas — reduz a velocidade
+        } else if (Math.abs(tmpSpeed.x) < Math.abs(tmpRecoil.x)) {
+            newX = tmpRecoil.x; // mesma direção, abaixo do limite
         }
-        // Caso contrário, já estamos no limite ou acima — não muda nada
+        // caso contrário, não muda
 
         // --- EIXO Y ---
-        float recoilY = recoil.y;
-        float bodyY = bodySpeed.y;
-
-        if (Math.signum(recoilY) != Math.signum(bodyY)) {
-            newVelocity.y = bodyY + recoilY;
-        } else if (Math.abs(bodyY) < Math.abs(recoilY)) {
-            newVelocity.y = recoilY;
+        if (Math.signum(tmpRecoil.y) != Math.signum(tmpSpeed.y)) {
+            newY += tmpRecoil.y;
+        } else if (Math.abs(tmpSpeed.y) < Math.abs(tmpRecoil.y)) {
+            newY = tmpRecoil.y;
         }
 
-        // Aplica a nova velocidade calculada
-        body.setLinearVelocity(0,0);
-        body.setLinearVelocity(newVelocity);
+        // Aplica a nova velocidade diretamente
+        body.setLinearVelocity(newX, newY);
     }
 
 

@@ -177,15 +177,14 @@ public class Shotgun extends RangeWeapon<Shotgun> {
 
         if(!owner.isOnGround()){
             weaponStatus.recoilForceMultiplier = 1;
-            System.out.println("jump dash " + !owner.isOnGround());
-        } else {
+        } else if(canPogoShoot()){
+            weaponStatus.recoilForceMultiplier = 1.5f;
+        }else {
             weaponStatus.recoilForceMultiplier = 0;
-            System.out.println("jump dash " + !owner.isOnGround());
         }
 
-        System.out.println(owner.getMoveC().getxSpeed());
-
         shoot(p);
+
         applyRecoil(shootDirection);
     }
 

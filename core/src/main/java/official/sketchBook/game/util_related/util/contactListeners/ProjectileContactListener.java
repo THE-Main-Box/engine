@@ -1,4 +1,4 @@
-package official.sketchBook.engine.projectileRelated.util;
+package official.sketchBook.game.util_related.util.contactListeners;
 
 import com.badlogic.gdx.physics.box2d.*;
 import official.sketchBook.engine.components_related.toUse_component.projectile.ProjectileControllerComponent;

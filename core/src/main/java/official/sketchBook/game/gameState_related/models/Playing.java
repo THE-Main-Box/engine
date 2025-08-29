@@ -8,7 +8,8 @@ import com.badlogic.gdx.physics.box2d.World;
 import official.sketchBook.engine.camera_related.CameraManager;
 import official.sketchBook.engine.gameState_related.model.State;
 import official.sketchBook.engine.gameState_related.model.StateMethods;
-import official.sketchBook.engine.projectileRelated.util.ProjectileContactListener;
+import official.sketchBook.game.util_related.util.contactListeners.MovableObjectContactListener;
+import official.sketchBook.game.util_related.util.contactListeners.ProjectileContactListener;
 import official.sketchBook.engine.util_related.enumerators.states.GameState;
 import official.sketchBook.engine.util_related.utils.collision.MultiContactListener;
 import official.sketchBook.engine.util_related.utils.registers.ProjectileCollisionRegister;
@@ -49,6 +50,7 @@ public class Playing extends State implements StateMethods {
 
     private void setContactListeners() {
         handleContactListener(false, "projectile_listener", new ProjectileContactListener());
+        handleContactListener(false, "mob_listener", new MovableObjectContactListener());
     }
 
     @Override

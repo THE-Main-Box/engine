@@ -3,6 +3,7 @@ package official.sketchBook.engine.util_related.utils.general;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.WorldManifold;
+import official.sketchBook.engine.components_related.integration_interfaces.MovementCapableII;
 import official.sketchBook.engine.util_related.enumerators.directions.Direction;
 
 public class ContactActions {
@@ -40,6 +41,55 @@ public class ContactActions {
 
         return Direction.STILL;
     }
+
+    // thresholds — ajustáveis (declare constantes se quiser)
+    private static final float SIDE_NORMAL_MIN = 0.6f;        // considera colisão lateral significativa
+    private static final float FLOOR_NORMAL_MIN = 0.6f;       // considera colisão vertical significativa
+    private static final float MIN_VEL_TO_ZERO = 0.05f;       // abaixo disso consideramos "parado"
+
+    private static final Vector2 tmpNormal = new Vector2();
+    private static final Vector2 tmpVel = new Vector2();
+
+
+    public static void handleBlockedMovement(Contact contact, MovementCapableII mob) {
+        if (contact == null || mob == null) return;
+        WorldManifold manifold = contact.getWorldManifold();
+        if (manifold == null) return;
+
+        // normal do contato (não aloca)
+        tmpNormal.set(manifold.getNormal());
+
+        float nx = tmpNormal.x;
+        float ny = tmpNormal.y;
+
+        // velocidade atual do corpo
+        tmpVel.set(mob.getBody().getLinearVelocity());
+
+        float vx = tmpVel.x;
+        float vy = tmpVel.y;
+
+        // --- EIXO HORIZONTAL ---
+        // Se a normal tem componente X significativa (colisão lateral)
+        // e a velocidade no eixo X aponta na mesma direção da normal (ou seja, está indo contra a parede)
+        if (Math.abs(nx) >= SIDE_NORMAL_MIN && Math.abs(vx) > MIN_VEL_TO_ZERO) {
+            if (Math.signum(vx) == Math.signum(nx)) {
+                // zera x no MoveC e no corpo
+                mob.getMoveC().setxSpeed(0);
+                mob.getBody().setLinearVelocity(0f, mob.getBody().getLinearVelocity().y);
+            }
+        }
+
+        // --- EIXO VERTICAL (corrigido) ---
+        if (Math.abs(ny) >= FLOOR_NORMAL_MIN && Math.abs(vy) > MIN_VEL_TO_ZERO) {
+            // usa produto: se vy * ny < 0 => velocidade está entrando na superfície (colidindo e empurrando)
+            if (vy * ny < 0f) {
+                // zera y no MoveC e no corpo
+                mob.getMoveC().setySpeed(0);
+                mob.getBody().setLinearVelocity(mob.getBody().getLinearVelocity().x, 0f);
+            }
+        }
+    }
+
 
 
     public static void applyDefaultFrictionLogic(Contact contact) {

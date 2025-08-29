@@ -141,4 +141,11 @@ public class MovementComponent implements Component {
         this.acceleratingY = acceleratingY;
     }
 
+    public void setxSpeed(float xSpeed) {
+        this.xSpeed = xSpeed;
+    }
+
+    public void setySpeed(float ySpeed) {
+        this.ySpeed = ySpeed;
+    }
 }

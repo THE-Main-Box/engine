@@ -13,20 +13,29 @@ public enum Direction {
     UP_DOWN,
     LEFT_RIGHT;
 
+    /// Verifica se tem a direção baixo
     public boolean isDown() {
         return this == DOWN || this == DOWN_LEFT || this == DOWN_RIGHT;
     }
 
+    /// Verifica se tem a direção cima
     public boolean isUp() {
         return this == UP || this == UP_LEFT || this == UP_RIGHT;
     }
 
+    /// Verifica se tem a direção esquerda
     public boolean isLeft() {
         return this == LEFT || this == DOWN_LEFT || this == UP_LEFT;
     }
 
+    /// Verifica se possui a direção direita
     public boolean isRight() {
         return this == RIGHT || this == DOWN_RIGHT || this == UP_RIGHT;
+    }
+
+    /// Verifica se é uma diagonal
+    public boolean isDiagonal() {
+        return this == DOWN_LEFT || this == DOWN_RIGHT || this == UP_RIGHT || this == UP_LEFT;
     }
 
     public Direction getOpposite() {

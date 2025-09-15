@@ -138,7 +138,7 @@ public class Player extends RangeWeaponWieldingEntity implements JumpCapableII, 
     @Override
     protected void setBodyDefValues() {
         this.defDens = 0.5f;
-        this.defFric = 1.5f;
+        this.defFric = 1f;
         this.defRest = 0;
 
         this.setCategoryBit(ALLY_ENTITY.bit());
@@ -148,7 +148,7 @@ public class Player extends RangeWeaponWieldingEntity implements JumpCapableII, 
     @Override
     protected void createBody() {
 
-        this.body = BodyCreatorHelper.createCapsule(
+        this.body = BodyCreatorHelper.createBox(
             world,
             new Vector2(x, y),
             width,

@@ -1,12 +1,16 @@
 package official.sketchBook.game.util_related.util.contactListeners;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import official.sketchBook.engine.components_related.integration_interfaces.MovementCapableII;
+import official.sketchBook.engine.util_related.enumerators.directions.Direction;
 import official.sketchBook.engine.util_related.utils.general.ContactActions;
 
 import static official.sketchBook.engine.util_related.utils.general.HelpMethods.getTag;
 
 public class MovableObjectContactListener implements ContactListener {
+    private Direction tmpDir;
+
     @Override
     public void beginContact(Contact contact) {
 
@@ -27,15 +31,22 @@ public class MovableObjectContactListener implements ContactListener {
 
     }
 
-    ///TODO: verificar antes se devemos aplicar o efeito de block ou não
+    /// TODO: verificar antes se devemos aplicar o efeito de block ou não
     private void handle(Contact contact) {
         if (contact == null) return;
 
+        //Obtemos uma nova direção cacheada, ou seja usamos um meio mais simples para lidar com as coisas
+        tmpDir = ContactActions.getCachedCollisionDirection(contact);
+
         // Tentativa segura de obter MovementCapableII via GameObjectTag/HelpMethods.getTag
         MovementCapableII movable = detectMovableObject(contact);
+
         // Preserva comportamento original de aplicar fricção:
-        ContactActions.handleBlockedMovement(contact, movable);
+        ContactActions.handleBlockedMovement(tmpDir, movable);
+
+//        ContactActions.applyDefaultFrictionLogic(contact);
     }
+
 
     private MovementCapableII detectMovableObject(Contact contact) {
         if (contact == null) return null;

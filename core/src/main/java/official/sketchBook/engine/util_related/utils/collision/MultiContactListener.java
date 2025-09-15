@@ -38,8 +38,6 @@ public class MultiContactListener implements ContactListener {
 
     @Override
     public void preSolve(Contact contact, Manifold oldManifold) {
-        ContactActions.applyDefaultFrictionLogic(contact);
-
         // Chama preSolve para cada listener registrado
         for (Map.Entry<String, ContactListener> entry : listeners.entrySet()) {
             entry.getValue().preSolve(contact, oldManifold);  // Delegando para cada listener

@@ -69,6 +69,10 @@ public class ContactActions {
     }
 
 
+
+
+
+
     public static void handleBlockedMovement(Direction dir, MovementCapableII mob) {
         if (dir == null || mob == null || dir == Direction.STILL) return;
 

@@ -14,8 +14,7 @@ public class MovementComponent implements Component {
 
     private boolean acceleratingX, acceleratingY;
 
-    private boolean moving = false;
-
+    private boolean movingX = false;
 
     public MovementComponent(float weight) {
         this.weight = weight;
@@ -40,9 +39,14 @@ public class MovementComponent implements Component {
     }
 
     private float applyFriction(float speed, float deceleration) {
-        if(speed == 0|| deceleration == 0) return 0;
+        if (speed == 0 || deceleration == 0) return 0;
+
+        // Se a velocidade é menor que o deceleration, zera
+        if (Math.abs(speed) <= deceleration) return 0;
+
         return speed - deceleration * Math.signum(speed);
     }
+
 
     private void limitSpeed() {
         xSpeed = Math.max(-xMaxSpeed, Math.min(xSpeed, xMaxSpeed));
@@ -61,12 +65,12 @@ public class MovementComponent implements Component {
     }
 
     // Getters e Setters
-    public boolean isMoving() {
-        return moving;
+    public boolean isMovingX() {
+        return movingX;
     }
 
-    public void setMoving(boolean moving) {
-        this.moving = moving;
+    public void setMovingX(boolean moving) {
+        this.movingX = moving;
     }
 
     public float getxSpeed() {

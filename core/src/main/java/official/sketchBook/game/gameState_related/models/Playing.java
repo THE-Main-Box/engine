@@ -6,8 +6,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import official.sketchBook.engine.camera_related.CameraManager;
+import official.sketchBook.engine.data_management_related.GameObjectManagerBase;
 import official.sketchBook.engine.gameState_related.model.State;
 import official.sketchBook.engine.gameState_related.model.StateMethods;
+import official.sketchBook.game.entities.Player;
 import official.sketchBook.game.util_related.util.contactListeners.MovableObjectContactListener;
 import official.sketchBook.game.util_related.util.contactListeners.ProjectileContactListener;
 import official.sketchBook.engine.util_related.enumerators.states.GameState;
@@ -31,8 +33,9 @@ public class Playing extends State implements StateMethods {
     public static MultiContactListener multiContactListener = new MultiContactListener();
 
     public World world;
-    public GameObjectManager objectManager;
+    public GameObjectManagerBase objectManager;
 
+    public Player player;
 
     public Playing(PlayScreen game, CameraManager gameCameraManager, CameraManager uiCameraManager) {
         super(game, gameCameraManager, uiCameraManager);
@@ -73,8 +76,11 @@ public class Playing extends State implements StateMethods {
         updateCameraMovementParams(gameCameraManager, worldWidth, worldHeight);
         gameCameraManager.setEase(0.1f, 0.5f, 1f);
 
-        if (objectManager.player != null)
-            gameCameraManager.trackObjectByOffset(objectManager.player.getX(), objectManager.player.getY());
+        if (player != null) {
+            gameCameraManager.trackObjectByOffset(player.getX(), player.getY());
+        } else {
+            player = objectManager.getCurrentRoom().getObjectInListByClass(Player.class);
+        }
     }
 
     @Override

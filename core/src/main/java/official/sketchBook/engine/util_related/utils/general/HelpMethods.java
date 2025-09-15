@@ -8,43 +8,44 @@ public class HelpMethods {
     private static final Vector2 tmpRecoil = new Vector2(); // buffer estático para evitar criação a cada chamada
     private static final Vector2 tmpSpeed = new Vector2(); // buffer estático para evitar criação a cada chamada
 
+
     /**
-     * Aplica uma velocidade de recuo ao corpo, somando-a à velocidade atual,
-     * mas apenas se a projeção da velocidade atual na direção do recuo for menor que a velocidade de recuo desejada.
+     * Aplica recuo como velocidade, limitado para não ultrapassar a magnitude desejada.
+     * Mantém a pipeline atual.
      *
-     * @param body           O corpo que receberá o recuo
-     * @param direction      Direção do recuo (vetor com magnitude qualquer; será normalizado)
-     * @param recoilVelocity Velocidade de recuo desejada (em m/s)
+     * @param body           Corpo que receberá o recuo
+     * @param direction      Direção do recuo (vetor qualquer)
+     * @param maxRecoilSpeed Velocidade máxima de recuo a aplicar
      */
-    public static void applyRecoil(Body body, Vector2 direction, float recoilVelocity) {
+    public static void applyRecoil(Body body, Vector2 direction, float maxRecoilSpeed) {
         if (body == null || direction == null || direction.isZero()) return;
 
-        // Cria o vetor de recuo invertido sem criar novos objetos
-        tmpRecoil.set(direction).scl(-recoilVelocity);
+        // Cria vetor de recuo desejado já normalizado e invertido
+        tmpRecoil.set(direction);
+        float dirLen2 = tmpRecoil.len2();
+        if (dirLen2 == 0f) return;
+        tmpRecoil.scl(-maxRecoilSpeed / (float)Math.sqrt(dirLen2));
 
+        // Velocidade atual
         tmpSpeed.set(body.getLinearVelocity());
 
-        float newX = tmpSpeed.x;
-        float newY = tmpSpeed.y;
+        // Soma vetorial direta
+        tmpSpeed.add(tmpRecoil);
 
-        // --- EIXO X ---
-        if (Math.signum(tmpRecoil.x) != Math.signum(tmpSpeed.x)) {
-            newX += tmpRecoil.x; // direções opostas — reduz a velocidade
-        } else if (Math.abs(tmpSpeed.x) < Math.abs(tmpRecoil.x)) {
-            newX = tmpRecoil.x; // mesma direção, abaixo do limite
-        }
-        // caso contrário, não muda
-
-        // --- EIXO Y ---
-        if (Math.signum(tmpRecoil.y) != Math.signum(tmpSpeed.y)) {
-            newY += tmpRecoil.y;
-        } else if (Math.abs(tmpSpeed.y) < Math.abs(tmpRecoil.y)) {
-            newY = tmpRecoil.y;
+        // Limita magnitude total sem criar vetor extra
+        float speedLen2 = tmpSpeed.len2();
+        float maxRecoilSpeed2 = maxRecoilSpeed * maxRecoilSpeed;
+        if (speedLen2 > maxRecoilSpeed2) {
+            float factor = maxRecoilSpeed / (float)Math.sqrt(speedLen2);
+            tmpSpeed.scl(factor);
         }
 
-        // Aplica a nova velocidade diretamente
-        body.setLinearVelocity(newX, newY);
+        // Aplica direto mantendo pipeline
+        body.setLinearVelocity(tmpSpeed);
     }
+
+
+
 
 
     /// Obtém a tag presente em uma body dentro de uma fixture

@@ -140,18 +140,18 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
             case LEFT:
                 player.setxAxisInverted(false);
                 player.getMoveC().setAcceleratingX(true);
-                player.getMoveC().setMoving(true);
+                player.getMoveC().setMovingX(true);
                 player.getMoveC().setxAccel(-accelToApply);
                 break;
             case RIGHT:
                 player.setxAxisInverted(true);
                 player.getMoveC().setAcceleratingX(true);
-                player.getMoveC().setMoving(true);
+                player.getMoveC().setMovingX(true);
                 player.getMoveC().setxAccel(accelToApply);
                 break;
             case STILL:
                 player.getMoveC().setAcceleratingX(false);
-                player.getMoveC().setMoving(false);
+                player.getMoveC().setMovingX(false);
                 break;
             default:
                 break;

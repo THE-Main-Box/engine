@@ -18,7 +18,7 @@ public class SpeedRelatedConstants {
         public static final float HORIZONTAL_AIR_MAX = 140f;
 
         //Valores de desaceleração por segundo por multiplicação
-        public static final float HORIZONTAL_WALK_DEC = 10f;
+        public static final float HORIZONTAL_WALK_DEC = 15f;
         public static final float HORIZONTAL_AIR_DEC = 5f;
 
         //Valor de aceleração de 70 centímetros por segundo

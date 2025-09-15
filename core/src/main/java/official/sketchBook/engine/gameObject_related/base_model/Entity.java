@@ -41,11 +41,11 @@ public abstract class Entity extends MovablePhysicalGameObject {
     }
 
     public boolean isRunning() {
-        return onGround && moveC.isMoving();
+        return onGround && moveC.isMovingX();
     }
 
     public boolean isIdle() {
-        return onGround && !moveC.isMoving();
+        return onGround && !moveC.isMovingX();
     }
 
 }

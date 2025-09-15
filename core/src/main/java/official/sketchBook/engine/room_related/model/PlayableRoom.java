@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Pool.Poolable;
+import official.sketchBook.engine.components_related.integration_interfaces.JumpCapableII;
 import official.sketchBook.engine.components_related.integration_interfaces.MovementCapableII;
 import official.sketchBook.engine.components_related.integration_interfaces.RangeWeaponWielderII;
 import official.sketchBook.engine.components_related.integration_interfaces.RayCasterII;
@@ -21,21 +22,43 @@ import java.util.List;
 public class PlayableRoom implements Poolable {
     private Room roomData;
     private RoomNode roomConnections;
+
+    /// Pool de objetos do tipo projétil
     private GlobalProjectilePool projectilePool;
 
+    /*
+     *OBS: os objetos que estão fora da árvore de GameObjects,
+     *precisam ter a sua própria estrutura interna detro desta classe para lidar com suas atualizações,
+     *  renderização, etc.
+     *  Escolha feita justamente para garantir um controle fino e preciso
+     *  dos dados dos objetos de diferentes árvores de objetos
+     */
+
+    /// Mundo físico
     private World world;
 
+    /// Lista de objetos existentes da árvore de gameObjects
     private List<GameObject> gameObjects;
+
+    /// Lista de corpos nativos existentes dentro da sala
     private List<Body> nativeBodies;
 
+    /// Determina se a sala está ativa e pode ser usada
     private boolean active;
 
+    /// Inicialização padrão pra cada sala jogável
     public PlayableRoom(World world) {
         this.world = world;
         this.projectilePool = new GlobalProjectilePool(this);
         this.gameObjects = new ArrayList<>();
     }
 
+    /**
+     * Inicia a sala jogável, passando os dados da construção dela (blueprints e conexões)
+     *
+     * @param roomData        Objeto de dados a respeito da estrutura da sala a ser criada
+     * @param roomConnections Conexões entre as salas existentes
+     */
     public void initialize(Room roomData, RoomNode roomConnections) {
         this.roomData = roomData;
         this.roomConnections = roomConnections;
@@ -83,19 +106,19 @@ public class PlayableRoom implements Poolable {
 
     }
 
+    /// Atualiza todos os objetos que precisam de uma atualização extra depois do step do world
     public void updateObjectsAfterStep() {
         if (!active || gameObjects == null || gameObjects.isEmpty()) return;
 
         for (GameObject object : gameObjects) {
             syncObjectBody(object);
-
             updateObjectsRayCast(object);
         }
 
         this.projectilePool.syncProjectilesBodies();
     }
 
-    /// Sincroniza os corpos dos objetos com suas posições relativas
+    /// Sincroniza os objetos a seus corpos com a conversão para pixel e metro
     public void syncObjectBody(GameObject object) {
         if (object instanceof MovementCapableII mObj && mObj.getPhysicsC() != null) {
             mObj.getPhysicsC().syncBodyObjectPos();
@@ -103,7 +126,7 @@ public class PlayableRoom implements Poolable {
         }
     }
 
-    /// Atualiza os ray casts de todas as entidades que possuem a capacidade de usar um rayCast
+    /// Atualiza os ray casts de todos os objetos que possuem a capacidade de usar um rayCast
     public void updateObjectsRayCast(GameObject object) {
         if (object instanceof RayCasterII castable && castable.getRayCastHelper() != null) {
             castable.updateRayCast();
@@ -126,7 +149,7 @@ public class PlayableRoom implements Poolable {
     }
 
 
-    /// Renderiza todos os GameObjects
+    /// Renderiza todos os objetos
     public void render(SpriteBatch batch) {
         if (!active) return;
 
@@ -157,27 +180,40 @@ public class PlayableRoom implements Poolable {
 
     }
 
-//    public void addNativeBody(Body body) {
-//        this.nativeBodies.add(body);
-//    }
-//
-//    public void removeNativeBody(Body body) {
-//        if (this.nativeBodies.remove(body)) {
-//            this.world.destroyBody(body);
-//        }
-//    }
+    public void addNativeBody(Body body) {
+        this.nativeBodies.add(body);
+    }
 
-    public void addObject(PhysicalGameObject object) {
+    public void removeNativeBody(Body body) {
+        if (this.nativeBodies.remove(body)) {
+            this.world.destroyBody(body);
+        }
+    }
+
+    public void addObject(GameObject object) {
         this.gameObjects.add(object);
         object.setOwnerRoom(this);
     }
 
-    public void removeObject(PhysicalGameObject object) {
+    public void removeObject(GameObject object) {
         this.gameObjects.remove(object);
         object.setOwnerRoom(null);
-        if (object instanceof RangeWeaponWielderII wielder&& EmitterRegister.getEmitter(wielder) != null) {
+        if (object instanceof RangeWeaponWielderII wielder && EmitterRegister.getEmitter(wielder) != null) {
             EmitterRegister.unregister(wielder);
         }
+    }
+
+    /*TODO:Adicionar meio para obter objeto com base no id em vez da classe do objeto,
+     * para lidar com multiplas instancias
+     */
+
+    public <T> T getObjectInListByClass(Class<T> objectClass) {
+        for (GameObject go : this.gameObjects) {
+            if (objectClass.isInstance(go)) {
+                return objectClass.cast(go); // cast seguro
+            }
+        }
+        return null;
     }
 
     public boolean isActive() {

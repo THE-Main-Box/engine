@@ -19,7 +19,6 @@ public class GameObjectManager extends GameObjectManagerBase {
 
     //TODO: criar classe onde centralizamos a criação, salvamento, edição etc... de salas e mundos
 
-    public Player player;
 
     public GameObjectManager(World world) {
         super(world);
@@ -44,27 +43,29 @@ public class GameObjectManager extends GameObjectManagerBase {
 
         this.setCurrentRoom(0,0);
 
-        Dummy dumDum = new Dummy(
-            100,
-            100,
-            12,
-            28,
-            true,
-            false,
-            world
+        currentRoom.addObject(
+            new Dummy(
+                100,
+                100,
+                12,
+                28,
+                true,
+                false,
+                world
+            )
         );
-        currentRoom.addObject(dumDum);
 
-        this.player = new Player(
-            60,
-            100,
-            16,
-            16,
-            true,
-            false,
-            world
+        currentRoom.addObject(
+            new Player(
+                60,
+                100,
+                16,
+                16,
+                true,
+                false,
+                world
+            )
         );
-        currentRoom.addObject(player);
 
     }
 

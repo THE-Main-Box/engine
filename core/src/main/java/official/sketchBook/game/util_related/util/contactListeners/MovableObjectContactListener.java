@@ -41,10 +41,12 @@ public class MovableObjectContactListener implements ContactListener {
         // Tentativa segura de obter MovementCapableII via GameObjectTag/HelpMethods.getTag
         MovementCapableII movable = detectMovableObject(contact);
 
-        // Preserva comportamento original de aplicar fricção:
+        /* Verifica se podemos nos mover naquele eixo e naquela direção,
+         *se não resetamos a velocidade do eixo,
+         *para garantir que não teremos velocidade residual problemática
+         */
         ContactActions.handleBlockedMovement(tmpDir, movable);
 
-//        ContactActions.applyDefaultFrictionLogic(contact);
     }
 
 

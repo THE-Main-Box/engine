@@ -34,13 +34,13 @@ public class Shotgun extends RangeWeapon<Shotgun> {
     @Override
     protected void initDefaultStatus() {
         this.weaponStatus = new RangeWeaponStatus(
-            maxAmmo,
-            ammoCost,
-            fireCooldown,
-            fireRecoilSpeed,
-            rechargeSpeedMulti,
-            fireCooldownSpeedMulti,
-            fireRecoilForceMulti
+                maxAmmo,
+                ammoCost,
+                fireCooldown,
+                fireRecoilSpeed,
+                rechargeSpeedMulti,
+                fireCooldownSpeedMulti,
+                fireRecoilForceMulti
         );
     }
 
@@ -144,8 +144,8 @@ public class Shotgun extends RangeWeapon<Shotgun> {
 
         //Passamos a direção que o projétil deve ir
         setShootDirection(
-            direction.x,//mirando para direita ou esquerda
-            direction.y //mirando para cima ou para baixo
+                direction.x,//mirando para direita ou esquerda
+                direction.y //mirando para cima ou para baixo
         );
 
         //Verifica o tipo de projétil e assim executa o tiro correspondente
@@ -169,17 +169,15 @@ public class Shotgun extends RangeWeapon<Shotgun> {
         if (!canShoot()) return;
 
         Projectile p = projectileEmitter.obtain(
-            getProjectileSpawnPosition(dir)
+                getProjectileSpawnPosition(dir)
         );
 
         // Supondo que você queira disparar a 400 pixels/seg
         projectileSpeed = slugSpeed;
 
-        if(!owner.isOnGround()){
-            weaponStatus.recoilForceMultiplier = 1;
-        } else if(canPogoShoot()){
-            weaponStatus.recoilForceMultiplier = 1.5f;
-        }else {
+        if (canPogoShoot()) {
+            weaponStatus.recoilForceMultiplier = 1f;
+        } else {
             weaponStatus.recoilForceMultiplier = 0;
         }
 
@@ -197,22 +195,22 @@ public class Shotgun extends RangeWeapon<Shotgun> {
         this.aniPlayer = new ObjectAnimationPlayer();
 
         aniPlayer.addAnimation(shoot, Arrays.asList(
-            new Sprite(0, 0, 0.1f),
-            new Sprite(1, 0, 0.05f),
-            new Sprite(1, 2, 0.1f)
+                new Sprite(0, 0, 0.1f),
+                new Sprite(1, 0, 0.05f),
+                new Sprite(1, 2, 0.1f)
         ));
 
         aniPlayer.addAnimation(recharge, Arrays.asList(
-            new Sprite(2, 0, 0.08f),
-            new Sprite(0, 1, 0.1f),
-            new Sprite(1, 1, 0.1f),
-            new Sprite(2, 1, 0.2f),
-            new Sprite(0, 2, 0.1f),
-            new Sprite(1, 2, 0.1f)
+                new Sprite(2, 0, 0.08f),
+                new Sprite(0, 1, 0.1f),
+                new Sprite(1, 1, 0.1f),
+                new Sprite(2, 1, 0.2f),
+                new Sprite(0, 2, 0.1f),
+                new Sprite(1, 2, 0.1f)
         ));
 
         aniPlayer.addAnimation(run, List.of(
-            new Sprite(1, 2)
+                new Sprite(1, 2)
         ));
 
         aniPlayer.playAnimation(run);
@@ -220,15 +218,15 @@ public class Shotgun extends RangeWeapon<Shotgun> {
 
     protected void initSpriteSheet() {
         this.spriteDataHandler = new SpriteSheetDataHandler(
-            x,
-            y,
-            0,
-            0,
-            3,
-            3,
-            owner.isxAxisInverted(),
-            owner.isyAxisInverted(),
-            new Texture(WeaponsSpritePath.shotgun_path)
+                x,
+                y,
+                0,
+                0,
+                3,
+                3,
+                owner.isxAxisInverted(),
+                owner.isyAxisInverted(),
+                new Texture(WeaponsSpritePath.shotgun_path)
         );
     }
 

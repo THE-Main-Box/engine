@@ -1,5 +1,7 @@
 package official.sketchBook.game.util_related.info.values.constants;
 
+import static official.sketchBook.game.util_related.info.values.constants.GameConstants.Physics.PPM;
+
 public class RangeWeaponsStatusConstants {
 
     public static class Shotgun {

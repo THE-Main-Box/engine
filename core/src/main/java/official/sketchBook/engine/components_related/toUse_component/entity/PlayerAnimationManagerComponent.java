@@ -55,7 +55,7 @@ public class PlayerAnimationManagerComponent implements Component {
         }
 
         // Quando tocar o chão, entramos no afterFall
-        if (player.getJumpC().isEntityLanded() && !player.getMoveC().isMoving()) {
+        if (player.getJumpC().isEntityLanded() && !player.getMoveC().isMovingX()) {
             ani.playAnimation(afterFall);
             ani.setAnimationLooping(false);
             ani.setAutoUpdateAni(true);
@@ -87,7 +87,7 @@ public class PlayerAnimationManagerComponent implements Component {
     }
 
     private boolean handleRunAnimation(ObjectAnimationPlayer animationPlayer) {
-        if (!player.isOnGround() || !player.getMoveC().isMoving() || isPlayingAfterFall(animationPlayer)) return false;
+        if (!player.isOnGround() || !player.getMoveC().isMovingX() || isPlayingAfterFall(animationPlayer)) return false;
 
         animationPlayer.setAutoUpdateAni(true);
         animationPlayer.playAnimation(run);

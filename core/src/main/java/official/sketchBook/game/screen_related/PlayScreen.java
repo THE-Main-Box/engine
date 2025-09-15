@@ -42,7 +42,7 @@ public class PlayScreen implements Screen {
     private final CameraManager gameCameraManager;
     private final CameraManager uiCameraManager;
 
-    private Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
+    private final Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
 
     //game state related
     private Configuration configState;
@@ -50,7 +50,7 @@ public class PlayScreen implements Screen {
     private Paused pausedState;
     private Menu menuState;
 
-    private EnumMap<GameState, State> stateMap = new EnumMap<>(GameState.class);
+    private final EnumMap<GameState, State> stateMap = new EnumMap<>(GameState.class);
 
     public PlayScreen(MainClass game) {
 
@@ -91,10 +91,9 @@ public class PlayScreen implements Screen {
         // Acumula o tempo decorrido
         accumulator += delta;
 
-
         // Atualiza a lógica do jogo em passos fixos usando um segundo loop
         while (accumulator >= FIXED_TIMESTAMP) {
-            updateGameStates(); // Use FIXED_TIMESTEP para manter a lógica consistente
+            updateGameStates(FIXED_TIMESTAMP); // Use FIXED_TIMESTEP para manter a lógica consistente
             accumulator -= FIXED_TIMESTAMP;
             updates++;
         }
@@ -144,11 +143,11 @@ public class PlayScreen implements Screen {
         }
     }
 
-    private void updateGameStates() {
+    private void updateGameStates(float delta) {
         State currentState = stateMap.get(GameState.state);
         if (currentState != null) {
-            currentState.update(FIXED_TIMESTAMP);
-            currentState.updateUi(FIXED_TIMESTAMP);
+            currentState.update(delta);
+            currentState.updateUi(delta);
         }
 
 

@@ -8,6 +8,7 @@ import official.sketchBook.engine.projectileRelated.util.ProjectilePool;
 import official.sketchBook.engine.util_related.enumerators.directions.Direction;
 import official.sketchBook.engine.util_related.utils.general.HelpMethods;
 import official.sketchBook.engine.util_related.utils.registers.EmitterRegister;
+import official.sketchBook.engine.util_related.utils.registers.ProjectilePoolRegister;
 import official.sketchBook.game.util_related.util.entity.AnchorPoint;
 import official.sketchBook.engine.weapon_related.base_model.interfaces.IRangeCapable;
 import official.sketchBook.engine.weapon_related.util.RechargeManager;
@@ -193,6 +194,11 @@ public abstract class RangeWeapon<T extends RangeWeapon<T>> extends BaseWeapon<T
     public void setShootDirection(float x, float y) {
         // Atualiza o vetor reutilizável com os novos valores normalizados
         shootDirection.set(x, y);
+    }
+
+    public void setShootDirection(Vector2 dir) {
+        // Atualiza o vetor reutilizável com os novos valores normalizados
+        shootDirection.set(dir);
     }
 
     /// Atualiza o tipo de projétil do emissor

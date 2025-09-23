@@ -57,7 +57,7 @@ public abstract class GameObject {
         if (!spriteSheetDatahandlerList.isEmpty() && !objectAnimationPlayerList.isEmpty()) {
             //renderizamos primeiro tudo o que tivermos para renderizar do objeto do jogador
             for (int i = 0; i < spriteSheetDatahandlerList.size(); i++) {
-                spriteSheetDatahandlerList.get(i).setFacingForward(xAxisInverted);
+                spriteSheetDatahandlerList.get(i).setxAxisInvert(xAxisInverted);
                 spriteSheetDatahandlerList.get(i).renderSprite(batch,
                     objectAnimationPlayerList.get(i).getCurrentSprite()
                 );

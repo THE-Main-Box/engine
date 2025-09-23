@@ -1,6 +1,7 @@
 package official.sketchBook.engine.components_related.toUse_component.object;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import official.sketchBook.engine.components_related.base_component.Component;
 import official.sketchBook.engine.components_related.integration_interfaces.RangeWeaponWielderII;
 import official.sketchBook.game.util_related.util.entity.AnchorPoint;
@@ -12,8 +13,9 @@ public class WeaponWieldComponent implements Component {
     /// Entidade que é dona da arma
     private final RangeWeaponWielderII wielder;
 
-    /// flags de mira adicionais
-    private boolean aimingUp, aimingDown;
+    /// Vetor de mira
+    private final Vector2 aim = new Vector2();
+
     /// Ponto de ancoragem de uma arma
     private final AnchorPoint weaponAnchorPoint;
     /// Valores de ponto de ancoragem relativos ao ponto de ancoragem geral
@@ -27,8 +29,8 @@ public class WeaponWieldComponent implements Component {
         this.weaponAnchorPoint = new AnchorPoint();
     }
 
-    public void render(SpriteBatch batch){
-        if(weapon != null){
+    public void render(SpriteBatch batch) {
+        if (weapon != null) {
             weapon.render(batch);
         }
     }
@@ -80,10 +82,26 @@ public class WeaponWieldComponent implements Component {
         return null;
     }
 
-    public void dispose(){
-        if(weapon != null){
+    public void dispose() {
+        if (weapon != null) {
             weapon.dispose();
         }
+    }
+
+    /**
+     * Determina a mira caso ela não seja maior que 1 ou menor que -1 em cada eixo
+     *
+     * @param x mira do eixo x
+     * @param y mira do eixo y
+     */
+    public void aim(int x, int y) {
+        if (Math.abs(x) > 1 || Math.abs(y) > 1) return;
+
+        aim.set(x, y);
+    }
+
+    public Vector2 getAim() {
+        return aim;
     }
 
     public float getRxAP() {
@@ -103,19 +121,23 @@ public class WeaponWieldComponent implements Component {
     }
 
     public boolean isAimingUp() {
-        return aimingUp;
-    }
-
-    public void setAimingUp(boolean aimingUp) {
-        this.aimingUp = aimingUp;
+        return aim.y > 0; //Se mira for maior que 0 estamos mirando pra cima
     }
 
     public boolean isAimingDown() {
-        return aimingDown;
+        return aim.y < 0; //Se mira for menor que 0 estamos mirando pra baixo
     }
 
-    public void setAimingDown(boolean aimingDown) {
-        this.aimingDown = aimingDown;
+    public boolean isAimingRight() {
+        return aim.x > 0; //Se mira for maior que 0 estamos mirando pra direita
+    }
+
+    public boolean isAimingLeft() {
+        return aim.x < 0; //Se mira for menor que 0 estamos mirando pra esquerda
+    }
+
+    public boolean isDiagonalAim(){
+        return Math.abs(aim.x) > 0 && Math.abs(aim.y) > 0;
     }
 
     public void setWeapon(BaseWeapon<?> weapon) {

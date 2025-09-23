@@ -1,16 +1,20 @@
 package official.sketchBook.engine.components_related.toUse_component.entity;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector2;
 import official.sketchBook.engine.components_related.base_component.KeyBindedControllerComponent;
 import official.sketchBook.engine.gameObject_related.base_model.PhysicalGameObject;
-import official.sketchBook.game.entities.Player;
 import official.sketchBook.engine.util_related.enumerators.directions.Direction;
-import official.sketchBook.game.util_related.info.values.ControlKeys;
 import official.sketchBook.engine.weapon_related.base_model.BaseWeapon;
+import official.sketchBook.game.entities.Player;
+import official.sketchBook.game.util_related.info.values.ControlKeys;
 
+import static official.sketchBook.game.util_related.info.values.ControlKeys.*;
 import static official.sketchBook.game.util_related.info.values.constants.SpeedRelatedConstants.Player.*;
 
 public class PlayerControllerComponent extends KeyBindedControllerComponent {
     private final Player player;
+    private final Vector2 aim;
 
     private float accelToApply;
 
@@ -21,28 +25,34 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
 
     public PlayerControllerComponent(PhysicalGameObject physicalGameObject) {
         this.player = (Player) physicalGameObject;
+        this.aim = player.getWeaponWC().getAim();
 
-        // Vinculando teclas ao movimento
-        bindKey(ControlKeys.dir_left, this::moveLeft);
-        bindKey(ControlKeys.dir_right, this::moveRight);
+        bindKey(dir_down, this::down);
+        bindKey(dir_up, this::up);
 
-        bindKey(ControlKeys.dir_up, this::dirUp);
-        bindKey(ControlKeys.dir_down, this::dirDown);
+        bindKey(dir_left, this::moveLeft);
+        bindKey(dir_right, this::moveRight);
 
-        bindKey(ControlKeys.jump, this::jump);
+        bindKey(jump, this::jump);
 
-        bindKey(ControlKeys.recharge, this::rechargeWeapon);
+        bindKey(recharge, this::rechargeWeapon);
 
-        bindKey(ControlKeys.use, this::normalUse);
-        bindKey(ControlKeys.secondaryUse, this::secondaryItemUse);
+        bindKey(use, this::normalUse);
+        bindKey(secondaryUse, this::secondaryItemUse);
     }
 
-    private void dirUp(boolean pressed) {
-        player.getWeaponWC().setAimingUp(pressed);
+    private void up(boolean pressed) {
+        player.getWeaponWC().aim(
+            (int) aim.x,
+            pressed ? 1 : 0
+        );
     }
 
-    private void dirDown(boolean pressed) {
-        player.getWeaponWC().setAimingDown(pressed);
+    private void down(boolean pressed) {
+        player.getWeaponWC().aim(
+            (int) aim.x,
+            pressed ? -1 : 0
+        );
     }
 
     private void secondaryItemUse(boolean pressed) {
@@ -56,11 +66,18 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
     private void normalUse(boolean pressed) {
         if (pressed) {
             if (player.getWeaponWC().getWeapon(BaseWeapon.class) != null) {
+
+                player.getWeaponWC().aim(
+                    player.isxAxisInverted() ? -1 : 1,//Determinamos se estamos mirando pra esquerda ou direita
+                    (int) aim.y//Atualizamos a direção de olhar para cima apenas quando apertarmos para isso
+                );
+
                 player.getWeaponWC().primaryWeaponUse();
             }
         }
 
     }
+
 
     private void rechargeWeapon(boolean pressed) {
         if (pressed) {
@@ -81,29 +98,24 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
 
     }
 
-    //atualiza as variaveis de movimentação em cada estado, se estivermos no ar
+    private boolean lastOnGround = true;
+
     private void updateHorizontalMovementValues() {
+        boolean onGround = player.isOnGround();
+        if (onGround != lastOnGround) {
+            float accel = onGround ? GROUND_ACCEL : AIR_ACCEL;
+            float maxSpeed = onGround ? HORIZONTAL_WALK_MAX : HORIZONTAL_AIR_MAX;
+            float decel = onGround ? HORIZONTAL_WALK_DEC : HORIZONTAL_AIR_DEC;
 
-        float accel, decel, maxAccel;
+            accelToApply = accel;
+            var moveC = player.getMoveC();
+            moveC.setxMaxSpeed(maxSpeed);
+            moveC.setDecelerationX(decel);
 
-        if (player.isOnGround()) {
-            // se está no chão
-            accel = GROUND_ACCEL;
-            maxAccel = HORIZONTAL_WALK_MAX;
-            decel = HORIZONTAL_WALK_DEC;
-        } else {
-            // se está no ar
-            accel = AIR_ACCEL;
-            maxAccel = HORIZONTAL_AIR_MAX;
-            decel = HORIZONTAL_AIR_DEC;
+            lastOnGround = onGround;
         }
-
-
-        this.accelToApply = accel;
-        player.getMoveC().setxMaxSpeed(maxAccel);
-        player.getMoveC().setDecelerationX(decel);
-
     }
+
 
     private void updateMovement() {
         if (leftPressed && !rightPressed) {
@@ -115,14 +127,12 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
         } else {
             movePlayer(lastDirectionPressed); // Continua na última direção pressionada
         }
-
     }
 
     private void moveLeft(boolean pressed) {
         leftPressed = pressed;
         if (pressed) {
             lastDirectionPressed = Direction.LEFT;
-            player.setxAxisInverted(false);
         }
     }
 
@@ -130,31 +140,38 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
         rightPressed = pressed;
         if (pressed) {
             lastDirectionPressed = Direction.RIGHT;
-            player.setxAxisInverted(true);
         }
 
     }
 
-    private void movePlayer(Direction directions) {
-        switch (directions) {
+    private void movePlayer(Direction direction) {
+        switch (direction) {
             case LEFT:
-                player.setxAxisInverted(false);
-                player.getMoveC().setAcceleratingX(true);
-                player.getMoveC().setMovingX(true);
-                player.getMoveC().setxAccel(-accelToApply);
+                player.setxAxisInverted(true);
+                updateMovementComponent(-accelToApply);
                 break;
             case RIGHT:
-                player.setxAxisInverted(true);
-                player.getMoveC().setAcceleratingX(true);
-                player.getMoveC().setMovingX(true);
-                player.getMoveC().setxAccel(accelToApply);
+                player.setxAxisInverted(false);
+                updateMovementComponent(accelToApply);
                 break;
             case STILL:
-                player.getMoveC().setAcceleratingX(false);
-                player.getMoveC().setMovingX(false);
-                break;
-            default:
+                updateMovementComponent(0);
                 break;
         }
     }
+
+    private void updateMovementComponent(float xAccel) {
+        var moveC = player.getMoveC();
+
+        boolean accelerating = xAccel != 0;
+        boolean changedAccel = moveC.getxAccel() != xAccel;
+
+        // Só atualiza se houver mudança real
+        if (moveC.isAcceleratingX() != accelerating || changedAccel) {
+            moveC.setAcceleratingX(accelerating);
+            moveC.setMovingX(accelerating);
+            moveC.setxAccel(xAccel);
+        }
+    }
+
 }

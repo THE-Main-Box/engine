@@ -37,10 +37,10 @@ public class SpriteSheetDataHandler {
     private boolean scaleMultiplyMode = true;
 
     /// Define se o sprite está virado para frente
-    private boolean facingForward;
+    private boolean xAxisInvert;
 
     /// Define se o sprite está de ponta cabeça
-    private boolean upsideDown;
+    private boolean yAxisInvert;
 
     /// Textura contendo a sprite sheet
     private final Texture spriteSheet;
@@ -54,8 +54,8 @@ public class SpriteSheetDataHandler {
      * @param drawOffSetY       Offset de renderização no eixo Y.
      * @param spriteQuantityX   Quantidade de sprites na horizontal.
      * @param spriteQuantityY   Quantidade de sprites na vertical.
-     * @param facingForward      Define se o sprite começa virado para frente.
-     * @param upsideDown        Define se o sprite começa de cabeça para baixo.
+     * @param xAxisInvert      Define se o sprite começa virado para frente.
+     * @param yAxisInvert        Define se o sprite começa de cabeça para baixo.
      * @param spriteSheet       Textura contendo a sprite sheet.
      */
     public SpriteSheetDataHandler(
@@ -65,8 +65,8 @@ public class SpriteSheetDataHandler {
         float drawOffSetY,
         int spriteQuantityX,
         int spriteQuantityY,
-        boolean facingForward,
-        boolean upsideDown,
+        boolean xAxisInvert,
+        boolean yAxisInvert,
         Texture spriteSheet
     ) {
         this.x = x;
@@ -74,8 +74,8 @@ public class SpriteSheetDataHandler {
         this.drawOffSetX = drawOffSetX;
         this.drawOffSetY = drawOffSetY;
 
-        this.facingForward = facingForward;
-        this.upsideDown = upsideDown;
+        this.xAxisInvert = xAxisInvert;
+        this.yAxisInvert = yAxisInvert;
 
         this.spriteSheet = spriteSheet;
         this.canvasWidth = spriteSheet.getWidth() / spriteQuantityX;
@@ -167,8 +167,8 @@ public class SpriteSheetDataHandler {
                 canvasWidth,
                 canvasHeight,
                 spriteSheet,
-                !facingForward,
-                upsideDown
+                xAxisInvert,
+                yAxisInvert
             ),
             x,
             y,
@@ -203,13 +203,13 @@ public class SpriteSheetDataHandler {
     }
 
     /** Define se o sprite está virado para frente. */
-    public void setFacingForward(boolean facingForward) {
-        this.facingForward = facingForward;
+    public void setxAxisInvert(boolean xAxisInvert) {
+        this.xAxisInvert = xAxisInvert;
     }
 
     /** Define se o sprite está de ponta cabeça. */
-    public void setUpsideDown(boolean upsideDown) {
-        this.upsideDown = upsideDown;
+    public void setyAxisInvert(boolean yAxisInvert) {
+        this.yAxisInvert = yAxisInvert;
     }
 
     /** @return Textura da sprite sheet. */

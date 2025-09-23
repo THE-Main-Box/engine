@@ -33,12 +33,12 @@ public class ProjectilePhysicsComponent extends BasePhysicsComponent implements 
         float dx = displacement.x;
         float dy = displacement.y;
 
-        if (gravityScale == 0f || gravity == 0f) {
-            // Sem influência gravitacional: movimento linear
-            tmpImpulse.set(dx / time, dy / time).scl(body.getMass());
-            applyImpulse(tmpImpulse);
+        if (body.getGravityScale() == 0f || Math.abs(body.getWorld().getGravity().y) == 0f) {
+            // Trajetória linear independente da física
+            body.setLinearVelocity(dx / time, dy / time);
             return;
         }
+
 
         // Com gravidade: calcular arco
         float vx = dx / time;

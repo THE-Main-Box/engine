@@ -8,8 +8,7 @@ import official.sketchBook.engine.util_related.utils.RayCastUtils;
 import official.sketchBook.engine.util_related.utils.general.GameObjectTag;
 import official.sketchBook.engine.util_related.utils.registers.ProjectileCollisionRegister;
 
-import static official.sketchBook.engine.util_related.utils.CollisionUtils.estimateProjectileContactPointWithRayCast;
-import static official.sketchBook.engine.util_related.utils.CollisionUtils.getCollisionDirection;
+import static official.sketchBook.engine.util_related.utils.CollisionUtils.*;
 import static official.sketchBook.engine.util_related.utils.general.HelpMethods.getTag;
 import static official.sketchBook.game.util_related.info.values.constants.GameConstants.Physics.FIXED_TIMESTAMP;
 
@@ -49,13 +48,13 @@ public class ProjectileContactListener implements ContactListener {
     private void handleBegin(Projectile projectile, GameObjectTag other, Contact contact) {
         if (!projectile.isActive()) return;
         ProjectileControllerComponent controller = projectile.getControllerComponent();
-        RayCastUtils rayCastUtils = controller.getRayCastHelper();
 
         controller.lastContactBeginData.buff(
             getCollisionDirection(projectile, contact),
-            estimateProjectileContactPointWithRayCast(projectile, FIXED_TIMESTAMP, rayCastUtils),
+            estimateProjectileContactPoint(projectile),
             other,
-            contact
+            contact,
+            projectile.getBody().getAngle()
         );
         controller.colliding = true;
 
@@ -67,13 +66,13 @@ public class ProjectileContactListener implements ContactListener {
         if (!projectile.isActive()) return;
 
         ProjectileControllerComponent controller = projectile.getControllerComponent();
-        RayCastUtils rayCastUtils = controller.getRayCastHelper();
 
         controller.lastContactBeginData.buff(
             getCollisionDirection(projectile, contact),
-            estimateProjectileContactPointWithRayCast(projectile, FIXED_TIMESTAMP, rayCastUtils),
+            estimateProjectileContactPoint(projectile),
             other,
-            contact
+            contact,
+            projectile.getBody().getAngle()
         );
 
         controller.colliding = false;

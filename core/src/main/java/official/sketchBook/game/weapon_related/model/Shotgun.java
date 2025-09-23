@@ -34,13 +34,13 @@ public class Shotgun extends RangeWeapon<Shotgun> {
     @Override
     protected void initDefaultStatus() {
         this.weaponStatus = new RangeWeaponStatus(
-                maxAmmo,
-                ammoCost,
-                fireCooldown,
-                fireRecoilSpeed,
-                rechargeSpeedMulti,
-                fireCooldownSpeedMulti,
-                fireRecoilForceMulti
+            maxAmmo,
+            ammoCost,
+            fireCooldown,
+            fireRecoilSpeed,
+            rechargeSpeedMulti,
+            fireCooldownSpeedMulti,
+            fireRecoilForceMulti
         );
     }
 
@@ -70,6 +70,7 @@ public class Shotgun extends RangeWeapon<Shotgun> {
     public void update(float deltaTime) {
         super.update(deltaTime);
 
+
     }
 
     @Override
@@ -82,26 +83,29 @@ public class Shotgun extends RangeWeapon<Shotgun> {
     }
 
     protected void updateRenderingOffSets() {
-        float xOffSet, yOffSet;
+        float xOffSet, yOffSet, rotation;
+
 
         yOffSet = -4;
 
         //Se estiver mirando pra baixo
         if (canPogoShoot()) {
             // Mira para baixo
-            spriteDataHandler.setRotation(owner.isxAxisInverted() ? -90 : 90);
-            xOffSet = owner.isxAxisInverted() ? -10f : 10f;
+            rotation = owner.isxAxisInverted() ? 90 : -90;
+            xOffSet = owner.isxAxisInverted() ? 10f : -10f;
         } else {//se não estiver mirando
             // Mira para frente (nem cima nem baixo)
-            spriteDataHandler.setRotation(0);
-            xOffSet = owner.isxAxisInverted() ? -16f : 16f;
+            rotation = 0;
+            xOffSet = owner.isxAxisInverted() ? 16f : -16f;
         }
 
         if (rechargeManager.isRecharging()) {
-            spriteDataHandler.setRotation(0);
+            rotation = 0;
         }
 
         setRelativeOffset(xOffSet, yOffSet);
+        spriteDataHandler.setRotation(rotation);
+
     }
 
 
@@ -128,25 +132,42 @@ public class Shotgun extends RangeWeapon<Shotgun> {
             return;
         }
 
-        //Determinamos a posição em que iremos disparar com base em alguns fatores
-        Direction posOnDirection;//Chave que referencia a posição do projétil
-        Direction projDirection;//Chave que referencia a direção que o projétil deve percorrer
+        if (!canShoot()) return;
+
+        Direction posOnDirection = Direction.STILL;
+        Direction shootDirection = Direction.STILL;
+
         if (canPogoShoot()) {
-            posOnDirection = owner.isxAxisInverted() ? Direction.DOWN_RIGHT : Direction.DOWN_LEFT;
-            projDirection = Direction.DOWN;
+            //Se estivermos mirando pra esquerda
+            if (owner.getWeaponWC().isAimingLeft()) {
+                posOnDirection = Direction.DOWN_LEFT;
+            }
+
+            //Se estivermos mirando para a direita
+            if (owner.getWeaponWC().isAimingRight()) {
+                posOnDirection = Direction.DOWN_RIGHT;
+            }
+
+            //Como estamos mirando pra baixo a direção do disparo é para baixo
+            shootDirection = Direction.DOWN;
+
         } else {
-            posOnDirection = owner.isxAxisInverted() ? Direction.RIGHT : Direction.LEFT;
-            projDirection = posOnDirection;
+            //Se estivermos mirando pra esquerda
+            if (owner.getWeaponWC().isAimingLeft()) {
+                posOnDirection = Direction.LEFT;
+                shootDirection = Direction.LEFT;
+            }
+
+            //Se estivermos mirando para a direita
+            if (owner.getWeaponWC().isAimingRight()) {
+                posOnDirection = Direction.RIGHT;
+                shootDirection = Direction.RIGHT;
+            }
+
         }
 
-        //Obtemos a direção que o projétil deve ser lançado
-        Vector2 direction = getDefShootDir(projDirection);
-
-        //Passamos a direção que o projétil deve ir
-        setShootDirection(
-                direction.x,//mirando para direita ou esquerda
-                direction.y //mirando para cima ou para baixo
-        );
+        //Atualizamos a direção do disparo do projétil com base na mira passada pelo dono
+        setShootDirection(getDefShootDir(shootDirection));
 
         //Verifica o tipo de projétil e assim executa o tiro correspondente
         if (projectileType.equals(ShotgunProjectile.class)) {
@@ -166,10 +187,9 @@ public class Shotgun extends RangeWeapon<Shotgun> {
 
     /// Tiro único (slug)
     private void slugShot(Direction dir) {
-        if (!canShoot()) return;
 
         Projectile p = projectileEmitter.obtain(
-                getProjectileSpawnPosition(dir)
+            getProjectileSpawnPosition(dir)
         );
 
         // Supondo que você queira disparar a 400 pixels/seg
@@ -183,7 +203,8 @@ public class Shotgun extends RangeWeapon<Shotgun> {
 
         shoot(p);
 
-        applyRecoil(shootDirection);
+        if (weaponStatus.recoilForceMultiplier != 0)
+            applyRecoil(shootDirection);
     }
 
     @Override
@@ -195,22 +216,22 @@ public class Shotgun extends RangeWeapon<Shotgun> {
         this.aniPlayer = new ObjectAnimationPlayer();
 
         aniPlayer.addAnimation(shoot, Arrays.asList(
-                new Sprite(0, 0, 0.1f),
-                new Sprite(1, 0, 0.05f),
-                new Sprite(1, 2, 0.1f)
+            new Sprite(0, 0, 0.1f),
+            new Sprite(1, 0, 0.05f),
+            new Sprite(1, 2, 0.1f)
         ));
 
         aniPlayer.addAnimation(recharge, Arrays.asList(
-                new Sprite(2, 0, 0.08f),
-                new Sprite(0, 1, 0.1f),
-                new Sprite(1, 1, 0.1f),
-                new Sprite(2, 1, 0.2f),
-                new Sprite(0, 2, 0.1f),
-                new Sprite(1, 2, 0.1f)
+            new Sprite(2, 0, 0.08f),
+            new Sprite(0, 1, 0.1f),
+            new Sprite(1, 1, 0.1f),
+            new Sprite(2, 1, 0.2f),
+            new Sprite(0, 2, 0.1f),
+            new Sprite(1, 2, 0.1f)
         ));
 
         aniPlayer.addAnimation(run, List.of(
-                new Sprite(1, 2)
+            new Sprite(1, 2)
         ));
 
         aniPlayer.playAnimation(run);
@@ -218,15 +239,15 @@ public class Shotgun extends RangeWeapon<Shotgun> {
 
     protected void initSpriteSheet() {
         this.spriteDataHandler = new SpriteSheetDataHandler(
-                x,
-                y,
-                0,
-                0,
-                3,
-                3,
-                owner.isxAxisInverted(),
-                owner.isyAxisInverted(),
-                new Texture(WeaponsSpritePath.shotgun_path)
+            x,
+            y,
+            0,
+            0,
+            3,
+            3,
+            owner.isxAxisInverted(),
+            owner.isyAxisInverted(),
+            new Texture(WeaponsSpritePath.shotgun_path)
         );
     }
 

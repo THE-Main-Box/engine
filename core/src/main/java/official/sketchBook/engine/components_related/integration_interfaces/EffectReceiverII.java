@@ -5,5 +5,11 @@ import official.sketchBook.engine.components_related.toUse_component.object.Effe
 
 public interface EffectReceiverII {
     Body getBody();
+
+    void createHutBox();
+
     EffectReceiverComponent getEffectManager();
+
+    short getHBMaskBit();
+    short getHBCategoryBit();
 }

@@ -26,7 +26,7 @@ import official.sketchBook.game.util_related.enumerators.types.FactionTypes;
 import static official.sketchBook.engine.util_related.enumerators.layers.CollisionLayers.*;
 import static official.sketchBook.engine.util_related.utils.CollisionUtils.updateCollisionFilters;
 
-public abstract class Projectile implements CustomPool.Poolable, MovementCapableII, PhysicalObjectII {
+public abstract class Projectile implements CustomPool.Poolable, PhysicalObjectII {
 
     /// Raio do projétil
     protected float radius;
@@ -129,12 +129,16 @@ public abstract class Projectile implements CustomPool.Poolable, MovementCapable
      *
      * @param stickOnCollision         trava todos os eixos quando detectamos uma colisão
      * @param stickOnLeftWall          trava o eixo X quando detectamos uma colisão na horizontal
+     * @param stickOnRightWall         se deve parar de se mover ao haver uma colisão na direita
      * @param stickOnCeiling           trava o eixo Y quando detectamos uma colisão vinda da parte de cima do projétil
      * @param stickOnGround            trava o eixo Y quando detectamos uma colisão vinda da parte de baixo do projétil
      * @param affectedByGravity        se o projétil é afetado ou não pela constante da gravidade
-     * @param continuousCollisionCheck se devemos continuar a lidar com as colisões sem parar enquanto houver
-     * @param manageExit               se temos métodos para serem chamados ao sair de uma colisão
      * @param canRotate                se o projétil pode rotacionar por conta própria
+     * @param manageExit               se temos métodos para serem chamados ao sair de uma colisão
+     * @param continuousCollisionCheck se devemos continuar a lidar com as colisões sem parar enquanto houver
+     * @param applyToEntities          se podemos aplicar o efeito de movimentação em entidades
+     * @param physical                 se o projétil possui um corpo físico
+     * @param applyTrajectory          se devemos aplicar uma trajetória no movimento
      */
     protected void initBodyBehavior(
         boolean stickOnCollision,
@@ -146,7 +150,9 @@ public abstract class Projectile implements CustomPool.Poolable, MovementCapable
         boolean canRotate,
         boolean manageExit,
         boolean continuousCollisionCheck,
-        boolean applyToEntities
+        boolean applyToEntities,
+        boolean physical,
+        boolean applyTrajectory
     ) {
         //Validar colisão de forma contínua
         this.controllerComponent.setContinuousCollisionDetection(continuousCollisionCheck);
@@ -156,8 +162,6 @@ public abstract class Projectile implements CustomPool.Poolable, MovementCapable
         this.controllerComponent.setAffectedByGravity(affectedByGravity);
         //Deve parar de se mover ao colidir
         this.controllerComponent.setStickOnCollision(stickOnCollision);
-        //É sensor por padrão
-        this.controllerComponent.setSensorProjectile(true);
         //Deve lidar com a saída da colisão
         this.controllerComponent.setManageExitCollision(manageExit);
         //deve parar de mover ao acertar o teto
@@ -170,6 +174,10 @@ public abstract class Projectile implements CustomPool.Poolable, MovementCapable
         this.controllerComponent.setStickToRightWall(stickOnRightWall);
         //Se pode girar em volta do próprio eixo
         this.controllerComponent.setCanRotate(canRotate);
+        //Se é apenas um sensor ou não
+        this.controllerComponent.setSensorProjectile(!physical);
+        //Se deve se aplicar uma trajetória
+        this.controllerComponent.setTrajectoryUse(applyTrajectory);
 
     }
 
@@ -223,11 +231,6 @@ public abstract class Projectile implements CustomPool.Poolable, MovementCapable
         }
     }
 
-    @Override
-    public void onObjectBodySync() {
-
-    }
-
     /// Reset e desativação do projétil junto da liberação da memória
     @Override
     public void reset() {
@@ -276,11 +279,6 @@ public abstract class Projectile implements CustomPool.Poolable, MovementCapable
         if (controllerComponent != null && controllerComponent.getRayCastHelper() != null) {
             controllerComponent.getRayCastHelper().dispose();
         }
-    }
-
-    @Override
-    public MovementComponent getMoveC() {
-        return null;
     }
 
     public ProjectilePhysicsComponent getPhysicsC() {

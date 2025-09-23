@@ -20,9 +20,10 @@ public class ShotgunProjectile extends Projectile {
             false,
             false,
             false,
+            false,
+            false,
             false
         );
-
 
     }
 
@@ -35,7 +36,7 @@ public class ShotgunProjectile extends Projectile {
     protected void setBodyDefValues() {
         this.radius = 3.4f;
         this.defFric = 0f;
-        this.defRest = 0f;
+        this.defRest = 1f;
         this.defDens = 0.1f;
     }
 

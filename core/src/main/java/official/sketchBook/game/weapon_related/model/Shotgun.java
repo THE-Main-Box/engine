@@ -203,7 +203,8 @@ public class Shotgun extends RangeWeapon<Shotgun> {
 
         shoot(p);
 
-        applyRecoil(shootDirection);
+        if (weaponStatus.recoilForceMultiplier != 0)
+            applyRecoil(shootDirection);
     }
 
     @Override

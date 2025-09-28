@@ -33,6 +33,8 @@ public class ProjectileControllerComponent implements Component {
     private boolean manageExitCollision = false;
     private boolean sensorProjectile = false;
 
+    private boolean trajectoryUse = false;
+
     /// Flag para determinar se o projétil está preso numa colisão
     private boolean stuckToWall = false;
 
@@ -225,7 +227,11 @@ public class ProjectileControllerComponent implements Component {
         projectile.getPhysicsC().getBody().setLinearVelocity(0, 0);
         projectile.getPhysicsC().getBody().setAngularVelocity(0);
 
-        projectile.getPhysicsC().applyTimedTrajectory(displacement, timeSeconds);
+        if(trajectoryUse) {
+            projectile.getPhysicsC().applyTimedTrajectory(displacement, timeSeconds);
+        } else {
+            projectile.getPhysicsC().applyBallisticImpulse(displacement.y, displacement.x);
+        }
     }
 
     // ----- GETTERS/SETTERS -----
@@ -346,6 +352,14 @@ public class ProjectileControllerComponent implements Component {
 
     public boolean isSensorProjectile() {
         return sensorProjectile;
+    }
+
+    public boolean isTrajectoryUse() {
+        return trajectoryUse;
+    }
+
+    public void setTrajectoryUse(boolean trajectoryUse) {
+        this.trajectoryUse = trajectoryUse;
     }
 
     public void setSensorProjectile(boolean sensorProjectile) {

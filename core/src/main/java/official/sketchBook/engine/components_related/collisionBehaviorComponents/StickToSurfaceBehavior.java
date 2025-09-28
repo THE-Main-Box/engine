@@ -37,7 +37,7 @@ public class StickToSurfaceBehavior implements IEnterCollisionBehavior {
             controller.setSensorFixtureProperty(true);
         }
 
-        body.setTransform(controller.lastContactBeginData.getObjectCollisionPos(), body.getAngle());
+        body.setTransform(controller.lastContactBeginData.getObjectCollisionPos(), controller.lastContactBeginData.angle());
         body.setLinearVelocity(0, 0);
         body.setAngularVelocity(0);
         body.setGravityScale(0);

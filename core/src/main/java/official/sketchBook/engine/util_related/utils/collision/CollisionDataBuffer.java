@@ -14,6 +14,8 @@ public class CollisionDataBuffer {
     private Contact lastContact;
     /// Ponto de contato da colisão
     private Vector2 objectCollisionPos = new Vector2(); // novo campo
+    /// Angulo de contato
+    private float angle;
 
 
     private boolean isReset;
@@ -27,12 +29,12 @@ public class CollisionDataBuffer {
         this.isReset = false;
     }
 
-    public void buff(Direction dir, Vector2 objectCollisionPos, GameObjectTag gameObjectTag, Contact contact) {
+    public void buff(Direction dir, Vector2 objectCollisionPos, GameObjectTag gameObjectTag, Contact contact, float angle) {
         this.lastDirection = dir;
         this.lastCollisionWith = gameObjectTag;
         this.lastContact = contact;
         this.objectCollisionPos = objectCollisionPos != null ? objectCollisionPos.cpy() : null;
-
+        this.angle = angle;
 
         this.isReset = false;
     }
@@ -62,5 +64,9 @@ public class CollisionDataBuffer {
 
     public Vector2 getObjectCollisionPos() {
         return objectCollisionPos;
+    }
+
+    public float angle(){
+        return angle;
     }
 }

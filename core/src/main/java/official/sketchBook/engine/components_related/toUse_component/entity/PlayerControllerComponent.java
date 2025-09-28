@@ -1,13 +1,11 @@
 package official.sketchBook.engine.components_related.toUse_component.entity;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import official.sketchBook.engine.components_related.base_component.KeyBindedControllerComponent;
 import official.sketchBook.engine.gameObject_related.base_model.PhysicalGameObject;
 import official.sketchBook.engine.util_related.enumerators.directions.Direction;
 import official.sketchBook.engine.weapon_related.base_model.BaseWeapon;
 import official.sketchBook.game.entities.Player;
-import official.sketchBook.game.util_related.info.values.ControlKeys;
 
 import static official.sketchBook.game.util_related.info.values.ControlKeys.*;
 import static official.sketchBook.game.util_related.info.values.constants.SpeedRelatedConstants.Player.*;
@@ -22,6 +20,9 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
     private boolean rightPressed = false;
     private Direction lastDirectionPressed = Direction.STILL;
 
+    public boolean fullAuto = false;
+
+    private boolean shootPressed = false;
 
     public PlayerControllerComponent(PhysicalGameObject physicalGameObject) {
         this.player = (Player) physicalGameObject;
@@ -65,19 +66,31 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
 
     private void normalUse(boolean pressed) {
         if (pressed) {
-            if (player.getWeaponWC().getWeapon(BaseWeapon.class) != null) {
 
-                player.getWeaponWC().aim(
-                    player.isxAxisInverted() ? -1 : 1,//Determinamos se estamos mirando pra esquerda ou direita
-                    (int) aim.y//Atualizamos a direção de olhar para cima apenas quando apertarmos para isso
-                );
-
-                player.getWeaponWC().primaryWeaponUse();
+            if (!fullAuto) {
+                shoot();
             }
+
+        }
+        if (fullAuto) {
+            shootPressed = pressed;
         }
 
     }
 
+
+    private void shoot() {
+        if (player.getWeaponWC().getWeapon(BaseWeapon.class) != null) {
+
+            player.getWeaponWC().aim(
+                player.isxAxisInverted() ? -1 : 1,//Determinamos se estamos mirando pra esquerda ou direita
+                (int) aim.y//Atualizamos a direção de olhar para cima apenas quando apertarmos para isso
+            );
+
+            player.getWeaponWC().primaryWeaponUse();
+        }
+
+    }
 
     private void rechargeWeapon(boolean pressed) {
         if (pressed) {
@@ -95,6 +108,10 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
 
         updateMovement();
         updateHorizontalMovementValues();
+
+        if(fullAuto && shootPressed){
+            shoot();
+        }
 
     }
 

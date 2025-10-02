@@ -9,7 +9,7 @@ public class PolishDamageData {
     /// Direção do dano recebido no eixo Y
     public int dmgDirY;
     /// Dados brutos a respeito do dano recebido
-    public final RawDamageData damageData = new RawDamageData();
+    public RawDamageData damageData;
 
     public DamageDealerII dealer;
 

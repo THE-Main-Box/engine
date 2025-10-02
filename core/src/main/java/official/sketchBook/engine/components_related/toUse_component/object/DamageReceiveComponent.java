@@ -33,51 +33,27 @@ public class DamageReceiveComponent implements Component {
 
     /// Chama os métodos responsáveis pelo comportamento do dano
     public void damage(PolishDamageData data) {
-        if(data == null || data.damageData == null) return;
-        this.applyDamage(data);//aplica o dano
-        this.manageDeath();
-        if(isAlive()) {
-            this.applyInvincibility(data);//após aplicar o dano aplica o recuo
-            this.applyKnockBack(data);//aplica o knockBack
+        if (data == null || data.damageData == null) return;
+
+        // Aplicamos o dano primeiro
+        this.applyDamage(data);
+
+        // Verificamos se o receptor continua vivo
+        boolean alive = isAlive();
+
+        // Gerenciamos a morte se necessário
+        if (!alive) {
+            owner.onDeath();
+        }
+
+        // Se ainda estiver vivo, aplicamos invencibilidade e knockBack
+        if (alive) {
+            this.applyInvincibility(data);
+            this.applyKnockBack(data);
         }
     }
 
-    private void manageDeath(){
-        if(isAlive()) return;
-
-        owner.onDeath();
-    }
-
-    private void applyKnockBack(PolishDamageData data) {
-        if (!data.damageData.isApplyKnockBack()) return;
-
-        float kb = data.damageData.getKnockBack();
-
-        //aplicamos a velocidade do knockback na direção do impacto
-        owner.getBody().setLinearVelocity(
-            (kb * data.dmgDirX),
-            (kb * data.dmgDirY)
-        );
-
-    }
-
-    private void applyInvincibility(PolishDamageData data) {
-        // se não estiver vivo, ou o não pudermos aplicar a invencibilidade
-        if (data.damageData.getInvincibilityTime() <= 0) return;
-
-        initInvincibility(data.damageData.getInvincibilityTime());
-
-    }
-
-    /// executa a aplicação do dano
     private void applyDamage(PolishDamageData data) {
-        /*
-         *se não estivermos passando dados
-         *se estivermos invencíveis
-         *se não houver dados a respeito do dano
-         *se o dano for 0 ou negativo
-         *retornamos e não prosseguimos
-         */
         if (invincible || data.damageData.getAmount() <= 0 || health <= 0) return;
 
         double dmg = data.damageData.getAmount();
@@ -86,6 +62,27 @@ public class DamageReceiveComponent implements Component {
         health -= dmg * (dmgMod > 0 ? dmgMod : 1);
 
         owner.onDamage();
+    }
+
+    private void applyInvincibility(PolishDamageData data) {
+        if (data.damageData.getInvincibilityTime() <= 0) return;
+        initInvincibility(data.damageData.getInvincibilityTime());
+    }
+
+    private void applyKnockBack(PolishDamageData data) {
+        if (!data.damageData.isApplyKnockBack()) return;
+
+        float kb = data.damageData.getKnockBack();
+        owner.getBody().setLinearVelocity(
+            kb * data.dmgDirX,
+            kb * data.dmgDirY
+        );
+    }
+
+    private void manageDeath(){
+        if(isAlive()) return;
+
+        owner.onDeath();
     }
 
     /// Lida com o gerenciamento da flag de invencibilidade, usando o temporizador como base

@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import official.sketchBook.engine.animation_related.ObjectAnimationPlayer;
 import official.sketchBook.engine.animation_related.SpriteSheetDataHandler;
 import official.sketchBook.engine.gameObject_related.base_model.RangeWeaponWieldingEntity;
-import official.sketchBook.game.util_related.util.entity.AnchorPoint;
+import official.sketchBook.engine.util_related.utils.data_to_instance_related.point.AnchorPoint;
 
 public abstract class BaseWeapon<T extends BaseWeapon<T>> {
 

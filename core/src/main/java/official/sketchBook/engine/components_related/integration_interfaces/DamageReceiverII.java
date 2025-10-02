@@ -6,9 +6,11 @@ public interface DamageReceiverII {
 
     void createHutBox();
 
-    void die();
+    void onDeath();
 
     DamageReceiveComponent getDamageReceiveC();
+
+    void onDamage();
 
     short getHBMaskBit();
     short getHBCategoryBit();

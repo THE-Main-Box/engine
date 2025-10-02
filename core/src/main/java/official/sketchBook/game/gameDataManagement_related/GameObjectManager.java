@@ -4,8 +4,8 @@ import com.badlogic.gdx.physics.box2d.World;
 import official.sketchBook.engine.data_management_related.GameObjectManagerBase;
 import official.sketchBook.game.entities.Dummy;
 import official.sketchBook.game.entities.Player;
-import official.sketchBook.engine.room_related.worldGeneration_related.blueprint.LayoutParam;
-import official.sketchBook.engine.room_related.worldGeneration_related.blueprint.RoomBlueprint;
+import official.sketchBook.engine.util_related.utils.data_to_instance_related.world_gen_blueprint.LayoutParam;
+import official.sketchBook.engine.util_related.utils.data_to_instance_related.world_gen_blueprint.RoomBlueprint;
 import official.sketchBook.game.util_related.enumerators.types.RoomType;
 
 import java.util.ArrayList;

@@ -4,7 +4,7 @@ import official.sketchBook.engine.components_related.base_component.Component;
 
 public class TimerComponent implements Component {
     private float timeElapsed = 0;
-    private float targetTime;
+    private float targetTime = 0;
     private boolean running = false;
 
     private static final float EPSILON = 0.0001f; // evita problemas de precisão
@@ -17,8 +17,7 @@ public class TimerComponent implements Component {
     }
 
     public void update(float deltaTime) {
-        if (deltaTime < 0) return; // evita bugs por deltas negativos
-        if (running) {
+        if (running && targetTime > 0) {
             timeElapsed += deltaTime;
             if (timeElapsed >= targetTime) {
                 timeElapsed = targetTime; // Garante que não ultrapasse o tempo

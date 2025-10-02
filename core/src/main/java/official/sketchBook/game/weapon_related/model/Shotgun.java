@@ -1,7 +1,6 @@
 package official.sketchBook.game.weapon_related.model;
 
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.math.Vector2;
 import official.sketchBook.engine.animation_related.ObjectAnimationPlayer;
 import official.sketchBook.engine.animation_related.Sprite;
 import official.sketchBook.engine.animation_related.SpriteSheetDataHandler;
@@ -10,7 +9,7 @@ import official.sketchBook.engine.projectileRelated.model.Projectile;
 import official.sketchBook.game.projectiles_related.projectiles.ShotgunProjectile;
 import official.sketchBook.engine.util_related.enumerators.directions.Direction;
 import official.sketchBook.game.util_related.info.paths.WeaponsSpritePath;
-import official.sketchBook.game.util_related.util.entity.AnchorPoint;
+import official.sketchBook.engine.util_related.utils.data_to_instance_related.point.AnchorPoint;
 import official.sketchBook.engine.weapon_related.base_model.RangeWeapon;
 import official.sketchBook.engine.weapon_related.util.status.RangeWeaponStatus;
 

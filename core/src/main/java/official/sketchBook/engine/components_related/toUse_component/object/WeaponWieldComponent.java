@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import official.sketchBook.engine.components_related.base_component.Component;
 import official.sketchBook.engine.components_related.integration_interfaces.RangeWeaponWielderII;
-import official.sketchBook.game.util_related.util.entity.AnchorPoint;
+import official.sketchBook.engine.util_related.utils.data_to_instance_related.point.AnchorPoint;
 import official.sketchBook.engine.weapon_related.base_model.BaseWeapon;
 import official.sketchBook.engine.weapon_related.base_model.RangeWeapon;
 

@@ -7,7 +7,7 @@ import official.sketchBook.engine.room_related.worldGeneration_related.generatio
 import official.sketchBook.engine.room_related.worldGeneration_related.generation.WorldGrid;
 import official.sketchBook.engine.room_related.worldGeneration_related.generation.WorldLayout;
 import official.sketchBook.engine.room_related.model.RoomCell;
-import official.sketchBook.engine.room_related.worldGeneration_related.blueprint.RoomBlueprint;
+import official.sketchBook.engine.util_related.utils.data_to_instance_related.world_gen_blueprint.RoomBlueprint;
 import official.sketchBook.engine.room_related.worldGeneration_related.util.data_manager.RoomManager;
 import official.sketchBook.engine.room_related.worldGeneration_related.util.data_manager.WorldManager;
 

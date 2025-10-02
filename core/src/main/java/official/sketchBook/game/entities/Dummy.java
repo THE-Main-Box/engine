@@ -163,13 +163,18 @@ public class Dummy extends Enemy implements DamageReceiverII {
     }
 
     @Override
-    public void die() {
+    public void onDeath() {
 
     }
 
     @Override
     public DamageReceiveComponent getDamageReceiveC() {
         return damageReceiveC;
+    }
+
+    @Override
+    public void onDamage() {
+
     }
 
     @Override

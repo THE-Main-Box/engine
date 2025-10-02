@@ -1,4 +1,4 @@
-package official.sketchBook.game.util_related.util.effect;
+package official.sketchBook.game.util_related.instance_data_related.effect;
 
 import official.sketchBook.engine.components_related.integration_interfaces.EffectReceiverII;
 

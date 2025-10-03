@@ -16,7 +16,7 @@ public class RangeWeaponsStatusConstants {
         static {
             maxAmmo = 2;
             ammoCost = -1;
-            fireCooldown = 0.1f;
+            fireCooldown = 0.3f;
             rechargeSpeedMulti = 1f;
             fireCooldownSpeedMulti = 1f;
             fireRecoilForceMulti = 1f;

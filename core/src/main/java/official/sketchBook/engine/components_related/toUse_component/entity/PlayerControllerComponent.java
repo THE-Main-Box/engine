@@ -20,7 +20,7 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
     private boolean rightPressed = false;
     private Direction lastDirectionPressed = Direction.STILL;
 
-    public boolean fullAuto = false;
+    public boolean fullAuto = true;
 
     private boolean shootPressed = false;
 

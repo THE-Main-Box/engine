@@ -62,6 +62,7 @@ public class Playing extends State implements StateMethods {
     public void update(float delta) {
 
         objectManager.updateObjects(delta);
+        DamageDealerContactListener.pool.update(delta);
 
         if (world != null) {
             world.step(

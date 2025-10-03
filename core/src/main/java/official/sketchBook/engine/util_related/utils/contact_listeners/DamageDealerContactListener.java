@@ -10,7 +10,7 @@ import official.sketchBook.engine.util_related.utils.data_to_instance_related.da
 import static official.sketchBook.engine.util_related.utils.general.HelpMethods.getTag;
 
 public class DamageDealerContactListener implements ContactListener {
-    public final PolishDamageDataPool pool = new PolishDamageDataPool();
+    public static final PolishDamageDataPool pool = new PolishDamageDataPool();
 
     @Override
     public void beginContact(Contact contact) {

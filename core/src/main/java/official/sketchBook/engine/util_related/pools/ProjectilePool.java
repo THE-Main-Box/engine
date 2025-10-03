@@ -1,10 +1,11 @@
-package official.sketchBook.engine.projectileRelated.util;
+package official.sketchBook.engine.util_related.pools;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
-import official.sketchBook.engine.customComponents_related.CustomPool;
+import official.sketchBook.engine.custom_utils_related.CustomPool;
 import official.sketchBook.engine.projectileRelated.model.Projectile;
+import official.sketchBook.engine.projectileRelated.util.ProjectileFactory;
 
 import static official.sketchBook.game.util_related.info.values.constants.ProjectileManagementConstants.maxProjectilePerPool;
 import static official.sketchBook.game.util_related.info.values.constants.ProjectileManagementConstants.maxToDestroyPerFrame;

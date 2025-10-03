@@ -5,6 +5,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import official.sketchBook.engine.components_related.toUse_component.util.TimerComponent;
 import official.sketchBook.engine.projectileRelated.model.Projectile;
 import official.sketchBook.engine.room_related.model.PlayableRoom;
+import official.sketchBook.engine.util_related.pools.ProjectilePool;
 
 import java.util.HashMap;
 import java.util.Map;

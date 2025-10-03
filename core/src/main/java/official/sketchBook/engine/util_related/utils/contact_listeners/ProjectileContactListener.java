@@ -1,16 +1,14 @@
-package official.sketchBook.game.util_related.util.contactListeners;
+package official.sketchBook.engine.util_related.utils.contact_listeners;
 
 import com.badlogic.gdx.physics.box2d.*;
 import official.sketchBook.engine.components_related.toUse_component.projectile.ProjectileControllerComponent;
 import official.sketchBook.engine.projectileRelated.model.Projectile;
 import official.sketchBook.engine.util_related.enumerators.type.ObjectType;
-import official.sketchBook.engine.util_related.utils.RayCastUtils;
 import official.sketchBook.engine.util_related.utils.general.GameObjectTag;
 import official.sketchBook.engine.util_related.utils.registers.ProjectileCollisionRegister;
 
 import static official.sketchBook.engine.util_related.utils.CollisionUtils.*;
 import static official.sketchBook.engine.util_related.utils.general.HelpMethods.getTag;
-import static official.sketchBook.game.util_related.info.values.constants.GameConstants.Physics.FIXED_TIMESTAMP;
 
 public class ProjectileContactListener implements ContactListener {
 

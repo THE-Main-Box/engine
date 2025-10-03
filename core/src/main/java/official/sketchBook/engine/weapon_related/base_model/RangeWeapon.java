@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import official.sketchBook.engine.gameObject_related.base_model.RangeWeaponWieldingEntity;
 import official.sketchBook.engine.projectileRelated.model.Projectile;
 import official.sketchBook.engine.projectileRelated.emitters.Emitter;
-import official.sketchBook.engine.projectileRelated.util.ProjectilePool;
+import official.sketchBook.engine.util_related.pools.ProjectilePool;
 import official.sketchBook.engine.util_related.enumerators.directions.Direction;
 import official.sketchBook.engine.util_related.utils.general.HelpMethods;
 import official.sketchBook.engine.util_related.utils.registers.EmitterRegister;

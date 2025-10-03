@@ -1,4 +1,4 @@
-package official.sketchBook.engine.customComponents_related;
+package official.sketchBook.engine.custom_utils_related;
 
 import com.badlogic.gdx.utils.Array;
 
@@ -112,6 +112,8 @@ public abstract class CustomPool<T extends CustomPool.Poolable> {
         void reset();
 
         void destroy();
+
+        boolean isReset();
     }
 }
 

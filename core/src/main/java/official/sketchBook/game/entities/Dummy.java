@@ -39,6 +39,8 @@ public class Dummy extends Enemy implements DamageReceiverII {
 
     private void initComponents() {
         damageReceiveC = new DamageReceiveComponent(this, 100);
+
+        this.components.add(damageReceiveC);
     }
 
     private void initAnimations() {
@@ -78,7 +80,7 @@ public class Dummy extends Enemy implements DamageReceiverII {
 
     @Override
     protected void setBodyDefValues() {
-        this.defFric = 0;
+        this.defFric = 1;
         this.defDens = 1;
         this.defRest = 0;
 
@@ -124,6 +126,7 @@ public class Dummy extends Enemy implements DamageReceiverII {
         super.update(deltaTime);
 
         updateAnimationPlayer(deltaTime);
+        updateComponents(deltaTime);
     }
 
     @Override

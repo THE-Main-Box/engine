@@ -15,6 +15,9 @@ public interface DamageReceiverII {
 
     Body getBody();
 
+    float getWidth();
+    float getHeight();
+
     short getHBMaskBit();
     short getHBCategoryBit();
 

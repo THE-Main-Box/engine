@@ -27,6 +27,8 @@ public interface GroundInteractableII extends RayCasterII {
 
     void setOnGround(boolean onGround);
 
+    boolean isOnGround();
+
     /**
      * Atualiza o valor de "em pé" (onGround) do personagem usando 3 raycasts:
      * - Pé esquerdo (borda esquerda da body)

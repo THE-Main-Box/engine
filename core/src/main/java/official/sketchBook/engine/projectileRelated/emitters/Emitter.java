@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import official.sketchBook.engine.components_related.integration_interfaces.RangeWeaponWielderII;
 import official.sketchBook.engine.projectileRelated.model.Projectile;
 import official.sketchBook.engine.projectileRelated.util.GlobalProjectilePool;
-import official.sketchBook.engine.projectileRelated.util.ProjectilePool;
+import official.sketchBook.engine.util_related.pools.ProjectilePool;
 import official.sketchBook.engine.util_related.utils.registers.ProjectilePoolRegister;
 
 public class Emitter {

@@ -10,4 +10,6 @@ public interface DamageDealerII {
     Body getBody();
 
     RawDamageData getDamageData();
+
+    boolean isDamageAble();
 }

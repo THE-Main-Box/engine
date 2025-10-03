@@ -33,7 +33,7 @@ public class DamageReceiveComponent implements Component {
 
     /// Chama os métodos responsáveis pelo comportamento do dano
     public void damage(PolishDamageData data) {
-        if (data == null || data.damageData == null) return;
+        if (data == null || data.getDamageData() == null) return;
 
         // Aplicamos o dano primeiro
         this.applyDamage(data);
@@ -42,22 +42,24 @@ public class DamageReceiveComponent implements Component {
         boolean alive = isAlive();
 
         // Gerenciamos a morte se necessário
-        if (!alive) {
-            owner.onDeath();
-        }
+        this.manageDeath();
 
         // Se ainda estiver vivo, aplicamos invencibilidade e knockBack
         if (alive) {
             this.applyInvincibility(data);
             this.applyKnockBack(data);
         }
+
+        if(!data.isReset()){
+            data.endUse();
+        }
     }
 
     private void applyDamage(PolishDamageData data) {
-        if (invincible || data.damageData.getAmount() <= 0 || health <= 0) return;
+        if (invincible || data.getDamageData().getAmount() <= 0 || health <= 0) return;
 
-        double dmg = data.damageData.getAmount();
-        float dmgMod = data.damageData.getAmountMod();
+        double dmg = data.getDamageData().getAmount();
+        float dmgMod = data.getDamageData().getAmountMod();
 
         health -= dmg * (dmgMod > 0 ? dmgMod : 1);
 
@@ -65,17 +67,17 @@ public class DamageReceiveComponent implements Component {
     }
 
     private void applyInvincibility(PolishDamageData data) {
-        if (data.damageData.getInvincibilityTime() <= 0) return;
-        initInvincibility(data.damageData.getInvincibilityTime());
+        if (data.getDamageData().getInvincibilityTime() <= 0) return;
+        initInvincibility(data.getDamageData().getInvincibilityTime());
     }
 
     private void applyKnockBack(PolishDamageData data) {
-        if (!data.damageData.isApplyKnockBack()) return;
+        if (!data.getDamageData().isApplyKnockBack()) return;
 
-        float kb = data.damageData.getKnockBack();
+        float kb = data.getDamageData().getKnockBack();
         owner.getBody().setLinearVelocity(
-            kb * data.dmgDirX,
-            kb * data.dmgDirY
+            kb * data.getDmgDirX(),
+            kb * data.getDmgDirY()
         );
     }
 

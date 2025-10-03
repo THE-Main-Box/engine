@@ -14,8 +14,8 @@ public class RangeWeaponsStatusConstants {
         public static float fireRecoilForceMulti;
 
         static {
-            maxAmmo = 2;
-            ammoCost = -1;
+            maxAmmo = 3;
+            ammoCost = 1;
             fireCooldown = 0.3f;
             rechargeSpeedMulti = 1f;
             fireCooldownSpeedMulti = 1f;

@@ -1,7 +1,7 @@
 package official.sketchBook.game.util_related.enumerators.types;
 
 import official.sketchBook.engine.components_related.integration_interfaces.EffectReceiverII;
-import official.sketchBook.game.util_related.util.effect.EffectsAppliance;
+import official.sketchBook.game.util_related.instance_data_related.effect.EffectsAppliance;
 
 import java.util.function.Consumer;
 

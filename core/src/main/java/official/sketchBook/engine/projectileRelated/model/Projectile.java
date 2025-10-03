@@ -10,14 +10,12 @@ import official.sketchBook.engine.animation_related.ObjectAnimationPlayer;
 import official.sketchBook.engine.animation_related.SpriteSheetDataHandler;
 import official.sketchBook.engine.components_related.base_component.Component;
 import official.sketchBook.engine.components_related.collisionBehaviorComponents.StickToSurfaceBehavior;
-import official.sketchBook.engine.components_related.integration_interfaces.MovementCapableII;
 import official.sketchBook.engine.components_related.integration_interfaces.PhysicalObjectII;
 import official.sketchBook.engine.components_related.integration_interfaces.RangeWeaponWielderII;
-import official.sketchBook.engine.components_related.toUse_component.object.MovementComponent;
 import official.sketchBook.engine.components_related.toUse_component.projectile.ProjectileControllerComponent;
 import official.sketchBook.engine.components_related.toUse_component.projectile.ProjectilePhysicsComponent;
-import official.sketchBook.engine.customComponents_related.CustomPool;
-import official.sketchBook.engine.projectileRelated.util.ProjectilePool;
+import official.sketchBook.engine.custom_utils_related.CustomPool;
+import official.sketchBook.engine.util_related.pools.ProjectilePool;
 import official.sketchBook.engine.util_related.enumerators.type.ObjectType;
 import official.sketchBook.engine.util_related.utils.body.BodyCreatorHelper;
 import official.sketchBook.engine.util_related.utils.general.GameObjectTag;
@@ -248,6 +246,10 @@ public abstract class Projectile implements CustomPool.Poolable, PhysicalObjectI
     public void render(SpriteBatch batch) {
 
     }
+
+    public void onWallStuck(){}
+
+    public void onWallUnstuck(){}
 
     /// Destrói a body e a física do projétil permanentemente dentro do mundo e a limpa da memória
     private void destroyPhysics() {

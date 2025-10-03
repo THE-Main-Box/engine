@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.World;
 import official.sketchBook.engine.gameObject_related.base_model.PhysicalGameObject;
 import official.sketchBook.engine.room_related.model.PlayableRoom;
-import official.sketchBook.engine.room_related.worldGeneration_related.blueprint.LayoutParam;
+import official.sketchBook.engine.util_related.utils.data_to_instance_related.world_gen_blueprint.LayoutParam;
 import official.sketchBook.engine.room_related.worldGeneration_related.generation.WorldGenerator;
 import official.sketchBook.engine.room_related.worldGeneration_related.generation.WorldLayout;
 import official.sketchBook.game.screen_related.PlayScreen;

@@ -5,7 +5,7 @@ import official.sketchBook.game.util_related.enumerators.types.TileType;
 import official.sketchBook.engine.util_related.utils.IO.RoomBlueprintIO;
 import official.sketchBook.game.util_related.info.paths.LayoutAssetPath;
 import official.sketchBook.engine.room_related.model.Room;
-import official.sketchBook.engine.room_related.worldGeneration_related.blueprint.RoomBlueprint;
+import official.sketchBook.engine.util_related.utils.data_to_instance_related.world_gen_blueprint.RoomBlueprint;
 import official.sketchBook.engine.room_related.worldGeneration_related.util.converter.RoomConverter;
 
 import java.io.File;

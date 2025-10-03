@@ -9,9 +9,10 @@ import official.sketchBook.engine.camera_related.CameraManager;
 import official.sketchBook.engine.data_management_related.GameObjectManagerBase;
 import official.sketchBook.engine.gameState_related.model.State;
 import official.sketchBook.engine.gameState_related.model.StateMethods;
+import official.sketchBook.engine.util_related.utils.contact_listeners.DamageDealerContactListener;
 import official.sketchBook.game.entities.Player;
-import official.sketchBook.game.util_related.util.contactListeners.MovableObjectContactListener;
-import official.sketchBook.game.util_related.util.contactListeners.ProjectileContactListener;
+import official.sketchBook.engine.util_related.utils.contact_listeners.MovableObjectContactListener;
+import official.sketchBook.engine.util_related.utils.contact_listeners.ProjectileContactListener;
 import official.sketchBook.engine.util_related.enumerators.states.GameState;
 import official.sketchBook.engine.util_related.utils.collision.MultiContactListener;
 import official.sketchBook.engine.util_related.utils.registers.ProjectileCollisionRegister;
@@ -54,12 +55,14 @@ public class Playing extends State implements StateMethods {
     private void setContactListeners() {
         handleContactListener(false, "projectile_listener", new ProjectileContactListener());
         handleContactListener(false, "mob_listener", new MovableObjectContactListener());
+        handleContactListener(false, "dmg_listener", new DamageDealerContactListener());
     }
 
     @Override
     public void update(float delta) {
 
         objectManager.updateObjects(delta);
+        DamageDealerContactListener.pool.update(delta);
 
         if (world != null) {
             world.step(

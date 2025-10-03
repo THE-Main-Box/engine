@@ -43,6 +43,7 @@ public class StickToSurfaceBehavior implements IEnterCollisionBehavior {
         body.setGravityScale(0);
 
         controller.setStuckToWall(true);
+        controller.getProjectile().onWallStuck();
     }
 
     public static void resetProjectileState(ProjectileControllerComponent controller) {
@@ -54,5 +55,6 @@ public class StickToSurfaceBehavior implements IEnterCollisionBehavior {
 
         body.setGravityScale(controller.isAffectedByGravity() ? 1f : 0f);
         controller.setStuckToWall(false);
+        controller.getProjectile().onWallUnstuck();
     }
 }

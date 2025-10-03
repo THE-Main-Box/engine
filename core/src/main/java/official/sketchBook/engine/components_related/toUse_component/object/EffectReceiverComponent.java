@@ -2,7 +2,7 @@ package official.sketchBook.engine.components_related.toUse_component.object;
 
 import official.sketchBook.engine.components_related.base_component.Component;
 import official.sketchBook.game.util_related.enumerators.types.EffectsType;
-import official.sketchBook.game.util_related.util.effect.EffectInstance;
+import official.sketchBook.game.util_related.instance_data_related.effect.EffectInstance;
 import official.sketchBook.engine.components_related.integration_interfaces.EffectReceiverII;
 
 import java.util.ArrayList;

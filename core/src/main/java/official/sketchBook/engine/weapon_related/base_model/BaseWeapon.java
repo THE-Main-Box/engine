@@ -3,8 +3,9 @@ package official.sketchBook.engine.weapon_related.base_model;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import official.sketchBook.engine.animation_related.ObjectAnimationPlayer;
 import official.sketchBook.engine.animation_related.SpriteSheetDataHandler;
+import official.sketchBook.engine.components_related.integration_interfaces.RangeWeaponWielderII;
 import official.sketchBook.engine.gameObject_related.base_model.RangeWeaponWieldingEntity;
-import official.sketchBook.game.util_related.util.entity.AnchorPoint;
+import official.sketchBook.engine.util_related.utils.data_to_instance_related.point.AnchorPoint;
 
 public abstract class BaseWeapon<T extends BaseWeapon<T>> {
 
@@ -16,8 +17,9 @@ public abstract class BaseWeapon<T extends BaseWeapon<T>> {
     /// Descrição da arma
     protected String description;
 
+    //TODO:Alterar o objeto dono de arma
     /// Dono da arma
-    protected RangeWeaponWieldingEntity owner;
+    protected RangeWeaponWielderII owner;
 
     /// Gerenciador de dados da sprite-sheet
     protected SpriteSheetDataHandler spriteDataHandler;
@@ -31,7 +33,7 @@ public abstract class BaseWeapon<T extends BaseWeapon<T>> {
 
     protected AnchorPoint point;
 
-    public BaseWeapon(Class<T> weaponClass, RangeWeaponWieldingEntity owner, AnchorPoint point) {
+    public BaseWeapon(Class<T> weaponClass, RangeWeaponWielderII owner, AnchorPoint point) {
         this.weaponClass = weaponClass;
         this.owner = owner;
         this.point = point;

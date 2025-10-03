@@ -1,16 +1,16 @@
 package official.sketchBook.game.weapon_related.model;
 
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.math.Vector2;
 import official.sketchBook.engine.animation_related.ObjectAnimationPlayer;
 import official.sketchBook.engine.animation_related.Sprite;
 import official.sketchBook.engine.animation_related.SpriteSheetDataHandler;
+import official.sketchBook.engine.components_related.integration_interfaces.GroundInteractableII;
 import official.sketchBook.engine.gameObject_related.base_model.RangeWeaponWieldingEntity;
 import official.sketchBook.engine.projectileRelated.model.Projectile;
 import official.sketchBook.game.projectiles_related.projectiles.ShotgunProjectile;
 import official.sketchBook.engine.util_related.enumerators.directions.Direction;
 import official.sketchBook.game.util_related.info.paths.WeaponsSpritePath;
-import official.sketchBook.game.util_related.util.entity.AnchorPoint;
+import official.sketchBook.engine.util_related.utils.data_to_instance_related.point.AnchorPoint;
 import official.sketchBook.engine.weapon_related.base_model.RangeWeapon;
 import official.sketchBook.engine.weapon_related.util.status.RangeWeaponStatus;
 
@@ -119,7 +119,7 @@ public class Shotgun extends RangeWeapon<Shotgun> {
             aniPlayer.setAutoUpdateAni(true);
             aniPlayer.setAnimationLooping(false);
         } else {// Se não estivermos recarregando, mas estivermos andando ou parados sem fazer nada
-            if (owner.isRunning() || owner.isIdle()) {
+            if (owner.isMoving() || owner.isIdle()) {
                 aniPlayer.playAnimation(run);
             }
         }
@@ -258,6 +258,9 @@ public class Shotgun extends RangeWeapon<Shotgun> {
     }
 
     protected boolean canPogoShoot() {
-        return owner.getWeaponWC().isAimingDown() && !owner.isOnGround();
+        if (!owner.getWeaponWC().isAimingDown()) return false;
+        if (!(owner instanceof GroundInteractableII gOwner)) return false;
+        return !gOwner.isOnGround();
     }
+
 }

@@ -40,7 +40,7 @@ public abstract class Entity extends MovablePhysicalGameObject {
         this.onGround = onGround;
     }
 
-    public boolean isRunning() {
+    public boolean isMoving() {
         return onGround && moveC.isMovingX();
     }
 

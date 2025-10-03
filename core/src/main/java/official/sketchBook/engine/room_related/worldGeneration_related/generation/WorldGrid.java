@@ -3,7 +3,7 @@ package official.sketchBook.engine.room_related.worldGeneration_related.generati
 import official.sketchBook.engine.room_related.worldGeneration_related.connection.RoomNode;
 import official.sketchBook.engine.room_related.model.Room;
 import official.sketchBook.engine.room_related.model.RoomCell;
-import official.sketchBook.engine.room_related.worldGeneration_related.blueprint.WorldLayoutBlueprint;
+import official.sketchBook.engine.util_related.utils.data_to_instance_related.world_gen_blueprint.WorldLayoutBlueprint;
 import official.sketchBook.engine.util_related.utils.ArrayUtils;
 
 public class WorldGrid {

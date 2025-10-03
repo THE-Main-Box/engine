@@ -12,7 +12,7 @@ public class ShotgunProjectile extends Projectile implements DamageDealerII {
 
     static {
         data = new RawDamageData(
-            100,
+            1,
             0,
             0,
             1,

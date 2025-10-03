@@ -1,16 +1,36 @@
 package official.sketchBook.engine.util_related.pools;
 
-import com.badlogic.gdx.math.Vector2;
 import official.sketchBook.engine.components_related.integration_interfaces.DamageDealerII;
 import official.sketchBook.engine.components_related.integration_interfaces.DamageReceiverII;
+import official.sketchBook.engine.components_related.toUse_component.util.TimerComponent;
 import official.sketchBook.engine.custom_utils_related.CustomPool;
 import official.sketchBook.engine.util_related.utils.data_to_instance_related.damage_related.PolishDamageData;
 import official.sketchBook.engine.util_related.utils.data_to_instance_related.damage_related.RawDamageData;
 
 public class PolishDamageDataPool extends CustomPool<PolishDamageData> {
+    private final TimerComponent cleanUpTimer = new TimerComponent(1f);
+
     @Override
     protected PolishDamageData newObject() {
         return new PolishDamageData(this);
+    }
+
+    public void update(float delta){
+        if(!cleanUpTimer.isRunning()){
+            cleanUpTimer.reset();
+            cleanUpTimer.start();
+        }
+
+        if(cleanUpTimer.isFinished()){
+            cleanUpTimer.reset();
+            cleanPool();
+        }
+
+        cleanUpTimer.update(delta);
+    }
+
+    private void cleanPool(){
+        this.clear();
     }
 
     public void initPDD(DamageReceiverII receiver, DamageDealerII dealer, RawDamageData rdd, PolishDamageData toInit) {

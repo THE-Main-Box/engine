@@ -12,8 +12,10 @@ import official.sketchBook.engine.gameObject_related.base_model.GameObject;
 import official.sketchBook.engine.gameObject_related.base_model.PhysicalGameObject;
 import official.sketchBook.engine.projectileRelated.util.GlobalProjectilePool;
 import official.sketchBook.engine.room_related.worldGeneration_related.connection.RoomNode;
+import official.sketchBook.engine.util_related.pools.PolishDamageDataPool;
 import official.sketchBook.engine.util_related.utils.body.RoomBodyDataConversor;
 import official.sketchBook.engine.util_related.utils.registers.EmitterRegister;
+import official.sketchBook.engine.util_related.utils.registers.PolishDamageDataPoolRegister;
 import official.sketchBook.engine.util_related.utils.registers.ProjectilePoolRegister;
 
 import java.util.ArrayList;
@@ -25,6 +27,10 @@ public class PlayableRoom implements Poolable {
 
     /// Pool de objetos do tipo projétil
     private GlobalProjectilePool projectilePool;
+
+    /// Pool de dados polidos de dano
+    private PolishDamageDataPool polishDamagePool;
+
 
     /*
      *OBS: os objetos que estão fora da árvore de GameObjects,
@@ -50,6 +56,7 @@ public class PlayableRoom implements Poolable {
     public PlayableRoom(World world) {
         this.world = world;
         this.projectilePool = new GlobalProjectilePool(this);
+        this.polishDamagePool = new PolishDamageDataPool(this);
         this.gameObjects = new ArrayList<>();
     }
 
@@ -66,6 +73,7 @@ public class PlayableRoom implements Poolable {
 
         //Registra a pool na inicialização
         ProjectilePoolRegister.register(this, this.projectilePool);
+        PolishDamageDataPoolRegister.register(this, this.polishDamagePool);
 
         this.active = true;
     }
@@ -89,6 +97,7 @@ public class PlayableRoom implements Poolable {
         EmitterRegister.unregisterRoom(this);
 
         projectilePool.killPool();//destrói todos os projéteis dentro da pool global
+        polishDamagePool.cleanPool();
 
         roomData = null;//limpa os dados da sala
         roomConnections = null; //limpam os dados da conexão
@@ -103,6 +112,7 @@ public class PlayableRoom implements Poolable {
         this.nativeBodies = null;
         this.gameObjects = null;
         this.projectilePool = null;
+        this.polishDamagePool = null;
 
     }
 
@@ -145,6 +155,10 @@ public class PlayableRoom implements Poolable {
 
         if (projectilePool != null) {
             this.projectilePool.update(delta);
+        }
+
+        if (polishDamagePool != null) {
+            this.polishDamagePool.update(delta);
         }
     }
 
@@ -238,5 +252,9 @@ public class PlayableRoom implements Poolable {
 
     public GlobalProjectilePool getProjectilePool() {
         return projectilePool;
+    }
+
+    public PolishDamageDataPool getPolishDamagePool() {
+        return polishDamagePool;
     }
 }

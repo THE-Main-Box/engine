@@ -49,8 +49,13 @@ public class HelpMethods {
 
 
     /// Obtém a tag presente em uma body dentro de uma fixture
-    public static GameObjectTag getTag(Fixture fixture) {
+    public static GameObjectTag getFromBodyTag(Fixture fixture) {
         if (fixture == null || !(fixture.getBody().getUserData() instanceof GameObjectTag tag)) return null;
+        return tag;
+    }
+
+    public static GameObjectTag getFromFixtureTag(Fixture fixture) {
+        if (fixture == null || !(fixture.getUserData() instanceof GameObjectTag tag)) return null;
         return tag;
     }
 }

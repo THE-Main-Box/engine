@@ -8,7 +8,7 @@ import official.sketchBook.engine.projectileRelated.model.Projectile;
 import official.sketchBook.engine.util_related.utils.data_to_instance_related.damage_related.RawDamageData;
 
 public class ShotgunProjectile extends Projectile implements DamageDealerII {
-    private static final RawDamageData data;
+    public static final RawDamageData data;
 
     static {
         data = new RawDamageData(

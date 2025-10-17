@@ -15,7 +15,7 @@ import java.util.function.Consumer;
 import static official.sketchBook.game.util_related.info.values.constants.GameConstants.Physics.PPM;
 
 
-public class RayCastUtils {
+public class RayCastHelper {
     private final World world;
     private final ShapeRenderer shapeRenderer;
 
@@ -25,7 +25,7 @@ public class RayCastUtils {
     /**
      * Construtor recebe o mundo do Box2D e inicializa o ShapeRenderer para debug.
      */
-    public RayCastUtils(World world) {
+    public RayCastHelper(World world) {
         this.world = world;
         this.shapeRenderer = new ShapeRenderer(); // Inicializa o ShapeRenderer para depuração
         this.activeRays = new ArrayList<>();
@@ -38,10 +38,11 @@ public class RayCastUtils {
      * @param end    Posição final do raio.
      * @param action Ação a ser executada se houver colisão.
      */
-    public void castRay(Vector2 start, Vector2 end, Consumer<RayCastData> action) {
+    public void castRay(Vector2 start, Vector2 end,boolean includeSensors,  Consumer<RayCastData> action) {
         if (world == null || action == null) return;
 
         world.rayCast((fixture, point, normal, fraction) -> {
+            if (!includeSensors && fixture.isSensor()) return -1; // ignora sensores se configurado
             action.accept(new RayCastData(fixture, point, normal, fraction));
             return 0; // Para o RayCast na primeira colisão encontrada
         }, start, end);
@@ -51,6 +52,33 @@ public class RayCastUtils {
         activeRays.add(new Ray<>(start.cpy(), end.cpy())); // Guarda o raio para debug
 
     }
+
+    /**
+     * Executa um RayCast que detecta apenas sensores.
+     * Ignora todas as fixtures que não são sensores e continua até encontrar uma.
+     *
+     * @param start  Posição inicial do raio.
+     * @param end    Posição final do raio.
+     * @param action Ação a ser executada se encontrar um sensor.
+     */
+    public void castRaySensorsOnly(Vector2 start, Vector2 end, Consumer<RayCastData> action) {
+        if (world == null || action == null) return;
+
+        final RayCastData[] sensorHit = {null};
+
+        world.rayCast((fixture, point, normal, fraction) -> {
+            if (!fixture.isSensor()) return 1; // ignora não sensores e continua
+            if (sensorHit[0] == null || fraction < sensorHit[0].fraction()) {
+                sensorHit[0] = new RayCastData(fixture, point, normal, fraction);
+            }
+            return fraction; // continua procurando o mais próximo
+        }, start, end);
+
+        if (sensorHit[0] != null) action.accept(sensorHit[0]);
+
+        activeRays.add(new Ray<>(start.cpy(), end.cpy()));
+    }
+
 
     public void addRay(Vector2 start, Vector2 end) {
         activeRays.add(new Ray<>(start, end)); // Adiciona o raio à lista

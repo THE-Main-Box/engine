@@ -11,7 +11,7 @@ import official.sketchBook.engine.gameObject_related.base_model.Entity;
 import official.sketchBook.engine.components_related.collisionBehaviorComponents.IEnterCollisionBehavior;
 import official.sketchBook.engine.components_related.collisionBehaviorComponents.IExitCollisionBehavior;
 import official.sketchBook.engine.projectileRelated.model.Projectile;
-import official.sketchBook.engine.util_related.utils.RayCastUtils;
+import official.sketchBook.engine.util_related.utils.RayCastHelper;
 import official.sketchBook.engine.util_related.utils.collision.CollisionDataBuffer;
 
 
@@ -70,7 +70,7 @@ public class ProjectileControllerComponent implements Component {
     private final Array<IExitCollisionBehavior> exitCollisionProjBehaviors = new Array<>(false, 2);
 
 
-    private RayCastUtils rayCastUtils;
+    private RayCastHelper rayCastHelper;
 
     public ProjectileControllerComponent(Projectile projectile) {
         this.projectile = projectile;
@@ -79,7 +79,7 @@ public class ProjectileControllerComponent implements Component {
         lastContactEndData = new CollisionDataBuffer();
         lastContactBeginData = new CollisionDataBuffer();
 
-        rayCastUtils = new RayCastUtils(projectile.getWorld());
+        rayCastHelper = new RayCastHelper(projectile.getWorld());
 
     }
 
@@ -385,7 +385,7 @@ public class ProjectileControllerComponent implements Component {
         this.stuckToWall = stuckToWall;
     }
 
-    public RayCastUtils getRayCastHelper() {
-        return rayCastUtils;
+    public RayCastHelper getRayCastHelper() {
+        return rayCastHelper;
     }
 }

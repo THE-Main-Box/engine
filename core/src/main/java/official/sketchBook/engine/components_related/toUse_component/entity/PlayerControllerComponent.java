@@ -5,6 +5,7 @@ import official.sketchBook.engine.components_related.base_component.KeyBindedCon
 import official.sketchBook.engine.gameObject_related.base_model.PhysicalGameObject;
 import official.sketchBook.engine.util_related.enumerators.directions.Direction;
 import official.sketchBook.engine.weapon_related.base_model.BaseWeapon;
+import official.sketchBook.engine.weapon_related.base_model.RangeWeapon;
 import official.sketchBook.game.entities.Player;
 
 import static official.sketchBook.game.util_related.info.values.ControlKeys.*;
@@ -20,7 +21,7 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
     private boolean rightPressed = false;
     private Direction lastDirectionPressed = Direction.STILL;
 
-    public boolean fullAuto = true;
+    public boolean fullAuto = false;
 
     private boolean shootPressed = false;
 
@@ -109,7 +110,7 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
         updateMovement();
         updateHorizontalMovementValues();
 
-        if(fullAuto && shootPressed){
+        if (fullAuto && shootPressed) {
             shoot();
         }
 
@@ -162,6 +163,7 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
     }
 
     private void movePlayer(Direction direction) {
+
         switch (direction) {
             case LEFT:
                 player.setxAxisInverted(true);
@@ -182,7 +184,6 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
 
         boolean accelerating = xAccel != 0;
         boolean changedAccel = moveC.getxAccel() != xAccel;
-
         // Só atualiza se houver mudança real
         if (moveC.isAcceleratingX() != accelerating || changedAccel) {
             moveC.setAcceleratingX(accelerating);

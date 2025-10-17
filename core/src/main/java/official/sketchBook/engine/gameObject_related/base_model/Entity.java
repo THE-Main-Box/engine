@@ -1,18 +1,18 @@
 package official.sketchBook.engine.gameObject_related.base_model;
 
 import com.badlogic.gdx.physics.box2d.World;
-import official.sketchBook.engine.util_related.utils.RayCastUtils;
+import official.sketchBook.engine.util_related.utils.RayCastHelper;
 
 
 public abstract class Entity extends MovablePhysicalGameObject {
 
     protected boolean onGround;
-    protected RayCastUtils rayCastUtils;
+    protected RayCastHelper rayCastHelper;
 
     public Entity(float x, float y, float width, float height, boolean xAxisInverted, boolean yAxisInverted, World world) {
         super(x, y, width, height, xAxisInverted, yAxisInverted, world);
 
-        this.rayCastUtils = new RayCastUtils(world);
+        this.rayCastHelper = new RayCastHelper(world);
     }
 
     @Override
@@ -23,13 +23,13 @@ public abstract class Entity extends MovablePhysicalGameObject {
     @Override
     public void dispose() {
         super.dispose();
-        if (rayCastUtils != null) {
-            rayCastUtils.dispose();
+        if (rayCastHelper != null) {
+            rayCastHelper.dispose();
         }
     }
 
-    public RayCastUtils getRayCastHelper() {
-        return rayCastUtils;
+    public RayCastHelper getRayCastHelper() {
+        return rayCastHelper;
     }
 
     public boolean isOnGround() {

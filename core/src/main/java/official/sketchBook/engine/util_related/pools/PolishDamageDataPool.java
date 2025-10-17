@@ -4,11 +4,17 @@ import official.sketchBook.engine.components_related.integration_interfaces.Dama
 import official.sketchBook.engine.components_related.integration_interfaces.DamageReceiverII;
 import official.sketchBook.engine.components_related.toUse_component.util.TimerComponent;
 import official.sketchBook.engine.custom_utils_related.CustomPool;
+import official.sketchBook.engine.room_related.model.PlayableRoom;
 import official.sketchBook.engine.util_related.utils.data_to_instance_related.damage_related.PolishDamageData;
 import official.sketchBook.engine.util_related.utils.data_to_instance_related.damage_related.RawDamageData;
 
 public class PolishDamageDataPool extends CustomPool<PolishDamageData> {
+    private final PlayableRoom ownerRoom;
     private final TimerComponent cleanUpTimer = new TimerComponent(1f);
+
+    public PolishDamageDataPool(PlayableRoom ownerRoom) {
+        this.ownerRoom = ownerRoom;
+    }
 
     @Override
     protected PolishDamageData newObject() {
@@ -29,7 +35,7 @@ public class PolishDamageDataPool extends CustomPool<PolishDamageData> {
         cleanUpTimer.update(delta);
     }
 
-    private void cleanPool(){
+    public void cleanPool(){
         this.clear();
     }
 
@@ -64,6 +70,7 @@ public class PolishDamageDataPool extends CustomPool<PolishDamageData> {
         toInit.init(x, y, rdd, dealer);
     }
 
-
-
+    public PlayableRoom getOwnerRoom() {
+        return ownerRoom;
+    }
 }

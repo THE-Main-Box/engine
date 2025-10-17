@@ -5,7 +5,7 @@ import official.sketchBook.engine.components_related.integration_interfaces.Move
 import official.sketchBook.engine.util_related.enumerators.directions.Direction;
 import official.sketchBook.engine.util_related.utils.general.ContactActions;
 
-import static official.sketchBook.engine.util_related.utils.general.HelpMethods.getTag;
+import static official.sketchBook.engine.util_related.utils.general.HelpMethods.getFromBodyTag;
 
 public class MovableObjectContactListener implements ContactListener {
     private Direction tmpDir;
@@ -57,8 +57,8 @@ public class MovableObjectContactListener implements ContactListener {
         if (fa == null || fb == null) return null;
 
         // usa helper getTag, que você já tem (retorna GameObjectTag)
-        var tagA = getTag(fa);
-        var tagB = getTag(fb);
+        var tagA = getFromBodyTag(fa);
+        var tagB = getFromBodyTag(fb);
 
         if (tagA != null && tagA.owner() instanceof MovementCapableII) return (MovementCapableII) tagA.owner();
         if (tagB != null && tagB.owner() instanceof MovementCapableII) return (MovementCapableII) tagB.owner();

@@ -2,9 +2,13 @@ package official.sketchBook.engine.components_related.toUse_component.object;
 
 import com.badlogic.gdx.utils.Array;
 import official.sketchBook.engine.components_related.base_component.Component;
+import official.sketchBook.engine.components_related.integration_interfaces.DamageDealerII;
 import official.sketchBook.engine.components_related.integration_interfaces.DamageReceiverII;
 import official.sketchBook.engine.components_related.toUse_component.util.TimerComponent;
+import official.sketchBook.engine.util_related.pools.PolishDamageDataPool;
 import official.sketchBook.engine.util_related.utils.data_to_instance_related.damage_related.PolishDamageData;
+import official.sketchBook.engine.util_related.utils.data_to_instance_related.damage_related.RawDamageData;
+import official.sketchBook.engine.util_related.utils.registers.PolishDamageDataPoolRegister;
 
 
 public class DamageReceiveComponent implements Component {
@@ -34,6 +38,42 @@ public class DamageReceiveComponent implements Component {
     /// Chama os métodos responsáveis pelo comportamento do dano
     public void damage(PolishDamageData data) {
         if (data == null || data.getDamageData() == null) return;
+
+        // Aplicamos o dano primeiro
+        this.applyDamage(data);
+
+        // Verificamos se o receptor continua vivo
+        boolean alive = isAlive();
+
+        // Gerenciamos a morte se necessário
+        this.manageDeath();
+
+        // Se ainda estiver vivo, aplicamos invencibilidade e knockBack
+        if (alive) {
+            this.applyInvincibility(data);
+            this.applyKnockBack(data);
+        }
+
+        if(!data.isReset()){
+            data.endUse();
+        }
+    }
+
+    public void damage(RawDamageData rawData, DamageDealerII dealer) {
+        if (rawData == null) return;
+
+        PolishDamageDataPool pool = PolishDamageDataPoolRegister.getPool(
+            this.owner.getOwnerRoom()
+        );
+
+        PolishDamageData data = pool.obtain();
+
+        pool.initPDD(
+            this.owner,
+            dealer,
+            rawData,
+            data
+        );
 
         // Aplicamos o dano primeiro
         this.applyDamage(data);

@@ -82,6 +82,10 @@ public class WeaponWieldComponent implements Component {
         return null;
     }
 
+    public BaseWeapon<?> getBaseWeapon() {
+        return weapon;
+    }
+
     public void dispose() {
         if (weapon != null) {
             weapon.dispose();

@@ -6,7 +6,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import official.sketchBook.engine.util_related.enumerators.type.ObjectType;
 import official.sketchBook.engine.util_related.utils.general.GameObjectTag;
 
-import static official.sketchBook.engine.util_related.utils.general.HelpMethods.getTag;
+import static official.sketchBook.engine.util_related.utils.general.HelpMethods.getFromBodyTag;
 import static official.sketchBook.game.util_related.info.values.constants.GameConstants.Physics.PPM;
 
 public interface GroundInteractableII extends RayCasterII {
@@ -88,8 +88,8 @@ public interface GroundInteractableII extends RayCasterII {
 
         hitBuffer[0] = false;
 
-        getRayCastHelper().castRay(rayStart, rayEnd, data -> {
-            GameObjectTag tag = getTag(data.fixture());
+        getRayCastHelper().castRay(rayStart, rayEnd, false, data -> {
+            GameObjectTag tag = getFromBodyTag(data.fixture());
             if (tag != null && tag.type() == ObjectType.ENVIRONMENT) {
                 hitBuffer[0] = true;
             }

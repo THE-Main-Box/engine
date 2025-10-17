@@ -137,7 +137,7 @@ public class Dummy extends Enemy implements DamageReceiverII {
     @Override
     public void createHutBox() {
         float sensorWidth = width * 0.8f;    // Ajuste conforme necessário
-        float sensorHeight = height * 0.9f;
+        float sensorHeight = height *0.9f;
 
         PolygonShape sensorShape = BodyCreatorHelper.createBoxShape(
                 sensorWidth,

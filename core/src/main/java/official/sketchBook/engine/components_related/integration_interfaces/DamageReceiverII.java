@@ -2,6 +2,7 @@ package official.sketchBook.engine.components_related.integration_interfaces;
 
 import com.badlogic.gdx.physics.box2d.Body;
 import official.sketchBook.engine.components_related.toUse_component.object.DamageReceiveComponent;
+import official.sketchBook.engine.room_related.model.PlayableRoom;
 
 public interface DamageReceiverII {
 
@@ -20,5 +21,7 @@ public interface DamageReceiverII {
 
     short getHBMaskBit();
     short getHBCategoryBit();
+
+    PlayableRoom getOwnerRoom();
 
 }

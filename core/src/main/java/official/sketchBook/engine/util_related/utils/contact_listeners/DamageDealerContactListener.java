@@ -3,14 +3,13 @@ package official.sketchBook.engine.util_related.utils.contact_listeners;
 import com.badlogic.gdx.physics.box2d.*;
 import official.sketchBook.engine.components_related.integration_interfaces.DamageDealerII;
 import official.sketchBook.engine.components_related.integration_interfaces.DamageReceiverII;
-import official.sketchBook.engine.components_related.integration_interfaces.MovementCapableII;
 import official.sketchBook.engine.util_related.pools.PolishDamageDataPool;
 import official.sketchBook.engine.util_related.utils.data_to_instance_related.damage_related.PolishDamageData;
+import official.sketchBook.game.gameState_related.models.Playing;
 
-import static official.sketchBook.engine.util_related.utils.general.HelpMethods.getTag;
+import static official.sketchBook.engine.util_related.utils.general.HelpMethods.getFromBodyTag;
 
 public class DamageDealerContactListener implements ContactListener {
-    public static final PolishDamageDataPool pool = new PolishDamageDataPool();
 
     @Override
     public void beginContact(Contact contact) {
@@ -39,6 +38,7 @@ public class DamageDealerContactListener implements ContactListener {
         DamageReceiverII receiver = detectDamageReceiver(contact);
         if (receiver == null) return; //se não houver um receptor pro dano, ignoramos
 
+        PolishDamageDataPool pool = Playing.objectManager.getCurrentRoom().getPolishDamagePool();
         PolishDamageData data = pool.obtain();
 
 
@@ -66,8 +66,8 @@ public class DamageDealerContactListener implements ContactListener {
         if (fa == null || fb == null) return null;
 
         // usa helper getTag, que você já tem (retorna GameObjectTag)
-        var tagA = getTag(fa);
-        var tagB = getTag(fb);
+        var tagA = getFromBodyTag(fa);
+        var tagB = getFromBodyTag(fb);
 
         if (tagA != null && tagA.owner() instanceof DamageDealerII) return (DamageDealerII) tagA.owner();
         if (tagB != null && tagB.owner() instanceof DamageDealerII) return (DamageDealerII) tagB.owner();
@@ -83,8 +83,8 @@ public class DamageDealerContactListener implements ContactListener {
         if (fa == null || fb == null) return null;
 
         // usa helper getTag, que você já tem (retorna GameObjectTag)
-        var tagA = getTag(fa);
-        var tagB = getTag(fb);
+        var tagA = getFromBodyTag(fa);
+        var tagB = getFromBodyTag(fb);
 
         if (tagA != null && tagA.owner() instanceof DamageReceiverII) return (DamageReceiverII) tagA.owner();
         if (tagB != null && tagB.owner() instanceof DamageReceiverII) return (DamageReceiverII) tagB.owner();

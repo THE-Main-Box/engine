@@ -8,7 +8,7 @@ import official.sketchBook.engine.util_related.utils.general.GameObjectTag;
 import official.sketchBook.engine.util_related.utils.registers.ProjectileCollisionRegister;
 
 import static official.sketchBook.engine.util_related.utils.CollisionUtils.*;
-import static official.sketchBook.engine.util_related.utils.general.HelpMethods.getTag;
+import static official.sketchBook.engine.util_related.utils.general.HelpMethods.getFromBodyTag;
 
 public class ProjectileContactListener implements ContactListener {
 
@@ -26,8 +26,8 @@ public class ProjectileContactListener implements ContactListener {
         Fixture a = contact.getFixtureA();
         Fixture b = contact.getFixtureB();
 
-        GameObjectTag tagA = getTag(a);
-        GameObjectTag tagB = getTag(b);
+        GameObjectTag tagA = getFromBodyTag(a);
+        GameObjectTag tagB = getFromBodyTag(b);
 
         if (tagA == null || tagB == null) return;
 

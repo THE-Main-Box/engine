@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import official.sketchBook.engine.animation_related.ObjectAnimationPlayer;
 import official.sketchBook.engine.animation_related.SpriteSheetDataHandler;
 import official.sketchBook.engine.components_related.integration_interfaces.RangeWeaponWielderII;
-import official.sketchBook.engine.gameObject_related.base_model.RangeWeaponWieldingEntity;
+import official.sketchBook.engine.util_related.utils.RayCastHelper;
 import official.sketchBook.engine.util_related.utils.data_to_instance_related.point.AnchorPoint;
 
 public abstract class BaseWeapon<T extends BaseWeapon<T>> {
@@ -17,26 +17,31 @@ public abstract class BaseWeapon<T extends BaseWeapon<T>> {
     /// Descrição da arma
     protected String description;
 
-    //TODO:Alterar o objeto dono de arma
     /// Dono da arma
     protected RangeWeaponWielderII owner;
 
     /// Gerenciador de dados da sprite-sheet
     protected SpriteSheetDataHandler spriteDataHandler;
+
     /// Gerenciador de animações
     protected ObjectAnimationPlayer aniPlayer;
 
     /// Posições da arma
     protected float x, y;
+
     /// Offset da posição a ser aplicada na renderização
     protected float xDrawOffset, yDrawOffset;
 
+    /// Valor que contém o offset que deve ser aplicado na posição da arma relativamente à posição do dono
     protected AnchorPoint point;
+
+    protected RayCastHelper rayCastHelper;
 
     public BaseWeapon(Class<T> weaponClass, RangeWeaponWielderII owner, AnchorPoint point) {
         this.weaponClass = weaponClass;
         this.owner = owner;
         this.point = point;
+        this.rayCastHelper = owner.getRayCastHelper();
         updatePosValues();
     }
 
@@ -46,10 +51,11 @@ public abstract class BaseWeapon<T extends BaseWeapon<T>> {
     /// Habilidade secundária
     public abstract void secondaryUse();
 
-    protected void updateRenderVariables(){
+    protected void updateRenderVariables() {
         updatePosValues();
         updateAnimations();
     }
+
     private void updatePosValues() {
         this.x = point.getX();
         this.y = point.getY();
@@ -85,7 +91,7 @@ public abstract class BaseWeapon<T extends BaseWeapon<T>> {
         }
     }
 
-    protected final void setRelativeOffset(float xOff, float yOff){
+    protected final void setRelativeOffset(float xOff, float yOff) {
         this.xDrawOffset = (spriteDataHandler.getCanvasWidth() / 2f) + xOff;
         this.yDrawOffset = (spriteDataHandler.getCanvasHeight() / 2f) + yOff;
     }
@@ -123,6 +129,10 @@ public abstract class BaseWeapon<T extends BaseWeapon<T>> {
 
     public String getDescription() {
         return description;
+    }
+
+    public RayCastHelper getRayCastHelper() {
+        return rayCastHelper;
     }
 
     public void dispose() {

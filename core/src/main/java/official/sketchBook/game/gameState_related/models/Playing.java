@@ -34,7 +34,7 @@ public class Playing extends State implements StateMethods {
     public static MultiContactListener multiContactListener = new MultiContactListener();
 
     public World world;
-    public GameObjectManagerBase objectManager;
+    public static GameObjectManagerBase objectManager;
 
     public Player player;
 
@@ -62,7 +62,6 @@ public class Playing extends State implements StateMethods {
     public void update(float delta) {
 
         objectManager.updateObjects(delta);
-        DamageDealerContactListener.pool.update(delta);
 
         if (world != null) {
             world.step(

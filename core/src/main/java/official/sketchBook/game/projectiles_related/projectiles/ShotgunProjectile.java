@@ -8,13 +8,14 @@ import official.sketchBook.engine.projectileRelated.model.Projectile;
 import official.sketchBook.engine.util_related.utils.data_to_instance_related.damage_related.RawDamageData;
 
 public class ShotgunProjectile extends Projectile implements DamageDealerII {
-    public static final RawDamageData data;
+    private static final RawDamageData dmgData;
 
     static {
-        data = new RawDamageData(
+        dmgData = new RawDamageData(
             1,
             0,
             0,
+            1,
             1,
             true
         );
@@ -80,7 +81,7 @@ public class ShotgunProjectile extends Projectile implements DamageDealerII {
 
     @Override
     public RawDamageData getDamageData() {
-        return data;
+        return dmgData;
     }
 
     @Override

@@ -9,15 +9,25 @@ public class RawDamageData {
     private float invincibilityTime;
     /// Velocidade com a qual o objeto será jogado ao haver knockBack
     private float knockBack;
+    /// Multiplicador de knockBack
+    private float knockBackMulti;
     /// Se devemos aplicar o knockBack
     private boolean applyKnockBack;
 
-    public RawDamageData(double amount, float amountMod, float invincibilityTime, float knockBack, boolean applyKnockBack) {
+    public RawDamageData(
+        double amount,
+        float amountMod,
+        float invincibilityTime,
+        float knockBack,
+        float knockBackMulti,
+        boolean applyKnockBack
+    ) {
         this.amount = amount;
         this.amountMod = amountMod;
         this.invincibilityTime = invincibilityTime;
         this.knockBack = knockBack;
         this.applyKnockBack = applyKnockBack;
+        this.knockBackMulti = knockBackMulti;
     }
 
     public void setAmount(double amount) {
@@ -58,5 +68,13 @@ public class RawDamageData {
 
     public boolean isApplyKnockBack() {
         return applyKnockBack;
+    }
+
+    public float getKnockBackMulti() {
+        return knockBackMulti;
+    }
+
+    public void setKnockBackMulti(float knockBackMulti) {
+        this.knockBackMulti = knockBackMulti;
     }
 }

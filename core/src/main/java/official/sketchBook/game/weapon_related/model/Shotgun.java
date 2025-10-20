@@ -40,6 +40,19 @@ public class Shotgun extends RangeWeapon<Shotgun> implements DamageDealerII {
 
     private boolean weaponBlocked;
 
+    private final static RawDamageData dmgData;
+
+    static {
+        dmgData = new RawDamageData(
+            1,
+            1,
+            1,
+            1,
+            1,
+            false
+        );
+    }
+
     public Shotgun(RangeWeaponWieldingEntity owner, AnchorPoint point) {
         super(Shotgun.class, owner, point);
         updateProjectileIndex(1);
@@ -174,9 +187,16 @@ public class Shotgun extends RangeWeapon<Shotgun> implements DamageDealerII {
                 weaponBlocked = true;
                 GameObjectTag tag = getFromFixtureTag(data.fixture());
                 if (tag != null && tag.owner() instanceof DamageReceiverII receiver
-                    && tag.type() == ObjectType.HURTBOX) {
-                    receiver.getDamageReceiveC().damage(ShotgunProjectile.data, this);
+                    && tag.type() == ObjectType.HURTBOX
+                ) {
+                    receiver.getDamageReceiveC()
+                        .damage(
+                            dmgData,
+                            this
+                        );
+
                     applyRecoilOnShoot();
+
                 }
             }
         });
@@ -269,7 +289,7 @@ public class Shotgun extends RangeWeapon<Shotgun> implements DamageDealerII {
 
     @Override
     public RawDamageData getDamageData() {
-        return ShotgunProjectile.data;
+        return dmgData;
     }
 
     @Override

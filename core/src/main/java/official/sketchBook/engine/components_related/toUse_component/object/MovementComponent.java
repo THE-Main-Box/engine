@@ -16,6 +16,8 @@ public class MovementComponent implements Component {
 
     private boolean movingX = false;
 
+    private boolean canApplyMovement = true;
+
     public MovementComponent(float weight) {
         this.weight = weight;
     }
@@ -151,5 +153,13 @@ public class MovementComponent implements Component {
 
     public void setySpeed(float ySpeed) {
         this.ySpeed = ySpeed;
+    }
+
+    public boolean isCanApplyMovement() {
+        return canApplyMovement;
+    }
+
+    public void setCanApplyMovement(boolean canApplyMovement) {
+        this.canApplyMovement = canApplyMovement;
     }
 }

@@ -54,7 +54,7 @@ public class DamageReceiveComponent implements Component {
             this.applyKnockBack(data);
         }
 
-        if(!data.isReset()){
+        if (!data.isReset()) {
             data.endUse();
         }
     }
@@ -90,7 +90,7 @@ public class DamageReceiveComponent implements Component {
             this.applyKnockBack(data);
         }
 
-        if(!data.isReset()){
+        if (!data.isReset()) {
             data.endUse();
         }
     }
@@ -101,7 +101,7 @@ public class DamageReceiveComponent implements Component {
         double dmg = data.getDamageData().getAmount();
         float dmgMod = data.getDamageData().getAmountMod();
 
-        health -= dmg * (dmgMod > 0 ? dmgMod : 1);
+        health -= dmg * dmgMod;
 
         owner.onDamage();
     }
@@ -115,14 +115,15 @@ public class DamageReceiveComponent implements Component {
         if (!data.getDamageData().isApplyKnockBack()) return;
 
         float kb = data.getDamageData().getKnockBack();
+        float kbM = data.getDamageData().getKnockBackMulti();
         owner.getBody().setLinearVelocity(
-            kb * data.getDmgDirX(),
-            kb * data.getDmgDirY()
+            ((kb * kbM) * data.getDmgDirX()),
+            ((kb * kbM) * data.getDmgDirY())
         );
     }
 
-    private void manageDeath(){
-        if(isAlive()) return;
+    private void manageDeath() {
+        if (isAlive()) return;
 
         owner.onDeath();
     }

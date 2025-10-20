@@ -15,6 +15,7 @@ import official.sketchBook.engine.components_related.toUse_component.entity.Play
 import official.sketchBook.engine.components_related.toUse_component.object.JumpComponent;
 import official.sketchBook.engine.gameObject_related.base_model.RangeWeaponWieldingEntity;
 import official.sketchBook.engine.projectileRelated.emitters.Emitter;
+import official.sketchBook.engine.weapon_related.base_model.RangeWeapon;
 import official.sketchBook.game.util_related.enumerators.types.FactionTypes;
 import official.sketchBook.engine.util_related.enumerators.type.ObjectType;
 import official.sketchBook.engine.util_related.utils.body.BodyCreatorHelper;
@@ -172,6 +173,7 @@ public class Player extends RangeWeaponWieldingEntity implements JumpCapableII, 
         super.update(deltaTime);
 
         updateAnimationPlayer(deltaTime);
+
     }
 
     @Override

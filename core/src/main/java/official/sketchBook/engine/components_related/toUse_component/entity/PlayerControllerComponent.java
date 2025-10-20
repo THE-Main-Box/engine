@@ -107,6 +107,7 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
     public void update(float delta) {
         super.update(delta);
 
+        updateCanAccelerateFlag();
         updateMovement();
         updateHorizontalMovementValues();
 
@@ -134,6 +135,15 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
         }
     }
 
+    private void updateCanAccelerateFlag(){
+//         final var moveC = player.getMoveC();
+//
+//        if (player.getWeaponWC().getBaseWeapon() instanceof RangeWeapon<?> rW) {
+//            boolean shooting = rW.getShootStateManager().isShooting();
+//            // enquanto estiver atirando, impedimos aceleração manual
+//            moveC.setCanAccelerateX(!shooting);
+//        }
+    }
 
     private void updateMovement() {
         if (leftPressed && !rightPressed) {
@@ -181,6 +191,11 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
 
     private void updateMovementComponent(float xAccel) {
         var moveC = player.getMoveC();
+
+        if(!moveC.isCanAccelerateX()){
+            moveC.setSpeed(0,0);
+            return;
+        }
 
         boolean accelerating = xAccel != 0;
         boolean changedAccel = moveC.getxAccel() != xAccel;

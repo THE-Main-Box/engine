@@ -217,12 +217,7 @@ public class Shotgun extends RangeWeapon<Shotgun> implements DamageDealerII {
                     ? 1.5f // se a arma estiver bloqueada
                     : 1f // se não estiver
             )
-            :
-            (// se não pudermos executar o pogo
-                weaponBlocked
-                    ? 3.5f // se a arma estiver bloqueada
-                    : 1.5f
-            );
+            :0; //se estivermos no chão e sem mirar pra baixo, não tem necesidade de aplicar um recuo
 
         weaponStatus.recoilForceMultiplier = multiplier;
 

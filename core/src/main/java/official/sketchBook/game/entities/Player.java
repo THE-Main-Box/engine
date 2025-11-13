@@ -45,6 +45,9 @@ public class Player extends RangeWeaponWieldingEntity implements JumpCapableII, 
 
 
         this.faction = FactionTypes.ALLY;
+
+        this.moveC.setCanAccelerateX(true);
+        this.moveC.setCanAccelerateY(false);
     }
 
     public void updateRayCast() {
@@ -180,6 +183,7 @@ public class Player extends RangeWeaponWieldingEntity implements JumpCapableII, 
     public void render(SpriteBatch batch) {
         this.weaponWC.render(batch);
         super.render(batch);
+
     }
 
     //verifica se dá para pular

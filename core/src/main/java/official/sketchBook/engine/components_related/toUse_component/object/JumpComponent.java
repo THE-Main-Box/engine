@@ -24,6 +24,9 @@ public class JumpComponent implements Component {
     /// Objeto que pode saltar
     private final JumpCapableII jumpableObject;
 
+    /// Componente de movimentação existente
+    private final MovementComponent moveC;
+
     /// Buffer para dizer se estávamos no chão no último frame
     private boolean prevOnGround;
     /// Buffer para dizer se aterrissamos no chão neste frame
@@ -61,6 +64,9 @@ public class JumpComponent implements Component {
         boolean superJump
     ) {
         this.jumpableObject = JumpableObject;
+        this.moveC = jumpableObject.getMoveC();
+
+
         this.coyoteTimer = new TimerComponent(coyoteTimeTarget);
         this.landBuffer = new TimerComponent(landBufferTime);
         this.jumpBufferTimer = new TimerComponent(jumpBufferTime);
@@ -167,9 +173,9 @@ public class JumpComponent implements Component {
 
     }
 
-    //pula ou cancela um pulo
+    /// Pula ou cancela um pulo
     private void executeJump(boolean cancel) {
-        if (!cancel) {
+        if (!cancel && moveC.isCanAccelerateY()) {
             if (jumpableObject.canJump()) {
 
                 //zera a velocidade vertical caso ela seja negativa antes de pular para evitar um pulo fraco

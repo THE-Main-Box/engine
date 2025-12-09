@@ -1,9 +1,10 @@
 package official.sketchBook.game.projectiles_related.projectiles;
 
 import com.badlogic.gdx.physics.box2d.World;
-import official.sketchBook.engine.components_related.integration_interfaces.DamageDealerII;
-import official.sketchBook.engine.components_related.integration_interfaces.DamageDealerOwnerII;
+import official.sketchBook.engine.components_related.integration_interfaces.dmg.DamageDealerII;
+import official.sketchBook.engine.components_related.integration_interfaces.dmg.DamageDealerOwnerII;
 import official.sketchBook.engine.components_related.integration_interfaces.RangeWeaponWielderII;
+import official.sketchBook.engine.components_related.integration_interfaces.dmg.DamageReceiverII;
 import official.sketchBook.engine.projectileRelated.model.Projectile;
 import official.sketchBook.engine.util_related.utils.data_to_instance_related.damage_related.RawDamageData;
 
@@ -13,7 +14,7 @@ public class ShotgunProjectile extends Projectile implements DamageDealerII {
     static {
         dmgData = new RawDamageData(
             1,
-            0,
+            1,
             0,
             1,
             1,
@@ -77,6 +78,16 @@ public class ShotgunProjectile extends Projectile implements DamageDealerII {
     @Override
     public DamageDealerOwnerII getOwner() {
         return owner;
+    }
+
+    @Override
+    public void onElimination(DamageReceiverII receiver) {
+
+    }
+
+    @Override
+    public void onDamage(DamageReceiverII receiver) {
+
     }
 
     @Override

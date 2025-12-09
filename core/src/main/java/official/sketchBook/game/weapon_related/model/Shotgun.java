@@ -6,10 +6,12 @@ import com.badlogic.gdx.physics.box2d.Body;
 import official.sketchBook.engine.animation_related.ObjectAnimationPlayer;
 import official.sketchBook.engine.animation_related.Sprite;
 import official.sketchBook.engine.animation_related.SpriteSheetDataHandler;
-import official.sketchBook.engine.components_related.integration_interfaces.DamageDealerII;
-import official.sketchBook.engine.components_related.integration_interfaces.DamageDealerOwnerII;
-import official.sketchBook.engine.components_related.integration_interfaces.DamageReceiverII;
-import official.sketchBook.engine.components_related.integration_interfaces.GroundInteractableII;
+import official.sketchBook.engine.components_related.integration_interfaces.*;
+import official.sketchBook.engine.components_related.integration_interfaces.dmg.DamageDealerII;
+import official.sketchBook.engine.components_related.integration_interfaces.dmg.DamageDealerOwnerII;
+import official.sketchBook.engine.components_related.integration_interfaces.dmg.DamageReceiverII;
+import official.sketchBook.engine.components_related.integration_interfaces.move.GroundInteractableII;
+import official.sketchBook.engine.components_related.toUse_component.object.LevelingComponent;
 import official.sketchBook.engine.gameObject_related.base_model.RangeWeaponWieldingEntity;
 import official.sketchBook.engine.projectileRelated.model.Projectile;
 import official.sketchBook.engine.util_related.enumerators.directions.Direction;
@@ -31,7 +33,7 @@ import static official.sketchBook.game.util_related.info.values.AnimationTitles.
 import static official.sketchBook.game.util_related.info.values.constants.GameConstants.Physics.PPM;
 import static official.sketchBook.game.util_related.info.values.constants.RangeWeaponsStatusConstants.Shotgun.*;
 
-public class Shotgun extends RangeWeapon<Shotgun> implements DamageDealerII {
+public class Shotgun extends RangeWeapon<Shotgun> implements DamageDealerII, LevelComponentHolderII {
 
     private static final float SLUG_SPEED = 400 / PPM;
 
@@ -42,20 +44,24 @@ public class Shotgun extends RangeWeapon<Shotgun> implements DamageDealerII {
 
     private final static RawDamageData dmgData;
 
+    private final LevelingComponent lvlC;
+
     static {
         dmgData = new RawDamageData(
             1,
             1,
             1,
             1,
-            1,
-            false
+            1.5f,
+            true
         );
     }
 
     public Shotgun(RangeWeaponWieldingEntity owner, AnchorPoint point) {
         super(Shotgun.class, owner, point);
         updateProjectileIndex(1);
+
+        lvlC = new LevelingComponent(this);
     }
 
     @Override
@@ -97,6 +103,24 @@ public class Shotgun extends RangeWeapon<Shotgun> implements DamageDealerII {
 
     @Override
     protected void onRechargeEnd() {
+    }
+
+    @Override
+    public void onLevelUp(LevelingComponent lvlC) {
+
+    }
+
+    @Override
+    public void onLevelDown(LevelingComponent lvlC) {
+
+    }
+
+    @Override
+    protected void dealEmptyAmmoOnShoot() {
+    }
+
+    @Override
+    public void secondaryUse() {
     }
 
     @Override
@@ -206,10 +230,6 @@ public class Shotgun extends RangeWeapon<Shotgun> implements DamageDealerII {
         }
     }
 
-    @Override
-    protected void dealEmptyAmmoOnShoot() {
-    }
-
     private void applyRecoilOnShoot() {
         float multiplier = canPogoShoot() ?
             (
@@ -229,10 +249,6 @@ public class Shotgun extends RangeWeapon<Shotgun> implements DamageDealerII {
         projectileSpeed = SLUG_SPEED;
         applyRecoilOnShoot();
         shoot(p);
-    }
-
-    @Override
-    public void secondaryUse() {
     }
 
     @Override
@@ -289,6 +305,16 @@ public class Shotgun extends RangeWeapon<Shotgun> implements DamageDealerII {
     }
 
     @Override
+    public void onElimination(DamageReceiverII receiver) {
+
+    }
+
+    @Override
+    public void onDamage(DamageReceiverII receiver) {
+
+    }
+
+    @Override
     public RawDamageData getDamageData() {
         return dmgData;
     }
@@ -296,5 +322,10 @@ public class Shotgun extends RangeWeapon<Shotgun> implements DamageDealerII {
     @Override
     public boolean isDamageAble() {
         return true;
+    }
+
+    @Override
+    public LevelingComponent getLvlC() {
+        return this.lvlC;
     }
 }

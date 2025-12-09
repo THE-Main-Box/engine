@@ -1,6 +1,6 @@
 package official.sketchBook.engine.test;
 
-import official.sketchBook.engine.components_related.integration_interfaces.LevelUpHolderII;
+import official.sketchBook.engine.components_related.integration_interfaces.LevelComponentHolderII;
 import official.sketchBook.engine.components_related.toUse_component.object.LevelingComponent;
 
 public class TestLevelingSystem {
@@ -8,7 +8,7 @@ public class TestLevelingSystem {
     public static void main(String[] args) {
 
 
-        LevelUpHolderII holder = new LevelUpHolderII() {
+        LevelComponentHolderII holder = new LevelComponentHolderII() {
             @Override
             public void onLevelUp(LevelingComponent lvlC) {
                 System.out.println("yay");

@@ -1,31 +1,24 @@
 package official.sketchBook.engine.components_related.toUse_component.object;
 
-import com.badlogic.gdx.utils.Array;
 import official.sketchBook.engine.components_related.base_component.Component;
-import official.sketchBook.engine.components_related.integration_interfaces.DamageDealerII;
-import official.sketchBook.engine.components_related.integration_interfaces.DamageReceiverII;
+import official.sketchBook.engine.components_related.integration_interfaces.dmg.DamageDealerII;
+import official.sketchBook.engine.components_related.integration_interfaces.dmg.DamageReceiverII;
 import official.sketchBook.engine.components_related.toUse_component.util.TimerComponent;
 import official.sketchBook.engine.util_related.pools.PolishDamageDataPool;
 import official.sketchBook.engine.util_related.utils.data_to_instance_related.damage_related.PolishDamageData;
 import official.sketchBook.engine.util_related.utils.data_to_instance_related.damage_related.RawDamageData;
 import official.sketchBook.engine.util_related.utils.registers.PolishDamageDataPoolRegister;
 
-
 public class DamageReceiveComponent implements Component {
 
-    /// Dono a quem receberá dano
     private final DamageReceiverII owner;
-    /// O quanto que ainda pode receber de dano
     private double health;
-    /// Flag para determinar se está invulnerável
     private boolean invincible;
-    /// Temporizador para garantir que a invencibilidade tenha fim
     private final TimerComponent invincibleTimer;
 
     public DamageReceiveComponent(DamageReceiverII owner, double health) {
         this.owner = owner;
         this.health = health;
-
         this.invincibleTimer = new TimerComponent();
     }
 
@@ -39,24 +32,10 @@ public class DamageReceiveComponent implements Component {
     public void damage(PolishDamageData data) {
         if (data == null || data.getDamageData() == null) return;
 
-        // Aplicamos o dano primeiro
-        this.applyDamage(data);
+        processDamage(data);
 
-        // Verificamos se o receptor continua vivo
-        boolean alive = isAlive();
-
-        // Gerenciamos a morte se necessário
-        this.manageDeath();
-
-        // Se ainda estiver vivo, aplicamos invencibilidade e knockBack
-        if (alive) {
-            this.applyInvincibility(data);
-            this.applyKnockBack(data);
-        }
-
-        if (!data.isReset()) {
-            data.endUse();
-        }
+        // Sempre liberar o objeto para o pool
+        data.endUse();
     }
 
     public void damage(RawDamageData rawData, DamageDealerII dealer) {
@@ -75,40 +54,51 @@ public class DamageReceiveComponent implements Component {
             data
         );
 
-        // Aplicamos o dano primeiro
-        this.applyDamage(data);
+        processDamage(data);
 
-        // Verificamos se o receptor continua vivo
-        boolean alive = isAlive();
+        // Sempre liberar o objeto para o pool
+        data.endUse();
+    }
 
-        // Gerenciamos a morte se necessário
-        this.manageDeath();
+    private void processDamage(PolishDamageData data) {
+        // Aplicar dano (ignorar invencibilidade aqui, pois morte ignora invencibilidade)
+        applyDamage(data);
 
-        // Se ainda estiver vivo, aplicamos invencibilidade e knockBack
-        if (alive) {
-            this.applyInvincibility(data);
-            this.applyKnockBack(data);
+        // Gerenciar morte (verifica se ficou com health <= 0)
+        DamageDealerII dealer = data.getDealer();
+        if (!isAlive()) {
+            manageDeath(dealer);
+            return; // Sair cedo se morreu
         }
 
-        if (!data.isReset()) {
-            data.endUse();
-        }
+        // Se sobreviveu, aplicar invencibilidade e knockback
+        applyInvincibility(data);
+        applyKnockBack(data);
     }
 
     private void applyDamage(PolishDamageData data) {
-        if (invincible || data.getDamageData().getAmount() <= 0 || health <= 0) return;
+        // Não aplicar dano se já está morto
+        if (!isAlive()) return;
+
+        // Não aplicar dano se o valor é inválido
+        if (data.getDamageData().getAmount() <= 0) return;
+
+        // Não aplicar dano se está invencível
+        if (invincible) return;
 
         double dmg = data.getDamageData().getAmount();
         float dmgMod = data.getDamageData().getAmountMod();
 
         health -= dmg * dmgMod;
 
-        owner.onDamage();
+        owner.onDamage(data.getDealer());
     }
 
     private void applyInvincibility(PolishDamageData data) {
-        if (data.getDamageData().getInvincibilityTime() <= 0) return;
-        initInvincibility(data.getDamageData().getInvincibilityTime());
+        float invTime = data.getDamageData().getInvincibilityTime();
+        if (invTime > 0) {
+            initInvincibility(invTime);
+        }
     }
 
     private void applyKnockBack(PolishDamageData data) {
@@ -116,45 +106,41 @@ public class DamageReceiveComponent implements Component {
 
         float kb = data.getDamageData().getKnockBack();
         float kbM = data.getDamageData().getKnockBackMulti();
+
         owner.getBody().setLinearVelocity(
-            ((kb * kbM) * data.getDmgDirX()),
-            ((kb * kbM) * data.getDmgDirY())
+            (kb * kbM) * data.getDmgDirX(),
+            (kb * kbM) * data.getDmgDirY()
         );
     }
 
-    private void manageDeath() {
-        if (isAlive()) return;
-
-        owner.onDeath();
+    private void manageDeath(DamageDealerII dealer) {
+        owner.onDeath(dealer);
     }
 
-    /// Lida com o gerenciamento da flag de invencibilidade, usando o temporizador como base
     private void manageInvincibilityTime() {
-        if (invincible) {//se invencível
-            //se não estiver rodando o temporizador
-            if (!invincibleTimer.isRunning()) {
-                invincibleTimer.reset();
-                invincibleTimer.start();
-            }
-            //se o temporizador estiver marcado como finalizado
-            if (invincibleTimer.isFinished()) {
+        if (!invincible) {
+            // Se não está invencível e o timer está rodando, parar
+            if (invincibleTimer.isRunning()) {
                 invincibleTimer.stop();
                 invincibleTimer.reset();
-                invincible = false;
-                invincibleTimer.setTargetTime(0);
             }
+            return;
+        }
 
-        } else if (invincibleTimer.isRunning()) {//se não estiver invencível e o temporizador ainda estiver rodando
+        // Está invencível
+        if (!invincibleTimer.isRunning()) {
+            invincibleTimer.reset();
+            invincibleTimer.start();
+        }
+
+        if (invincibleTimer.isFinished()) {
             invincibleTimer.stop();
             invincibleTimer.reset();
+            invincible = false;
+            invincibleTimer.setTargetTime(0);
         }
     }
 
-    /**
-     * Aplica a invencíbilidade
-     *
-     * @param time tempo que ela deve durar
-     */
     public void initInvincibility(float time) {
         this.invincible = true;
         this.invincibleTimer.setTargetTime(time);
@@ -179,6 +165,4 @@ public class DamageReceiveComponent implements Component {
     public boolean isInvincible() {
         return invincible;
     }
-
-
 }

@@ -3,7 +3,7 @@ package official.sketchBook.engine.util_related.utils.general;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.WorldManifold;
-import official.sketchBook.engine.components_related.integration_interfaces.MovementCapableII;
+import official.sketchBook.engine.components_related.integration_interfaces.move.MovementCapableII;
 import official.sketchBook.engine.util_related.enumerators.directions.Direction;
 
 public class ContactActions {

@@ -10,7 +10,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import official.sketchBook.engine.animation_related.ObjectAnimationPlayer;
 import official.sketchBook.engine.animation_related.Sprite;
 import official.sketchBook.engine.animation_related.SpriteSheetDataHandler;
-import official.sketchBook.engine.components_related.integration_interfaces.DamageReceiverII;
+import official.sketchBook.engine.components_related.integration_interfaces.dmg.DamageReceiverII;
 import official.sketchBook.engine.components_related.toUse_component.object.DamageReceiveComponent;
 import official.sketchBook.engine.gameObject_related.base_model.Enemy;
 import official.sketchBook.engine.util_related.enumerators.type.ObjectType;
@@ -38,7 +38,7 @@ public class Dummy extends Enemy implements DamageReceiverII {
     }
 
     private void initComponents() {
-        damageReceiveC = new DamageReceiveComponent(this, 100);
+        damageReceiveC = new DamageReceiveComponent(this, 101);
 
         this.components.add(damageReceiveC);
     }
@@ -166,18 +166,8 @@ public class Dummy extends Enemy implements DamageReceiverII {
     }
 
     @Override
-    public void onDeath() {
-
-    }
-
-    @Override
     public DamageReceiveComponent getDamageReceiveC() {
         return damageReceiveC;
-    }
-
-    @Override
-    public void onDamage() {
-
     }
 
     @Override

@@ -1,6 +1,6 @@
 package official.sketchBook.engine.util_related.utils.data_to_instance_related.damage_related;
 
-import official.sketchBook.engine.components_related.integration_interfaces.DamageDealerII;
+import official.sketchBook.engine.components_related.integration_interfaces.dmg.DamageDealerII;
 import official.sketchBook.engine.custom_utils_related.CustomPool;
 import official.sketchBook.engine.util_related.pools.PolishDamageDataPool;
 

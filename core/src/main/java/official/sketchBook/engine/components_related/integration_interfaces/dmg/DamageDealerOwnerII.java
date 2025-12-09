@@ -1,4 +1,6 @@
-package official.sketchBook.engine.components_related.integration_interfaces;
+package official.sketchBook.engine.components_related.integration_interfaces.dmg;
+
+import official.sketchBook.engine.components_related.integration_interfaces.physic.RayCasterII;
 
 /**
  * Interface que referencia aquele que irá receber o crédito pelo dano

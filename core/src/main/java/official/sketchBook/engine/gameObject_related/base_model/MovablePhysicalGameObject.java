@@ -2,7 +2,7 @@ package official.sketchBook.engine.gameObject_related.base_model;
 
 import com.badlogic.gdx.physics.box2d.World;
 import official.sketchBook.engine.animation_related.SpriteSheetDataHandler;
-import official.sketchBook.engine.components_related.integration_interfaces.MovementCapableII;
+import official.sketchBook.engine.components_related.integration_interfaces.move.MovementCapableII;
 import official.sketchBook.engine.components_related.toUse_component.object.MObjectPhysicsComponent;
 import official.sketchBook.engine.components_related.toUse_component.object.MovementComponent;
 import official.sketchBook.game.util_related.info.values.constants.SpeedRelatedConstants;

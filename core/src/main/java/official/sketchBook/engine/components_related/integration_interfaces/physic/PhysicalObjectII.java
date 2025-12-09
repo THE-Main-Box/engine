@@ -1,4 +1,4 @@
-package official.sketchBook.engine.components_related.integration_interfaces;
+package official.sketchBook.engine.components_related.integration_interfaces.physic;
 
 import com.badlogic.gdx.physics.box2d.Body;
 

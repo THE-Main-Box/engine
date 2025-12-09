@@ -2,7 +2,7 @@ package official.sketchBook.engine.components_related.base_component;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
-import official.sketchBook.engine.components_related.integration_interfaces.PhysicalObjectII;
+import official.sketchBook.engine.components_related.integration_interfaces.physic.PhysicalObjectII;
 
 import static official.sketchBook.game.util_related.info.values.constants.GameConstants.Physics.PPM;
 

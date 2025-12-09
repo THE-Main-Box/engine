@@ -1,7 +1,7 @@
 package official.sketchBook.engine.components_related.toUse_component.object;
 
 import official.sketchBook.engine.components_related.base_component.BasePhysicsComponent;
-import official.sketchBook.engine.components_related.integration_interfaces.MovementCapableII;
+import official.sketchBook.engine.components_related.integration_interfaces.move.MovementCapableII;
 import official.sketchBook.engine.gameObject_related.base_model.PhysicalGameObject;
 
 import static official.sketchBook.game.util_related.info.values.constants.GameConstants.Physics.PPM;

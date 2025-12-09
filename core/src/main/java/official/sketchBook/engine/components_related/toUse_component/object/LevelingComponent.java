@@ -1,12 +1,12 @@
 package official.sketchBook.engine.components_related.toUse_component.object;
 
 import official.sketchBook.engine.components_related.base_component.Component;
-import official.sketchBook.engine.components_related.integration_interfaces.LevelUpHolderII;
+import official.sketchBook.engine.components_related.integration_interfaces.LevelComponentHolderII;
 
 public class LevelingComponent implements Component {
 
     /// Dono do componente de levels
-    private final LevelUpHolderII owner;
+    private final LevelComponentHolderII owner;
 
     /// Nível atual
     private int currentLvl;
@@ -21,7 +21,7 @@ public class LevelingComponent implements Component {
     private float maxLvlProgress;
 
 
-    public LevelingComponent(LevelUpHolderII owner) {
+    public LevelingComponent(LevelComponentHolderII owner) {
         this.owner = owner;
     }
 
@@ -151,7 +151,7 @@ public class LevelingComponent implements Component {
         return maxLvlProgress;
     }
 
-    public LevelUpHolderII getOwner() {
+    public LevelComponentHolderII getOwner() {
         return owner;
     }
 }

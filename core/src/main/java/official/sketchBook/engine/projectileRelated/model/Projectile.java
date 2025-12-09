@@ -10,7 +10,7 @@ import official.sketchBook.engine.animation_related.ObjectAnimationPlayer;
 import official.sketchBook.engine.animation_related.SpriteSheetDataHandler;
 import official.sketchBook.engine.components_related.base_component.Component;
 import official.sketchBook.engine.components_related.collisionBehaviorComponents.StickToSurfaceBehavior;
-import official.sketchBook.engine.components_related.integration_interfaces.PhysicalObjectII;
+import official.sketchBook.engine.components_related.integration_interfaces.physic.PhysicalObjectII;
 import official.sketchBook.engine.components_related.integration_interfaces.RangeWeaponWielderII;
 import official.sketchBook.engine.components_related.toUse_component.projectile.ProjectileControllerComponent;
 import official.sketchBook.engine.components_related.toUse_component.projectile.ProjectilePhysicsComponent;

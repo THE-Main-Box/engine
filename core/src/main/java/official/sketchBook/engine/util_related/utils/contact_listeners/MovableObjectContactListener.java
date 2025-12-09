@@ -1,7 +1,7 @@
 package official.sketchBook.engine.util_related.utils.contact_listeners;
 
 import com.badlogic.gdx.physics.box2d.*;
-import official.sketchBook.engine.components_related.integration_interfaces.MovementCapableII;
+import official.sketchBook.engine.components_related.integration_interfaces.move.MovementCapableII;
 import official.sketchBook.engine.util_related.enumerators.directions.Direction;
 import official.sketchBook.engine.util_related.utils.general.ContactActions;
 

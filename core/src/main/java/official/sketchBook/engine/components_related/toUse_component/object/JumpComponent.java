@@ -1,7 +1,7 @@
 package official.sketchBook.engine.components_related.toUse_component.object;
 
 import official.sketchBook.engine.components_related.base_component.Component;
-import official.sketchBook.engine.components_related.integration_interfaces.JumpCapableII;
+import official.sketchBook.engine.components_related.integration_interfaces.move.JumpCapableII;
 import official.sketchBook.engine.components_related.toUse_component.util.TimerComponent;
 
 import static official.sketchBook.game.util_related.info.values.constants.GameConstants.Physics.PPM;

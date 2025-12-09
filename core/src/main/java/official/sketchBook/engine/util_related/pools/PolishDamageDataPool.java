@@ -1,7 +1,7 @@
 package official.sketchBook.engine.util_related.pools;
 
-import official.sketchBook.engine.components_related.integration_interfaces.DamageDealerII;
-import official.sketchBook.engine.components_related.integration_interfaces.DamageReceiverII;
+import official.sketchBook.engine.components_related.integration_interfaces.dmg.DamageDealerII;
+import official.sketchBook.engine.components_related.integration_interfaces.dmg.DamageReceiverII;
 import official.sketchBook.engine.components_related.toUse_component.util.TimerComponent;
 import official.sketchBook.engine.custom_utils_related.CustomPool;
 import official.sketchBook.engine.room_related.model.PlayableRoom;
@@ -40,7 +40,6 @@ public class PolishDamageDataPool extends CustomPool<PolishDamageData> {
     }
 
     public void initPDD(DamageReceiverII receiver, DamageDealerII dealer, RawDamageData rdd, PolishDamageData toInit) {
-
         int x = 0;
         int y = 0;
 

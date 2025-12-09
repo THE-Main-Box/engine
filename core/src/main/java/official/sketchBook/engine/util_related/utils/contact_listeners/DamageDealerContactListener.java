@@ -1,8 +1,8 @@
 package official.sketchBook.engine.util_related.utils.contact_listeners;
 
 import com.badlogic.gdx.physics.box2d.*;
-import official.sketchBook.engine.components_related.integration_interfaces.DamageDealerII;
-import official.sketchBook.engine.components_related.integration_interfaces.DamageReceiverII;
+import official.sketchBook.engine.components_related.integration_interfaces.dmg.DamageDealerII;
+import official.sketchBook.engine.components_related.integration_interfaces.dmg.DamageReceiverII;
 import official.sketchBook.engine.util_related.pools.PolishDamageDataPool;
 import official.sketchBook.engine.util_related.utils.data_to_instance_related.damage_related.PolishDamageData;
 import official.sketchBook.game.gameState_related.models.Playing;
@@ -53,6 +53,7 @@ public class DamageDealerContactListener implements ContactListener {
             "objeto: " + dealer.getClass().getSimpleName()
                 + " causou dano a: " + receiver.getClass().getSimpleName()
                 + "| " + receiver.getDamageReceiveC().getHealth()
+            + " | " + data.getDamageData().getAmount() * data.getDamageData().getAmountMod()
         );
 
         receiver.getDamageReceiveC().damage(data);

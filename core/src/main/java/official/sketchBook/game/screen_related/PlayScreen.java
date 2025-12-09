@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import official.sketchBook.engine.MainClass;
 import official.sketchBook.engine.camera_related.CameraManager;
-import official.sketchBook.engine.components_related.integration_interfaces.RayCasterII;
+import official.sketchBook.engine.components_related.integration_interfaces.physic.RayCasterII;
 import official.sketchBook.engine.gameObject_related.base_model.GameObject;
 import official.sketchBook.engine.gameState_related.model.State;
 import official.sketchBook.engine.util_related.enumerators.states.GameState;

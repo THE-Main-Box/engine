@@ -2,7 +2,7 @@ package official.sketchBook.engine.gameObject_related.base_model;
 
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
-import official.sketchBook.engine.components_related.integration_interfaces.PhysicalObjectII;
+import official.sketchBook.engine.components_related.integration_interfaces.physic.PhysicalObjectII;
 
 public abstract class PhysicalGameObject extends GameObject implements PhysicalObjectII {
 

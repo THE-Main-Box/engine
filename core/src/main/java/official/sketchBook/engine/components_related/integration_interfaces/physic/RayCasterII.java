@@ -1,4 +1,4 @@
-package official.sketchBook.engine.components_related.integration_interfaces;
+package official.sketchBook.engine.components_related.integration_interfaces.physic;
 
 import official.sketchBook.engine.util_related.utils.RayCastHelper;
 

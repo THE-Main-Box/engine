@@ -193,7 +193,7 @@ public class PlayerControllerComponent extends KeyBindedControllerComponent {
         var moveC = player.getMoveC();
 
         if(!moveC.isCanAccelerateX()){
-            moveC.setSpeed(0,0);
+            moveC.setxSpeed(0);
             return;
         }
 

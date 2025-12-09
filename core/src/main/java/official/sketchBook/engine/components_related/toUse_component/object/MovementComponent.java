@@ -19,6 +19,7 @@ public class MovementComponent implements Component {
     private boolean movingX = false;
 
 
+
     public MovementComponent(float weight) {
         this.weight = weight;
     }
